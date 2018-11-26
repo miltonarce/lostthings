@@ -1,3 +1,9 @@
+/**
+ * En el caso que tire error al ejecutar el script de gulp
+ * verificar la version de Nodejs instalada, ya que las viejas versiones
+ * no soportan es6, es7
+ */
+
 //Librería gulp
 const gulp = require('gulp');
 //Libreria para concatenar archivos

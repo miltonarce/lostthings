@@ -17,6 +17,27 @@
                 <div class="invalid-form" ng-show="errors.password">
                     <span>{{errors.password}}</span>
                 </div>
+                <label class="item item-input item-stacked-label item-form">
+                    <span class="input-label">Usuario</span>
+                    <input name="usuario" type="text" placeholder="Ingresa tu nombre de usuario" ng-model="user.usuario" required>
+                </label>
+                <div class="invalid-form" ng-show="errors.usuario">
+                    <span>{{errors.usuario}}</span>
+                </div>
+                <label class="item item-input item-stacked-label item-form">
+                    <span class="input-label">Nombre</span>
+                    <input name="nombre" type="text" placeholder="Ingresa tu nombre" ng-model="user.nombre" required>
+                </label>
+                <div class="invalid-form" ng-show="errors.nombre">
+                    <span>{{errors.nombre}}</span>
+                </div>
+                <label class="item item-input item-stacked-label item-form">
+                    <span class="input-label">Apellido</span>
+                    <input name="apellido" type="text" placeholder="Ingresa tu apellido" ng-model="user.apellido" required>
+                </label>
+                <div class="invalid-form" ng-show="errors.apellido">
+                    <span>{{errors.apellido}}</span>
+                </div>
             </div>
             <button type="submit" class="button button-dark button-block">Registrarse</button>
         </form>

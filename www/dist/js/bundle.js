@@ -112,194 +112,6 @@ angular.module("lostThings.services", []);
 //Módulo para los controllers
 angular.module("lostThings.controllers", []);
 
-angular.module("lostThings.services").factory("Authentication", [
-  "$http",
-  "API_SERVER",
-  function($http, API_SERVER) {
-    let token = null;
-
-    let userData = null;
-
-    /**
-     * Permite autenticar al usuario contra la API de PHP
-     * @param {Object} user
-     * @return boolean
-     */
-    function login(user) {
-      return $http.post(`${API_SERVER}/login`, user).then(function(res) {
-        let response = res.data;
-        if (response.status == 1) {
-          return true;
-        }
-        return false;
-      });
-      //MOCK
-      // token = 'fake-token';
-      // return new Promise((resolve, reject) => resolve(true));
-    }
-
-    function logout() {
-      token = null;
-    }
-
-    /**
-     * Permite registrar al usuario utilizando la API de PHP
-     * @param {Object} user
-     * @returns Object
-     */
-    function register(user) {
-      // return $http.post(`${API_SERVER}/register`, user).then(function(res) {
-      //     let response = res.data;
-      //     if (response.status == 1) {
-      //         //token = response.data.token;
-      //         // userData = {
-      //         //     id		: response.data.id,
-      //         //     usuario : response.data.usuario
-      //         // };
-      //         return true;
-      //     }
-      //     return false;
-      // });
-
-      //MOCK
-      return new Promise((resolve, reject) => resolve());
-    }
-
-    /**
-     * Permite saber si el usuario esta logueado, valida si existe el token
-     * @return boolean
-     */
-    function isLogged() {
-      return token !== null;
-    }
-
-    /**
-     * Permite obtener el token JWT
-     * @return token
-     */
-    function getToken() {
-      return token;
-    }
-
-    /**
-     * Permite obtener la información del usuario logueado
-     * @returns {Object} userData
-     */
-    function getUserData() {
-      let userData = {
-        id: "222",
-        usuario: "pepe"
-      };
-      return userData;
-    }
-
-    return {
-      login: login,
-      register: register,
-      isLogged: isLogged,
-      getUserData: getUserData,
-      getToken: getToken,
-      logout: logout
-    };
-  }
-]);
-
-angular
-.module('lostThings.services')
-.factory('Items', 
-    ['$http', 'API_SERVER', 
-    function($http, API_SERVER){
-        
-        /**
-         * Permite obtener todos los items perdidos
-         * @returns Promise
-         */
-        function getAllItems() {
-            /*return $http.get(`${API_SERVER}/items`).then(function(res) {
-                
-            });*/
-            //Mock
-            return new Promise((resolve, reject) => resolve(getAllMock));
-        }
-
-        /**
-         * Permite buscar los items por el valor ingresado como parametro
-         * @param {string} search 
-         * returns Promise
-         */
-        function searchItems(search) {
-            // return $http.get(`${API_SERVER}/items?search=${search}`).then(function(res) {
-                
-            // });
-            //Mock
-            return new Promise((resolve, reject) => resolve(searchItemsMock));
-        }
-
-        /**
-         * Permite publicar un item para mostrarse en el listado
-         * @param {Object} item 
-         */
-        function publishItem(item) {
-            /*return $http.post(`${API_SERVER}/items`).then(function(res) {
-                
-            });*/
-            //Mock
-            return new Promise((resolve, reject) => resolve(publishItemMock));
-        }
-
-        /**
-         * Permite obtener el detalle de una publicacion
-         * @param {number} id
-         * @returns Promise
-         */
-        function getDetail(id) {
-            //return $http.get(`${API_SERVER}/items/id=${id}`);
-            return new Promise((resolve, reject) => resolve(mockgetDetail));
-        }
-
-        /**
-         * Permite comentar una publicación
-         * @param {Object} item
-         */
-        function commentPublication(item, idUser) {
-            //return $http.get(`${API_SERVER}/items/id=${id}`);
-            commentPublicationMock.descripcion = item.description;
-            return new Promise((resolve, reject) => resolve(commentPublicationMock));
-        }
-
-        return {
-            getAllItems: getAllItems,
-            searchItems: searchItems,
-            publishItem: publishItem,
-            getDetail: getDetail,
-            commentPublication: commentPublication
-        }
-
-    }
-]);
-
-angular
-.module('lostThings.services')
-.factory('Utils', 
-    ['$ionicPopup', 
-    function($ionicPopup){
-        
-        /**
-		 * Permite crear una instancia del popup de ionic
-		 * @param {string} title titulo del popup
-		 * @param {string} text texto del popup, puede ser HTML
-		 * @returns Promise
-		 */
-		function showPopup(title, text) {
-			return $ionicPopup.alert({ title: title, template: text, cssClass:'lost-things-popup', okText: 'Aceptar' });
-		}
-
-        return {
-            showPopup: showPopup
-        }
-
-    }
-]);
 angular
 .module('lostThings.controllers')
 .controller('DetailCtrl', [
@@ -445,19 +257,13 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
     $scope.login = function(formLogin, user) {
       $scope.errors = validateFields(formLogin);
       if ($scope.errors.email === null && $scope.errors.password === null) {
-        Authentication.login(user)
-          .then(res => {
-            Utils.showPopup(
-              "Autenticación",
-              "Se ha autenticado correctamente!"
-            ).then(() => $state.go("dashboard.home"));
-          })
-          .catch(_error =>
-            Utils.showPopup(
-              "Autenticación",
-              "¡Ups se produjo un error al autenticarse"
-            )
-          );
+        Authentication.login(user).then(success => {
+          if (success) {
+            Utils.showPopup("Autenticación", "Se ha autenticado correctamente!").then(() => $state.go("dashboard.home"));
+          } else {
+            Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
+          }
+        }).catch(_error => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
       }
     };
 
@@ -571,13 +377,18 @@ angular
 		 */
 		$scope.register = function(formRegister, user) {
 			$scope.errors = validateFields(formRegister);
-			if ($scope.errors.email === null && $scope.errors.password === null) {
-				Authentication.register(user).then(res =>  {
-					Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
+			if (isValidForm($scope.errors)) {
+				Authentication.register(user).then(success =>  {
+					if (success) {
+						Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
+					} else {
+						Utils.showPopup('Registrarse', 'Se produjo un error al registrar al usuario');
+					}
 				}).catch(_error => {
 					Utils.showPopup('Registrarse', '¡Ups se produjo un error al registrar al usuario');
 				});
 			}
+			return false;
 		}
 
 		/**
@@ -586,7 +397,7 @@ angular
 		 * @return errors
 		 */
 		function validateFields(formRegister) {
-			let errors = { email: null, password: null, pic: '' };
+			let errors = { email: null, password: null, nombre: null, apellido: null, usuario:null, pic: '' };
 			if (formRegister.email.$invalid) {
 				if (formRegister.email.$error.required) {
 					errors.email = 'El campo email no puede ser vacío';
@@ -600,10 +411,215 @@ angular
 					errors.password = 'El campo password no puede ser vacío';
 				}
 			}
+			if (formRegister.usuario.$invalid) {
+				if (formRegister.usuario.$error.required) {
+					errors.usuario = 'El campo usuario no puede ser vacío';
+				}
+			}
+			if (formRegister.nombre.$invalid) {
+				if (formRegister.nombre.$error.required) {
+					errors.nombre = 'El campo nombre no puede ser vacío';
+				}
+			}
+			if (formRegister.apellido.$invalid) {
+				if (formRegister.apellido.$error.required) {
+					errors.apellido = 'El campo apellido no puede ser vacío';
+				}
+			}
 			return errors;
 		}
 
+		/**
+		 * Permite saber si el formulario es valido
+		 *	@returns boolean
+		 */
+		function isValidForm(errors) {
+			return errors.email === null && errors.password === null && errors.nombre === null && errors.apellido === null && errors.usuario === null;
+		}
+
 	}
+]);
+angular.module("lostThings.services").factory("Authentication", [
+  "$http",
+  "API_SERVER",
+  function($http, API_SERVER) {
+
+    //Token JWT
+    let token = null;
+
+    //Información del usuario logueado
+    let userData = null;
+
+    /**
+     * Permite autenticar al usuario contra la API de PHP
+     * @param {Object} user
+     * @return boolean
+     */
+    function login(user) {
+      return $http.post(`${API_SERVER}/login`, user).then(function(response) {
+        if (response.data.status === 1) {
+          userData = response.data.data;
+          token = response.data.token;
+          return true;
+        }
+        return false;
+      });
+    }
+
+    /**
+     * Permite eliminar el token del usuario y la data del mismo
+     * @returns void
+     */
+    function logout() {
+      token = null;
+      userData = null;
+    }
+
+    /**
+     * Permite registrar al usuario utilizando la API de PHP
+     * @param {Object} user
+     * @returns Object
+     */
+    function register(user) {
+       return $http.post(`${API_SERVER}/register`, user).then(function(res) {
+          let response = res.data;
+          if (response.status === 1) {
+            return true;
+          }
+          return false;
+       });
+    }
+
+    /**
+     * Permite saber si el usuario esta logueado, valida si existe el token
+     * @return boolean
+     */
+    function isLogged() {
+      return token !== null;
+    }
+
+    /**
+     * Permite obtener el token JWT
+     * @return token
+     */
+    function getToken() {
+      return token;
+    }
+
+    /**
+     * Permite obtener la información del usuario logueado
+     * @returns {Object} userData
+     */
+    function getUserData() {
+      return userData;
+    }
+
+    return {
+      login: login,
+      register: register,
+      isLogged: isLogged,
+      getUserData: getUserData,
+      getToken: getToken,
+      logout: logout
+    };
+  }
+]);
+
+angular
+.module('lostThings.services')
+.factory('Items', 
+    ['$http', 'API_SERVER', 
+    function($http, API_SERVER){
+        
+        /**
+         * Permite obtener todos los items perdidos
+         * @returns Promise
+         */
+        function getAllItems() {
+            /*return $http.get(`${API_SERVER}/items`).then(function(res) {
+                
+            });*/
+            //Mock
+            return new Promise((resolve, reject) => resolve(getAllMock));
+        }
+
+        /**
+         * Permite buscar los items por el valor ingresado como parametro
+         * @param {string} search 
+         * returns Promise
+         */
+        function searchItems(search) {
+            // return $http.get(`${API_SERVER}/items?search=${search}`).then(function(res) {
+                
+            // });
+            //Mock
+            return new Promise((resolve, reject) => resolve(searchItemsMock));
+        }
+
+        /**
+         * Permite publicar un item para mostrarse en el listado
+         * @param {Object} item 
+         */
+        function publishItem(item) {
+            /*return $http.post(`${API_SERVER}/items`).then(function(res) {
+                
+            });*/
+            //Mock
+            return new Promise((resolve, reject) => resolve(publishItemMock));
+        }
+
+        /**
+         * Permite obtener el detalle de una publicacion
+         * @param {number} id
+         * @returns Promise
+         */
+        function getDetail(id) {
+            //return $http.get(`${API_SERVER}/items/id=${id}`);
+            return new Promise((resolve, reject) => resolve(mockgetDetail));
+        }
+
+        /**
+         * Permite comentar una publicación
+         * @param {Object} item
+         */
+        function commentPublication(item, idUser) {
+            //return $http.get(`${API_SERVER}/items/id=${id}`);
+            commentPublicationMock.descripcion = item.description;
+            return new Promise((resolve, reject) => resolve(commentPublicationMock));
+        }
+
+        return {
+            getAllItems: getAllItems,
+            searchItems: searchItems,
+            publishItem: publishItem,
+            getDetail: getDetail,
+            commentPublication: commentPublication
+        }
+
+    }
+]);
+
+angular
+.module('lostThings.services')
+.factory('Utils', 
+    ['$ionicPopup', 
+    function($ionicPopup){
+        
+        /**
+		 * Permite crear una instancia del popup de ionic
+		 * @param {string} title titulo del popup
+		 * @param {string} text texto del popup, puede ser HTML
+		 * @returns Promise
+		 */
+		function showPopup(title, text) {
+			return $ionicPopup.alert({ title: title, template: text, cssClass:'lost-things-popup', okText: 'Aceptar' });
+		}
+
+        return {
+            showPopup: showPopup
+        }
+
+    }
 ]);
 /*! angular-base64-upload - v0.1.23
 * https://github.com/adonespitogo/angular-base64-upload

@@ -17,19 +17,13 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
     $scope.login = function(formLogin, user) {
       $scope.errors = validateFields(formLogin);
       if ($scope.errors.email === null && $scope.errors.password === null) {
-        Authentication.login(user)
-          .then(res => {
-            Utils.showPopup(
-              "Autenticación",
-              "Se ha autenticado correctamente!"
-            ).then(() => $state.go("dashboard.home"));
-          })
-          .catch(_error =>
-            Utils.showPopup(
-              "Autenticación",
-              "¡Ups se produjo un error al autenticarse"
-            )
-          );
+        Authentication.login(user).then(success => {
+          if (success) {
+            Utils.showPopup("Autenticación", "Se ha autenticado correctamente!").then(() => $state.go("dashboard.home"));
+          } else {
+            Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
+          }
+        }).catch(_error => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
       }
     };
 
