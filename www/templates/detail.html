@@ -1,0 +1,41 @@
+<ion-view title="Detalle">
+    <!-- Se agrega el botón back porque las tabs tienen su propio history y no reconoce el back... -->
+    <ion-nav-bar  class="bar-stable">
+        <ion-nav-buttons side="left">
+            <a class="button icon-left ion-chevron-left button-clear" href="/#dashboard/home">Atrás</a>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-content class="background-content">
+        <div class="padding">
+            <h1 class="title-item-detail">{{item.nombre}}</h1>
+            <div>
+                <img class="img-responsive pic-item" ng-src="{{item.foto}}" alt="{{item.nombre}}">
+            </div>
+            <p>{{item.descripcion}}</p>
+        </div>
+        <div>
+            <h2 class="title-comments">Comentarios</h2>
+           <div>
+                <ion-list class="list">
+                    <ion-item ng-repeat="comentario in item.comentarios" class="item item-avatar item-comments">
+                        <img ng-src="{{comentario.avatar}}">
+                        <p>{{comentario.usuario}}</p>
+                        <p>{{comentario.descripcion}}</p>
+                    </ion-item>
+                </ion-list>
+           </div>
+           <div class="padding">
+                <!-- Form Comments -->
+                <form name="formComments" ng-submit="addComment(formComments, comment)" novalidate>
+                    <div class="container-form-input-comment">
+                        <textarea name="description" ng-model="comment.description" rows="4" placeholder="Escribi tu comentario..." required></textarea>        
+                    </div>  
+                    <div class="invalid-form" ng-show="errors.description">
+                        <span>{{errors.description}}</span>
+                    </div>
+                    <button type="submit" class="button button-dark button-block">Comentar</button>
+                </form>
+           </div>
+        </div>
+    </ion-content>
+</ion-view>

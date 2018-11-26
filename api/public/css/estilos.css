@@ -1,0 +1,28 @@
+/*
+CSS
+*/
+
+html {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: .9em;
+}
+
+.main-content {
+    padding-bottom: 70px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    margin-top: 1em;
+    background-color: #ededed;
+    line-height: 50px;
+    text-align: center;
+}
+
+.error {
+    margin: 10px 0;
+}

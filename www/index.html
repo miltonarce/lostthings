@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title>Lost Things</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="cordova.js"></script>
+    <!-- Bundles de la APP -->
+    <link href="dist/css/style.css" rel="stylesheet">
+    <script src="dist/js/bundle.js"></script>
+    <!-- Mocks hasta que este el backend, eliminar despues -->
+    <script src="mocks/items.js"></script>
+    <!-- Iconos -->
+    <script src="https://unpkg.com/ionicons@4.4.7/dist/ionicons.js"></script>
+    <!-- Fuentes -->
+    <link href="https://fonts.googleapis.com/css?family=Black+Han+Sans|Roboto" rel="stylesheet">
+  </head>
+  <body ng-app="lostThings">
+    <ion-nav-bar class="bar-stable">
+      <ion-nav-back-button></ion-nav-back-button>
+    </ion-nav-bar>
+    <ion-nav-view></ion-nav-view>
+  </body>
+</html>

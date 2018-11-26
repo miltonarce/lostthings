@@ -1,0 +1,32 @@
+<ion-view title="Publicar">
+    <ion-content class="padding">
+        <!-- Form publicar -->
+        <form name="formPublish" ng-submit="publish(formPublish, item)" novalidate enctype="multipart/form-data">
+            <div class="list">
+                <label class="item item-input item-stacked-label item-form">
+                    <span class="input-label">Nombre del ítem</span>
+                    <input name="name" type="text" placeholder="Ejemplo: Anteojos Ray Ban" ng-model="item.nombre" required>
+                </label>
+                <div class="invalid-form" ng-show="errors.name">
+                    <span>{{errors.name}}</span>
+                </div>
+                <label class="item item-input item-stacked-label item-form">
+                    <span class="input-label">Descripción del mismo</span>
+                    <textarea name="description" ng-model="item.description" rows="4"
+                    placeholder="Ejemplo: Lo perdí en la facultad de medicina el jueves pasado..." required></textarea>
+                </label>
+                <div class="invalid-form" ng-show="errors.description">
+                    <span>{{errors.description}}</span>
+                </div>
+                <div class="padding container-image-pic">
+                    <p>¿Posees alguna foto?</p>
+                    <input type="file" name="file" ng-model="item.pic" maxsize="1000" base-sixty-four-input>
+                </div>
+                <div class="invalid-form" ng-show="errors.pic">
+                    <span>{{errors.description}}</span>
+                </div>
+            </div>
+            <button type="submit" class="button button-dark button-block">Publicar</button>
+        </form>
+    </ion-content>
+</ion-view>

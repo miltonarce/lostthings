@@ -1,0 +1,38 @@
+# Verificamos que el módulo de reescritura de urls del
+# Apache esté disponible.
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews
+    </IfModule>
+
+    # Encendemos el módulo de reescritura.
+    RewriteEngine On
+
+    # El RewriteEngine funciona basándose en condiciones,
+    # que si se cumplen, aplican la primer regla que
+    # aparezca a continuación.
+    # Redirect Trailing Slashes If Not A Folder...
+    # Verificamos si el {REQUEST_FILENAME} (archivo de
+    # la petición) NO es un directorio REAL.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    # Flags:
+    # L: Indica que si la regla aplica, entonces no hace falta seguir parseando.
+    # R: Indica que es un redireccionamiento. 301 es un redireccionamiento permanente.
+    #   Muy importante para motores de búsqueda.
+    #   De dejar R solo, se asume por default 302, que es redireccionamiento temporal.
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+    # Handle Front Controller...
+    # -d: Pregunta si es un directorio.
+    # -f: Pregunta si es un arcivo (file).
+    # Es decir, si la url pedida no matchea con ningún archivo ni directorio, entonces
+    # se aplica la reescritura.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+
+    # Allow Authorization header
+    # Este header es necesario para trabajar con tokens en ciertos escenarios standards.
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+</IfModule>

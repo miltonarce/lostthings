@@ -1,0 +1,26 @@
+<ion-view title="Registrarse">
+    <ion-content class="padding">
+        <!-- Form Registro -->
+        <form name="formRegister" ng-submit="register(formRegister, user)" novalidate enctype="multipart/form-data">
+            <div class="list">
+                <label class="item item-input item-stacked-label item-form">
+                    <span class="input-label">Email</span>
+                    <input name="email" type="email" placeholder="Ingresa tu email" ng-model="user.email" required>
+                </label>
+                <div class="invalid-form" ng-show="errors.email">
+                    <span>{{errors.email}}</span>
+                </div>
+                <label class="item item-input item-stacked-label item-form">
+                    <span class="input-label">Password</span>
+                    <input name="password" type="password" placeholder="Ingresa tu password" ng-model="user.password" required>
+                </label>
+                <div class="invalid-form" ng-show="errors.password">
+                    <span>{{errors.password}}</span>
+                </div>
+            </div>
+            <button type="submit" class="button button-dark button-block">Registrarse</button>
+        </form>
+    </ion-content>
+</ion-view>
+    
+    
