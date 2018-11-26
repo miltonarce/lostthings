@@ -44,7 +44,7 @@ class Auth
  * @param User $userClass - Class Usuario
  * @return \Lcobucci\JWT\Token
  */
-public function genToken($email){
+public function genToken($userClass){
   $builder = new Builder();
   $builder->setIssuer(self::TOKEN_ISSUER);
   $builder->set('idusuario', $userClass->id);

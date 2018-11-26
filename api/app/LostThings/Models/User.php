@@ -34,7 +34,7 @@ class User
   public function loadDataArray($row){
     $this->id = $row['idusuario'];
     $this->user = $row['usuario'];
-    $this->user = $row['email'];
+    $this->email = $row['email'];
     $this->pass = $row['contraseña'];
   }
 }

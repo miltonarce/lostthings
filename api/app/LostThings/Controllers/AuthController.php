@@ -12,7 +12,7 @@ class AuthController
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
     $auth = new Auth;
-    if($dataLogin = $auth->login($_POST['email'], $_POST['pass'])){
+    if($dataLogin = $auth->login($data['email'],$data['password'])){
      View::renderJson([
        'status' => 1,
        'data' => $dataLogin
