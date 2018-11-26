@@ -19,13 +19,18 @@ angular
 		 */
 		$scope.register = function(formRegister, user) {
 			$scope.errors = validateFields(formRegister);
-			if ($scope.errors.email === null && $scope.errors.password === null) {
-				Authentication.register(user).then(res =>  {
-					Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
+			if (isValidForm($scope.errors)) {
+				Authentication.register(user).then(success =>  {
+					if (success) {
+						Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
+					} else {
+						Utils.showPopup('Registrarse', 'Se produjo un error al registrar al usuario');
+					}
 				}).catch(_error => {
 					Utils.showPopup('Registrarse', '¡Ups se produjo un error al registrar al usuario');
 				});
 			}
+			return false;
 		}
 
 		/**
@@ -34,7 +39,7 @@ angular
 		 * @return errors
 		 */
 		function validateFields(formRegister) {
-			let errors = { email: null, password: null, pic: '' };
+			let errors = { email: null, password: null, nombre: null, apellido: null, usuario:null, pic: '' };
 			if (formRegister.email.$invalid) {
 				if (formRegister.email.$error.required) {
 					errors.email = 'El campo email no puede ser vacío';
@@ -48,7 +53,30 @@ angular
 					errors.password = 'El campo password no puede ser vacío';
 				}
 			}
+			if (formRegister.usuario.$invalid) {
+				if (formRegister.usuario.$error.required) {
+					errors.usuario = 'El campo usuario no puede ser vacío';
+				}
+			}
+			if (formRegister.nombre.$invalid) {
+				if (formRegister.nombre.$error.required) {
+					errors.nombre = 'El campo nombre no puede ser vacío';
+				}
+			}
+			if (formRegister.apellido.$invalid) {
+				if (formRegister.apellido.$error.required) {
+					errors.apellido = 'El campo apellido no puede ser vacío';
+				}
+			}
 			return errors;
+		}
+
+		/**
+		 * Permite saber si el formulario es valido
+		 *	@returns boolean
+		 */
+		function isValidForm(errors) {
+			return errors.email === null && errors.password === null && errors.nombre === null && errors.apellido === null && errors.usuario === null;
 		}
 
 	}

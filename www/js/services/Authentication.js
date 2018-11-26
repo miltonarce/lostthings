@@ -2,8 +2,10 @@ angular.module("lostThings.services").factory("Authentication", [
   "$http",
   "API_SERVER",
   function($http, API_SERVER) {
+    //Token JWT
     let token = null;
 
+    //Información del usuario logueado
     let userData = null;
 
     /**
@@ -12,20 +14,23 @@ angular.module("lostThings.services").factory("Authentication", [
      * @return boolean
      */
     function login(user) {
-      // return $http.post(`${API_SERVER}/login`, user).then(function(res) {
-      //   let response = res.data;
-      //   if (response.status == 1) {
-      //     return true;
-      //   }
-      //   return false;
-      // });
-      //MOCK
-      token = "fake-token";
-      return new Promise((resolve, reject) => resolve(true));
+      return $http.post(`${API_SERVER}/login`, user).then(function(response) {
+        if (response.data.status === 1) {
+          userData = response.data.data;
+          token = response.data.token;
+          return true;
+        }
+        return false;
+      });
     }
 
+    /**
+     * Permite eliminar el token del usuario y la data del mismo
+     * @returns void
+     */
     function logout() {
       token = null;
+      userData = null;
     }
 
     /**
@@ -34,21 +39,13 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns Object
      */
     function register(user) {
-      // return $http.post(`${API_SERVER}/register`, user).then(function(res) {
-      //     let response = res.data;
-      //     if (response.status == 1) {
-      //         //token = response.data.token;
-      //         // userData = {
-      //         //     id		: response.data.id,
-      //         //     usuario : response.data.usuario
-      //         // };
-      //         return true;
-      //     }
-      //     return false;
-      // });
-
-      //MOCK
-      return new Promise((resolve, reject) => resolve());
+      return $http.post(`${API_SERVER}/register`, user).then(function(res) {
+        let response = res.data;
+        if (response.status === 1) {
+          return true;
+        }
+        return false;
+      });
     }
 
     /**
@@ -72,10 +69,6 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns {Object} userData
      */
     function getUserData() {
-      let userData = {
-        id: "222",
-        usuario: "pepe"
-      };
       return userData;
     }
 

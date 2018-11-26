@@ -257,19 +257,13 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
     $scope.login = function(formLogin, user) {
       $scope.errors = validateFields(formLogin);
       if ($scope.errors.email === null && $scope.errors.password === null) {
-        Authentication.login(user)
-          .then(res => {
-            Utils.showPopup(
-              "Autenticación",
-              "Se ha autenticado correctamente!"
-            ).then(() => $state.go("dashboard.home"));
-          })
-          .catch(_error =>
-            Utils.showPopup(
-              "Autenticación",
-              "¡Ups se produjo un error al autenticarse"
-            )
-          );
+        Authentication.login(user).then(success => {
+          if (success) {
+            Utils.showPopup("Autenticación", "Se ha autenticado correctamente!").then(() => $state.go("dashboard.home"));
+          } else {
+            Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
+          }
+        }).catch(_error => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
       }
     };
 
@@ -383,13 +377,18 @@ angular
 		 */
 		$scope.register = function(formRegister, user) {
 			$scope.errors = validateFields(formRegister);
-			if ($scope.errors.email === null && $scope.errors.password === null) {
-				Authentication.register(user).then(res =>  {
-					Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
+			if (isValidForm($scope.errors)) {
+				Authentication.register(user).then(success =>  {
+					if (success) {
+						Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
+					} else {
+						Utils.showPopup('Registrarse', 'Se produjo un error al registrar al usuario');
+					}
 				}).catch(_error => {
 					Utils.showPopup('Registrarse', '¡Ups se produjo un error al registrar al usuario');
 				});
 			}
+			return false;
 		}
 
 		/**
@@ -398,7 +397,7 @@ angular
 		 * @return errors
 		 */
 		function validateFields(formRegister) {
-			let errors = { email: null, password: null, pic: '' };
+			let errors = { email: null, password: null, nombre: null, apellido: null, usuario:null, pic: '' };
 			if (formRegister.email.$invalid) {
 				if (formRegister.email.$error.required) {
 					errors.email = 'El campo email no puede ser vacío';
@@ -412,7 +411,30 @@ angular
 					errors.password = 'El campo password no puede ser vacío';
 				}
 			}
+			if (formRegister.usuario.$invalid) {
+				if (formRegister.usuario.$error.required) {
+					errors.usuario = 'El campo usuario no puede ser vacío';
+				}
+			}
+			if (formRegister.nombre.$invalid) {
+				if (formRegister.nombre.$error.required) {
+					errors.nombre = 'El campo nombre no puede ser vacío';
+				}
+			}
+			if (formRegister.apellido.$invalid) {
+				if (formRegister.apellido.$error.required) {
+					errors.apellido = 'El campo apellido no puede ser vacío';
+				}
+			}
 			return errors;
+		}
+
+		/**
+		 * Permite saber si el formulario es valido
+		 *	@returns boolean
+		 */
+		function isValidForm(errors) {
+			return errors.email === null && errors.password === null && errors.nombre === null && errors.apellido === null && errors.usuario === null;
 		}
 
 	}
@@ -421,8 +443,10 @@ angular.module("lostThings.services").factory("Authentication", [
   "$http",
   "API_SERVER",
   function($http, API_SERVER) {
+    //Token JWT
     let token = null;
 
+    //Información del usuario logueado
     let userData = null;
 
     /**
@@ -431,20 +455,23 @@ angular.module("lostThings.services").factory("Authentication", [
      * @return boolean
      */
     function login(user) {
-      // return $http.post(`${API_SERVER}/login`, user).then(function(res) {
-      //   let response = res.data;
-      //   if (response.status == 1) {
-      //     return true;
-      //   }
-      //   return false;
-      // });
-      //MOCK
-      token = "fake-token";
-      return new Promise((resolve, reject) => resolve(true));
+      return $http.post(`${API_SERVER}/login`, user).then(function(response) {
+        if (response.data.status === 1) {
+          userData = response.data.data;
+          token = response.data.token;
+          return true;
+        }
+        return false;
+      });
     }
 
+    /**
+     * Permite eliminar el token del usuario y la data del mismo
+     * @returns void
+     */
     function logout() {
       token = null;
+      userData = null;
     }
 
     /**
@@ -453,21 +480,13 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns Object
      */
     function register(user) {
-      // return $http.post(`${API_SERVER}/register`, user).then(function(res) {
-      //     let response = res.data;
-      //     if (response.status == 1) {
-      //         //token = response.data.token;
-      //         // userData = {
-      //         //     id		: response.data.id,
-      //         //     usuario : response.data.usuario
-      //         // };
-      //         return true;
-      //     }
-      //     return false;
-      // });
-
-      //MOCK
-      return new Promise((resolve, reject) => resolve());
+      return $http.post(`${API_SERVER}/register`, user).then(function(res) {
+        let response = res.data;
+        if (response.status === 1) {
+          return true;
+        }
+        return false;
+      });
     }
 
     /**
@@ -491,10 +510,6 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns {Object} userData
      */
     function getUserData() {
-      let userData = {
-        id: "222",
-        usuario: "pepe"
-      };
       return userData;
     }
 
