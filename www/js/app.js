@@ -105,7 +105,7 @@ angular
     //Se configura el texto del button back a mostrar...
     $ionicConfigProvider.backButton.text("Atrás");
   })
-  .constant("API_SERVER", "http://localhost/lostthings/api");
+  .constant("API_SERVER", "http://localhost/lostthings/api/public");
 
 //Módulo para los services
 angular.module("lostThings.services", []);

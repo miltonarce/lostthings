@@ -105,7 +105,7 @@ angular
     //Se configura el texto del button back a mostrar...
     $ionicConfigProvider.backButton.text("Atrás");
   })
-  .constant("API_SERVER", "http://localhost/lostthings/api");
+  .constant("API_SERVER", "http://localhost/lostthings/api/public");
 
 //Módulo para los services
 angular.module("lostThings.services", []);
@@ -255,7 +255,6 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
      * @returns void
      */
     $scope.login = function(formLogin, user) {
-      alert("algo");
       $scope.errors = validateFields(formLogin);
       if ($scope.errors.email === null && $scope.errors.password === null) {
         Authentication.login(user)
@@ -434,6 +433,7 @@ angular.module("lostThings.services").factory("Authentication", [
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(res) {
         let response = res.data;
+        console.log(response);
         if (response.status == 1) {
           return true;
         }

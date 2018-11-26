@@ -15,7 +15,6 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
      * @returns void
      */
     $scope.login = function(formLogin, user) {
-      alert("algo");
       $scope.errors = validateFields(formLogin);
       if ($scope.errors.email === null && $scope.errors.password === null) {
         Authentication.login(user)

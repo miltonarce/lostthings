@@ -14,6 +14,7 @@ angular.module("lostThings.services").factory("Authentication", [
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(res) {
         let response = res.data;
+        console.log(response);
         if (response.status == 1) {
           return true;
         }

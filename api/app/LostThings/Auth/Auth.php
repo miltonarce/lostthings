@@ -65,11 +65,11 @@ public function isTokenValid($token){
   if($token == "null" || empty($token)){
     return false;
   }
-  $parseer = new Parser;
-  $token = $parser->((string) $token);
+  $parser = new Parser;
+  $token = $parser->parse((string) $token);
   $validationData = new ValidationData;
   $validationData-> setIssuer(self::TOKEN_ISSUER);
-  if(!token->validate($validationData)){
+  if(!$token->validate($validationData)){
     return false;
   }
   $signer = new Sha256;
@@ -77,7 +77,7 @@ public function isTokenValid($token){
     return false;
   }
   return [
-    'idusuario' =>$token->getClaim('idusuario');
+    'idusuario' => $token->getClaim('idusuario')
   ];
 }
 }
