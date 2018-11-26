@@ -12,16 +12,16 @@ angular.module("lostThings.services").factory("Authentication", [
      * @return boolean
      */
     function login(user) {
-      return $http.post(`${API_SERVER}/login`, user).then(function(res) {
-        let response = res.data;
-        if (response.status == 1) {
-          return true;
-        }
-        return false;
-      });
+      // return $http.post(`${API_SERVER}/login`, user).then(function(res) {
+      //   let response = res.data;
+      //   if (response.status == 1) {
+      //     return true;
+      //   }
+      //   return false;
+      // });
       //MOCK
-      // token = 'fake-token';
-      // return new Promise((resolve, reject) => resolve(true));
+      token = "fake-token";
+      return new Promise((resolve, reject) => resolve(true));
     }
 
     function logout() {
