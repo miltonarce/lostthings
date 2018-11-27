@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `nombre` varchar(45) NOT NULL,
   `apellido` varchar(45) NOT NULL,
   `fecha_alta` date DEFAULT NULL,
-  `contraseña` varchar(60) NOT NULL,
+  `password` varchar(60) NOT NULL,
   `email` varchar(100) NOT NULL,
   `img` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`idusuario`),
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`idusuario`, `usuario`, `nombre`, `apellido`, `fecha_alta`, `contraseña`, `email`, `img`) VALUES
+INSERT INTO `usuarios` (`idusuario`, `usuario`, `nombre`, `apellido`, `fecha_alta`, `password`, `email`, `img`) VALUES
 (1, 'admin', 'Admin', 'Administrador', '2018-11-20', '$2y$10$dZlL62iNlBs8YrrhUAPPeeV5sh4EQj.wj6J10JROzUNyQ5jpveKcS', 'admin@mail.com', NULL),
 (2, 'matias.torre', 'Matias', 'Torre', '2018-11-20', '$2y$10$dZlL62iNlBs8YrrhUAPPeeV5sh4EQj.wj6J10JROzUNyQ5jpveKcS', 'mtorre@mail.com', NULL),
 (3, 'milton.arce', 'Milton', 'Arce', '2018-11-20', '$2y$10$dZlL62iNlBs8YrrhUAPPeeV5sh4EQj.wj6J10JROzUNyQ5jpveKcS', 'marce@mail.com', NULL);
