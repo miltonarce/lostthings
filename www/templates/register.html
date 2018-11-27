@@ -1,47 +1,82 @@
 <ion-view title="Registrarse">
-    <ion-content class="padding">
-        <!-- Form Registro -->
-        <form name="formRegister" ng-submit="register(formRegister, user)" novalidate enctype="multipart/form-data">
-            <div class="list">
-                <label class="item item-input item-stacked-label item-form">
-                    <span class="input-label">Email</span>
-                    <input name="email" type="email" placeholder="Ingresa tu email" ng-model="user.email" required>
-                </label>
-                <div class="invalid-form" ng-show="errors.email">
-                    <span>{{errors.email}}</span>
-                </div>
-                <label class="item item-input item-stacked-label item-form">
-                    <span class="input-label">Password</span>
-                    <input name="password" type="password" placeholder="Ingresa tu password" ng-model="user.password" required>
-                </label>
-                <div class="invalid-form" ng-show="errors.password">
-                    <span>{{errors.password}}</span>
-                </div>
-                <label class="item item-input item-stacked-label item-form">
-                    <span class="input-label">Usuario</span>
-                    <input name="usuario" type="text" placeholder="Ingresa tu nombre de usuario" ng-model="user.usuario" required>
-                </label>
-                <div class="invalid-form" ng-show="errors.usuario">
-                    <span>{{errors.usuario}}</span>
-                </div>
-                <label class="item item-input item-stacked-label item-form">
-                    <span class="input-label">Nombre</span>
-                    <input name="nombre" type="text" placeholder="Ingresa tu nombre" ng-model="user.nombre" required>
-                </label>
-                <div class="invalid-form" ng-show="errors.nombre">
-                    <span>{{errors.nombre}}</span>
-                </div>
-                <label class="item item-input item-stacked-label item-form">
-                    <span class="input-label">Apellido</span>
-                    <input name="apellido" type="text" placeholder="Ingresa tu apellido" ng-model="user.apellido" required>
-                </label>
-                <div class="invalid-form" ng-show="errors.apellido">
-                    <span>{{errors.apellido}}</span>
-                </div>
-            </div>
-            <button type="submit" class="button button-dark button-block">Registrarse</button>
-        </form>
-    </ion-content>
+  <ion-content class="padding">
+    <!-- Form Registro -->
+    <form
+      name="formRegister"
+      ng-submit="register(formRegister, user)"
+      novalidate
+      enctype="multipart/form-data"
+    >
+      <div class="list">
+        <label class="item item-input item-stacked-label item-form">
+          <span class="input-label">Email</span>
+          <input
+            name="email"
+            type="email"
+            placeholder="Ingresa tu email"
+            ng-model="user.email"
+            required
+          />
+        </label>
+        <div class="invalid-form" ng-show="errors.email">
+          <span>{{ errors.email }}</span>
+        </div>
+        <label class="item item-input item-stacked-label item-form">
+          <span class="input-label">Password</span>
+          <input
+            name="password"
+            type="password"
+            placeholder="Ingresa tu password"
+            ng-model="user.password"
+            required
+          />
+        </label>
+        <div class="invalid-form" ng-show="errors.password">
+          <span>{{ errors.password }}</span>
+        </div>
+        <label class="item item-input item-stacked-label item-form">
+          <span class="input-label">Usuario</span>
+          <input
+            name="usuario"
+            type="text"
+            placeholder="Ingresa tu nombre de usuario"
+            ng-model="user.usuario"
+            required
+          />
+        </label>
+        <div class="invalid-form" ng-show="errors.usuario">
+          <span>{{ errors.usuario }}</span>
+        </div>
+        <label class="item item-input item-stacked-label item-form">
+          <span class="input-label">Nombre</span>
+          <input
+            name="nombre"
+            type="text"
+            placeholder="Ingresa tu nombre"
+            ng-model="user.nombre"
+            required
+          />
+        </label>
+        <div class="invalid-form" ng-show="errors.nombre">
+          <span>{{ errors.nombre }}</span>
+        </div>
+        <label class="item item-input item-stacked-label item-form">
+          <span class="input-label">Apellido</span>
+          <input
+            name="apellido"
+            type="text"
+            placeholder="Ingresa tu apellido"
+            ng-model="user.apellido"
+            required
+          />
+        </label>
+        <div class="invalid-form" ng-show="errors.apellido">
+          <span>{{ errors.apellido }}</span>
+        </div>
+      </div>
+      <button type="submit" class="button button-dark button-block">
+        Registrarse
+      </button>
+    </form>
+  </ion-content>
 </ion-view>
-    
-    

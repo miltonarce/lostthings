@@ -10,6 +10,7 @@ use LostThings\Core\Route;
 
 Route::add('POST', '/login', 'AuthController@login');
 Route::add('GET', '/items', 'ItemsController@all');
+Route::add('POST', '/register', 'UsuariosController@create');
 
 
 
