@@ -1,4 +1,4 @@
-<ion-view view-title="Home">
+<ion-view title="Home">
     <!-- Se agrega al navbar el button de búsqueda -->
     <ion-nav-bar  class="bar-stable">
         <ion-nav-buttons side="right">
@@ -10,8 +10,12 @@
       <div ng-if="showSearch">
         <p class="text-center">Utiliza el buscador para encontrar más facílmente los artículos perdidos</p>
         <form name="formSearch" novalidate class="form-search" ng-submit="searchItems(search)">
-          <input type="search" name="search" class="form-search-input" ng-model="search" placeholder="¿Qué estas buscando?">
-          <button class="button button-dark button-small">Buscar</button>
+          <div class="list list-inset">
+            <label class="item item-input">
+              <i class="icon ion-search placeholder-icon"></i>
+              <input type="search" name="search" class="form-search-input" ng-model="search" placeholder="¿Qué estas buscando?">
+            </label>
+          </div>
         </form>
       </div>
       <h1 class="title-last-items">Últimos items publicados</h1>

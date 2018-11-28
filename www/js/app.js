@@ -75,6 +75,18 @@ angular
           requiresAuth: true
         }
       })
+      .state("dashboard.profile", {
+        url: "/profile",
+        views: {
+          "tab-profile" : {
+            templateUrl: "templates/dashboard-profile.html",
+            controller: "ProfileCtrl"
+          }
+        },
+        data: {
+          requiresAuth: true
+        }
+      })
       .state("detail", {
         url: "/detail/:id",
         templateUrl: "templates/detail.html",
@@ -93,10 +105,6 @@ angular
         url: "/register",
         templateUrl: "templates/register.html",
         controller: "RegisterCtrl"
-      })
-      .state("logout", {
-        url: "/logout",
-        controller: "LogoutCtrl"
       });
 
     //Por default se muestra la view de login...

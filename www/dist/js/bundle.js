@@ -75,6 +75,18 @@ angular
           requiresAuth: true
         }
       })
+      .state("dashboard.profile", {
+        url: "/profile",
+        views: {
+          "tab-profile" : {
+            templateUrl: "templates/dashboard-profile.html",
+            controller: "ProfileCtrl"
+          }
+        },
+        data: {
+          requiresAuth: true
+        }
+      })
       .state("detail", {
         url: "/detail/:id",
         templateUrl: "templates/detail.html",
@@ -93,10 +105,6 @@ angular
         url: "/register",
         templateUrl: "templates/register.html",
         controller: "RegisterCtrl"
-      })
-      .state("logout", {
-        url: "/logout",
-        controller: "LogoutCtrl"
       });
 
     //Por default se muestra la view de login...
@@ -292,12 +300,117 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
 
 angular
 .module('lostThings.controllers')
-.controller('LogoutCtrl', [
+.controller('ProfileCtrl', [
+	'$scope',
 	'$state',
 	'Authentication',
-	function($state, Authentication) {
-		Authentication.logout();
-		$state.go('login');
+	'Profile',
+	'Utils',
+	function($scope, $state, Authentication, Profile, Utils) {
+
+		//Obtengo la información del usuario
+		$scope.userData = Authentication.getUserData();
+
+		$scope.requestPassword = { idUser: $scope.userData.idusuario, oldPassword: '', newPassword: '' } ;
+
+		//Flag para mostrar el formulario de edición
+		$scope.enableEdit = false;
+
+		/**
+		 * Permite habilitar / deshabilitar el formulario de edición
+		 * @returns void
+		 */
+		$scope.toggleEnableEdit = function() {
+			$scope.enableEdit = !$scope.enableEdit;
+		}
+
+		/**
+		 * Permite editar el perfil del usuario con los datos recibidos
+		 * @param {Object} formEdit
+		 * @param {Object} user
+		 */
+		$scope.editProfile = function(formEdit, user) {
+			$scope.errors = validateFields(formEdit);
+			if ($scope.errors.usuario === null && $scope.errors.email === null) {
+			 Profile.edit($scope.userData).then(response => {
+				if (response.status === 1) {
+					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!");
+				} else {
+					Utils.showPopup("Perfil", "No se pudo actualizar su perfil, intente más tarde");
+				}
+			 }).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos"));
+			} 
+		}
+
+		/**
+		 * Permite modificar el password del usuario, valida los datos
+		 * y realiza la actualización llamando al service...
+		 * @param {string} formChangePassword 
+		 * @param {string} requestPassword 
+		 * @returns void
+		 */
+		$scope.changePassword = function(formChangePassword, requestPassword) {
+			$scope.errorsFormChangePassword = validateFieldsPassword(formChangePassword);
+			if ($scope.errorsFormChangePassword.oldPassword === null && $scope.errorsFormChangePassword.newPassword === null) {
+				Profile.changePassword($scope.requestPassword).then(response => {
+					if (response.status === 1) {
+						Utils.showPopup("Perfil", "Se actualizó correctamente su password!");
+					} else {
+						Utils.showPopup("Perfil", "No se pudo actualizar su password, intente más tarde");
+					}
+				}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password"));
+			}
+		}
+
+		/**
+		 * Permite validar los datos ingresados por el usuario
+		 * @param {Object} formEdit
+		 * @return errors
+		 */
+		function validateFields(formEdit) {
+			let errors = {
+				email: null,
+				usuario: null,
+			};
+			if (formEdit.email.$invalid) {
+				if (formEdit.email.$error.required) {
+					errors.email = "El campo email no puede ser vacío";
+				}
+				if (formEdit.email.$error.email) {
+					errors.email = "No es un email válido";
+				}
+			}
+			if (formEdit.usuario.$invalid) {
+				if (formEdit.usuario.$error.required) {
+					errors.usuario = "El campo usuario no puede ser vacío";
+				}
+			}
+			return errors;
+		}
+
+		/**
+		 * Permite validar los campos del formulario de password
+		 * @param {Object} formChangePassword
+		 * @returns errors
+		 */
+		function validateFieldsPassword(formChangePassword) {
+			let errors = {
+				oldPassword: null,
+				newPassword: null
+			};
+			if (formChangePassword.oldPassword.$invalid) {
+				if (formChangePassword.oldPassword.$error.required) {
+					errors.oldPassword = "Su password actual no puede ser vacía";
+				}
+			}
+			if (formChangePassword.newPassword.$invalid) {
+				if (formChangePassword.newPassword.$error.required) {
+					errors.newPassword = "Su nuevo password no puede ser vacío";
+				}
+			}
+			return errors;
+		}
+
 	}
 ]);
 angular
@@ -470,11 +583,6 @@ angular.module("lostThings.services").factory("Authentication", [
   "$http",
   "API_SERVER",
   function($http, API_SERVER) {
-    //Token JWT
-    let token = null;
-
-    //Información del usuario logueado
-    let userData = null;
 
     /**
      * Permite autenticar al usuario contra la API de PHP
@@ -484,8 +592,8 @@ angular.module("lostThings.services").factory("Authentication", [
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(response) {
         if (response.data.status === 1) {
-          userData = response.data.data;
-          token = response.data.token;
+          setUserData(response.data.data.user);
+          setToken(response.data.data.token);
           return true;
         }
         return false;
@@ -493,12 +601,11 @@ angular.module("lostThings.services").factory("Authentication", [
     }
 
     /**
-     * Permite eliminar el token del usuario y la data del mismo
+     * Permite eliminar el token del usuario y la data del mismo del localStorage
      * @returns void
      */
     function logout() {
-      token = null;
-      userData = null;
+      localStorage.clear();
     }
 
     /**
@@ -521,15 +628,31 @@ angular.module("lostThings.services").factory("Authentication", [
      * @return boolean
      */
     function isLogged() {
-      return token !== null;
+      return getToken() !== null;
     }
 
     /**
+     * Permite guardar el token en el localStorage
+     * @param {string} token 
+     */
+    function setToken(token) {
+      localStorage.setItem('token', token);
+    }
+
+     /**
      * Permite obtener el token JWT
-     * @return token
+     * @return {string}
      */
     function getToken() {
-      return token;
+      return localStorage.getItem('token');
+    }
+
+    /** Permit guardar la informacion del usuario en el localStorage
+     * @param {Object} userData
+     * @returns void
+     */
+    function setUserData(userData) {
+      localStorage.setItem('userData', JSON.stringify(userData));
     }
 
     /**
@@ -537,7 +660,7 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns {Object} userData
      */
     function getUserData() {
-      return userData;
+      return JSON.parse(localStorage.getItem('userData'));
     }
 
     return {
@@ -570,11 +693,7 @@ angular.module("lostThings.services").factory("Items", [
      * returns Promise
      */
     function searchItems(search) {
-      // return $http.get(`${API_SERVER}/items?search=${search}`).then(function(res) {
-
-      // });
-      //Mock
-      return new Promise((resolve, reject) => resolve(searchItemsMock));
+      return $http.get(`${API_SERVER}/items?search=${search}`);
     }
 
     /**
@@ -582,11 +701,7 @@ angular.module("lostThings.services").factory("Items", [
      * @param {Object} item
      */
     function publishItem(item) {
-      /*return $http.post(`${API_SERVER}/items`).then(function(res) {
-                
-            });*/
-      //Mock
-      return new Promise((resolve, reject) => resolve(publishItemMock));
+      return $http.post(`${API_SERVER}/items`);
     }
 
     /**
@@ -595,8 +710,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      //return $http.get(`${API_SERVER}/items/id=${id}`);
-      return new Promise((resolve, reject) => resolve(mockgetDetail));
+      return $http.get(`${API_SERVER}/items/id=${id}`);
     }
 
     /**
@@ -619,6 +733,40 @@ angular.module("lostThings.services").factory("Items", [
   }
 ]);
 
+
+angular
+.module('lostThings.services')
+.factory('Profile', 
+    ["$http",
+    "API_SERVER",
+    function($http, API_SERVER){
+        
+        /**
+         * Permite editar los datos del usuario
+         * @param userData
+         * @returns Promise
+         */
+        function edit(userData) {
+            return $http.put(`${API_SERVER}/profile`, userData);
+        }
+
+        /**
+         * Permite modificar la contraseña que posee el usuario
+         * @param {Object} requestPassword 
+         */
+        function changePassword(requestPassword) {
+            //poner despues el valor real
+            //return $http.put()
+            return new Promise((resolve, reject) => resolve({data: { status: 1 , msg: 'todo ok'}}));
+        }
+
+        return {
+            edit: edit,
+            changePassword: changePassword
+        }
+
+    }
+]);
 angular
 .module('lostThings.services')
 .factory('Utils', 

@@ -17,11 +17,7 @@ angular.module("lostThings.services").factory("Items", [
      * returns Promise
      */
     function searchItems(search) {
-      // return $http.get(`${API_SERVER}/items?search=${search}`).then(function(res) {
-
-      // });
-      //Mock
-      return new Promise((resolve, reject) => resolve(searchItemsMock));
+      return $http.get(`${API_SERVER}/items?search=${search}`);
     }
 
     /**
@@ -29,11 +25,7 @@ angular.module("lostThings.services").factory("Items", [
      * @param {Object} item
      */
     function publishItem(item) {
-      /*return $http.post(`${API_SERVER}/items`).then(function(res) {
-                
-            });*/
-      //Mock
-      return new Promise((resolve, reject) => resolve(publishItemMock));
+      return $http.post(`${API_SERVER}/items`);
     }
 
     /**
@@ -42,8 +34,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      //return $http.get(`${API_SERVER}/items/id=${id}`);
-      return new Promise((resolve, reject) => resolve(mockgetDetail));
+      return $http.get(`${API_SERVER}/items/id=${id}`);
     }
 
     /**

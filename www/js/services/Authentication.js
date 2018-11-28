@@ -2,11 +2,6 @@ angular.module("lostThings.services").factory("Authentication", [
   "$http",
   "API_SERVER",
   function($http, API_SERVER) {
-    //Token JWT
-    let token = null;
-
-    //Información del usuario logueado
-    let userData = null;
 
     /**
      * Permite autenticar al usuario contra la API de PHP
@@ -16,8 +11,8 @@ angular.module("lostThings.services").factory("Authentication", [
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(response) {
         if (response.data.status === 1) {
-          userData = response.data.data;
-          token = response.data.token;
+          setUserData(response.data.data.user);
+          setToken(response.data.data.token);
           return true;
         }
         return false;
@@ -25,12 +20,11 @@ angular.module("lostThings.services").factory("Authentication", [
     }
 
     /**
-     * Permite eliminar el token del usuario y la data del mismo
+     * Permite eliminar el token del usuario y la data del mismo del localStorage
      * @returns void
      */
     function logout() {
-      token = null;
-      userData = null;
+      localStorage.clear();
     }
 
     /**
@@ -53,15 +47,31 @@ angular.module("lostThings.services").factory("Authentication", [
      * @return boolean
      */
     function isLogged() {
-      return token !== null;
+      return getToken() !== null;
     }
 
     /**
+     * Permite guardar el token en el localStorage
+     * @param {string} token 
+     */
+    function setToken(token) {
+      localStorage.setItem('token', token);
+    }
+
+     /**
      * Permite obtener el token JWT
-     * @return token
+     * @return {string}
      */
     function getToken() {
-      return token;
+      return localStorage.getItem('token');
+    }
+
+    /** Permit guardar la informacion del usuario en el localStorage
+     * @param {Object} userData
+     * @returns void
+     */
+    function setUserData(userData) {
+      localStorage.setItem('userData', JSON.stringify(userData));
     }
 
     /**
@@ -69,7 +79,7 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns {Object} userData
      */
     function getUserData() {
-      return userData;
+      return JSON.parse(localStorage.getItem('userData'));
     }
 
     return {

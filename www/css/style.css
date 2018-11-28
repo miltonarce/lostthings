@@ -173,3 +173,11 @@ ion-item.item.item-avatar.item-comments {
 a.button.icon-left.ion-chevron-left.button-clear {
     color: #fff;
 }
+.title-profile, .title-change-password {
+    font-family: 'Roboto';
+    margin: 0;
+}
+.container-modify-profile {
+    display: flex;
+    justify-content: space-around;
+}
