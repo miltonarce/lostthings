@@ -4,14 +4,15 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
   "Authentication",
   "Utils",
   function($scope, $state, Authentication, Utils) {
+
     //Request Registro
     $scope.user = {
       email: "",
-      contraseña: "",
+      password: "",
       usuario: "",
       nombre: "",
       apellido: "",
-      fecha_alta: "2018-11-27"
+      fecha_alta: getDate()
     };
 
     /**
@@ -27,22 +28,12 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         Authentication.register(user)
           .then(success => {
             if (success) {
-              Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(
-                () => $state.go("login")
-              );
+              Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
             } else {
-              Utils.showPopup(
-                "Registrarse",
-                "Se produjo un error al registrar al usuario"
-              );
+              Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
             }
           })
-          .catch(_error => {
-            Utils.showPopup(
-              "Registrarse",
-              "¡Ups se produjo un error al registrar al usuario"
-            );
-          });
+          .catch(_error => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
       }
       return false;
     };
@@ -105,5 +96,16 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         errors.usuario === null
       );
     }
+
+    /**
+     * Permite crear la fecha del alta del usuario para enviar al backend de php
+     * en el formato que entiende mySQL
+     * @return string
+     */
+    function getDate() {
+      let date = new Date();
+      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    }
+
   }
 ]);

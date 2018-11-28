@@ -192,7 +192,7 @@ angular.module('lostThings.controllers')
 		 */
 		$scope.searchItems = function(search = '') {
 			Items.searchItems(search).then(res => {
-				$scope.items = res;
+				$scope.items = res.data;
 				$scope.$apply();
 			}).catch(_err => {
 				Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`);
@@ -206,7 +206,7 @@ angular.module('lostThings.controllers')
 		 */
 		$scope.doRefresh = function() {
 			Items.getAllItems().then(res => {
-				$scope.items = res;
+				$scope.items = res.data;
 				$scope.$broadcast('scroll.refreshComplete');
 			}).catch(_err => { 
 				$scope.$broadcast('scroll.refreshComplete');
@@ -221,10 +221,8 @@ angular.module('lostThings.controllers')
 		 */
 		$scope.getAllItems = function() {
 			Items.getAllItems().then(res => {
-				$scope.items = res;
-			}).catch(_err => { 
-				Utils.showPopup('Home', 'Se produjo un error al obtener los resultados')
-			});
+				$scope.items = res.data;
+			}).catch(_err => Utils.showPopup('Home', 'Se produjo un error al obtener los resultados'));
 		}
 
 		/**
@@ -362,14 +360,15 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
   "Authentication",
   "Utils",
   function($scope, $state, Authentication, Utils) {
+
     //Request Registro
     $scope.user = {
       email: "",
-      contraseña: "",
+      password: "",
       usuario: "",
       nombre: "",
       apellido: "",
-      fecha_alta: "2018-11-27"
+      fecha_alta: getDate()
     };
 
     /**
@@ -385,22 +384,12 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         Authentication.register(user)
           .then(success => {
             if (success) {
-              Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(
-                () => $state.go("login")
-              );
+              Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
             } else {
-              Utils.showPopup(
-                "Registrarse",
-                "Se produjo un error al registrar al usuario"
-              );
+              Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
             }
           })
-          .catch(_error => {
-            Utils.showPopup(
-              "Registrarse",
-              "¡Ups se produjo un error al registrar al usuario"
-            );
-          });
+          .catch(_error => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
       }
       return false;
     };
@@ -463,6 +452,17 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         errors.usuario === null
       );
     }
+
+    /**
+     * Permite crear la fecha del alta del usuario para enviar al backend de php
+     * en el formato que entiende mySQL
+     * @return string
+     */
+    function getDate() {
+      let date = new Date();
+      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    }
+
   }
 ]);
 
@@ -555,14 +555,13 @@ angular.module("lostThings.services").factory("Items", [
   "$http",
   "API_SERVER",
   function($http, API_SERVER) {
+
     /**
      * Permite obtener todos los items perdidos
      * @returns Promise
      */
     function getAllItems() {
-      return $http.get(`${API_SERVER}/items`).then(function(res) {});
-      //Mock
-      // return new Promise((resolve, reject) => resolve(getAllMock));
+      return $http.get(`${API_SERVER}/items`);
     }
 
     /**

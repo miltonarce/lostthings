@@ -30,7 +30,7 @@ angular.module('lostThings.controllers')
 		 */
 		$scope.searchItems = function(search = '') {
 			Items.searchItems(search).then(res => {
-				$scope.items = res;
+				$scope.items = res.data;
 				$scope.$apply();
 			}).catch(_err => {
 				Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`);
@@ -44,7 +44,7 @@ angular.module('lostThings.controllers')
 		 */
 		$scope.doRefresh = function() {
 			Items.getAllItems().then(res => {
-				$scope.items = res;
+				$scope.items = res.data;
 				$scope.$broadcast('scroll.refreshComplete');
 			}).catch(_err => { 
 				$scope.$broadcast('scroll.refreshComplete');
@@ -59,10 +59,8 @@ angular.module('lostThings.controllers')
 		 */
 		$scope.getAllItems = function() {
 			Items.getAllItems().then(res => {
-				$scope.items = res;
-			}).catch(_err => { 
-				Utils.showPopup('Home', 'Se produjo un error al obtener los resultados')
-			});
+				$scope.items = res.data;
+			}).catch(_err => Utils.showPopup('Home', 'Se produjo un error al obtener los resultados'));
 		}
 
 		/**

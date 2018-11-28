@@ -19,20 +19,20 @@
       <ion-refresher pulling-text="Actualizando resultados..." on-refresh="doRefresh()"></ion-refresher>
       <!-- Resultados de items si hay -->
       <ion-list ng-if="items.length > 0">
-        <ion-item class="list card" ng-repeat="item in items" ng-click="goDetail(item.producto.id)">
+        <ion-item class="list card" ng-repeat="item in items" ng-click="goDetail(item.idpublicacion)">
             <div class="item item-avatar">
               <!-- Poner el avatar cuando se registre con imagen ... {{item.usuario.avatar}} -->
-              <img ng-src="img/avatar.png" alt="avatar de {{item.usuario.nombre}}">
-              <h2 class="text-bold">{{item.usuario.nombre}}</h2>
-              <p>{{item.producto.fecha_publicacion}}</p>
+              <img ng-src="img/avatar.png" alt="avatar">
+              <h2 class="text-bold">agregar user</h2>
+              <p>{{item.fecha_publicacion}}</p>
             </div>
             <div class="item item-body">
-              <h3>{{item.producto.nombre}}</h3>
-              <img class="full-image" ng-src="{{item.producto.foto}}" alt="{{item.producto.nombre}}">
-              <p>{{item.producto.descripcion}}</p>
-              <span class="subdued comments-block">
-                <ion-icon name="chatboxes"></ion-icon>
-                {{item.producto.cantComentarios}}
+              <h3>{{item.titulo}}</h3>
+              <img class="full-image" ng-src="" alt="{{item.titulo}}">
+              <p>{{item.descripcion}}</p>
+              <span class="subdued locate-block">
+                <ion-icon name="pin"></ion-icon>
+                {{item.ubicacion}}
               </span>
             </div>
         </ion-item>

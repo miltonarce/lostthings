@@ -37,7 +37,7 @@ input.ng-invalid {
 .background-content {
     background-color: #f5f5f5;
 }
-.comments-block {
+.locate-block {
     display: flex;
     justify-content: flex-end;
 }

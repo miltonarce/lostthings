@@ -10,40 +10,24 @@
       <div class="list">
         <label class="item item-input item-stacked-label item-form">
           <span class="input-label">Email</span>
-          <input
-            name="email"
-            type="email"
-            placeholder="Ingresa tu email"
-            ng-model="user.email"
-            required
-          />
+          <input name="email" type="email" placeholder="Ingresa tu email" ng-model="user.email" required />
         </label>
         <div class="invalid-form" ng-show="errors.email">
           <span>{{ errors.email }}</span>
         </div>
         <label class="item item-input item-stacked-label item-form">
           <span class="input-label">Password</span>
-          <input
-            name="password"
-            type="password"
-            placeholder="Ingresa tu password"
-            ng-model="user.password"
-            required
-          />
+          <input name="password" type="password" placeholder="Ingresa tu password" ng-model="user.password" required />
         </label>
         <div class="invalid-form" ng-show="errors.password">
           <span>{{ errors.password }}</span>
         </div>
       </div>
-      <button type="submit" class="button button-dark button-block">
-        Acceder
-      </button>
+      <button type="submit" class="button button-dark button-block">Acceder</button>
     </form>
     <div class="padding container-buttons-login">
       <p>¿No tienes cuenta?</p>
-      <a class="button button-clear button-positive" href="#/register"
-        >Registrarse</a
-      >
+      <a class="button button-clear button-positive" href="#/register">Registrarse</a>
     </div>
   </ion-content>
 </ion-view>

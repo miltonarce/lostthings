@@ -2,14 +2,13 @@ angular.module("lostThings.services").factory("Items", [
   "$http",
   "API_SERVER",
   function($http, API_SERVER) {
+
     /**
      * Permite obtener todos los items perdidos
      * @returns Promise
      */
     function getAllItems() {
-      return $http.get(`${API_SERVER}/items`).then(function(res) {});
-      //Mock
-      // return new Promise((resolve, reject) => resolve(getAllMock));
+      return $http.get(`${API_SERVER}/items`);
     }
 
     /**
