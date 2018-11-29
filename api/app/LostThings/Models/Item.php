@@ -54,9 +54,12 @@ class Item implements JsonSerializable{
     FROM publicaciones AS p 
     JOIN usuarios AS us ON us.idusuario = p.fkidusuario JOIN comentarios AS c ON c.fkidpublicacion = p.idpublicacion JOIN usuarios AS us2 WHERE p.idpublicacion = :id  AND c.fkidusuario = us2.idusuario";
     $stmt = $db->prepare($query);
-    $stmt->execute(['id' => $id]);
+    $success = $stmt->execute(['id' => $id]);
     $row = $stmt->fetch();
     $this->loadDataArray($row);
+    if(!$success){
+      throw new Exception('Error al traer el item solicitado');
+    } 
   }
 
   public function create($row)

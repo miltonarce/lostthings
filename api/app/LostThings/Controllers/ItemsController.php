@@ -22,9 +22,17 @@ Class ItemsController extends BaseController{
   public function detail() {
     $params = Route::getUrlParameters();
     $id = $params['id'];
+    try{
       $item = new Item;
-      $item->detail($id)
+      $item->detail($id);
       View::renderJson($item);
+    }catch(Exception $e){
+      View::renderJson([
+      'status' => 0,
+      'message' => $e
+      ]);
+    }
+    
   }
 
  /**
