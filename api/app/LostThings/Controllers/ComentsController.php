@@ -13,8 +13,8 @@ Class ComentsController extends BaseController{
     $id = $params['id'];
     try{
       $item = new Item;
-      $item->getItemsComents($id);
-      View::renderJson($item);
+      $items = $item->getItemsComents($id);
+      View::renderJson($items);
     }catch(Exception $e){
       View::renderJson([
       'status' => 0,
