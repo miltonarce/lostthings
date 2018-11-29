@@ -15,7 +15,7 @@ class Item implements JsonSerializable{
   protected $fecha_publicacion;
   protected $ubicacion;
   protected $fkidusuario;
-  protected $usuario; 
+  protected $usuario;
 
   protected $props = ['idpublicacion','titulo','descripcion','img','fecha_publicacion','ubicacion','fkidusuario', 'usuario'];
 
@@ -50,9 +50,9 @@ class Item implements JsonSerializable{
 
   public function detail($id) {
     $db = DBConnection::getConnection();
-    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, p.fkidusuario, us.usuario AS upublic , c.comentario, us2.usuario AS ucoment
+    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, p.fkidusuario, us.usuario
     FROM publicaciones AS p 
-    JOIN usuarios AS us ON us.idusuario = p.fkidusuario JOIN comentarios AS c ON c.fkidpublicacion = p.idpublicacion JOIN usuarios AS us2 WHERE p.idpublicacion = :id  AND c.fkidusuario = us2.idusuario";
+    JOIN usuarios AS us ON us.idusuario = p.fkidusuario WHERE p.idpublicacion = :id";
     $stmt = $db->prepare($query);
     $success = $stmt->execute(['id' => $id]);
     $row = $stmt->fetch();
@@ -60,6 +60,22 @@ class Item implements JsonSerializable{
     if(!$success){
       throw new Exception('Error al traer el item solicitado');
     } 
+  }
+
+  public function getItemsComents($id) {
+    $db = DBConnection::getConnection();
+    $query = "SELECT  c.idcomentario, c.comentario, c.fecha_publicacion, c.fkidpublicacion, c.fkidusuario, u.usuario 
+    FROM comentarios AS c JOIN usuarios AS u WHERE c.fkidpublicacion = :id AND c.fkidusuario = u.idusuario";
+    $stmt = $db->prepare($query);
+    $success = $stmt->execute();
+    $response = [];
+    while($row = $stmt->fetch()){
+      $response[] = $item;
+    }
+    if(!$success){
+      throw new Exception('Error al traer los comentarios solicitados');
+    } 
+    return $response;
   }
 
   public function create($row)
