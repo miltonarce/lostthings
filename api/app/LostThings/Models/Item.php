@@ -70,7 +70,7 @@ class Item implements JsonSerializable{
     $success = $stmt->execute();
     $response = [];
     while($row = $stmt->fetch()){
-      $response[] = $item;
+      $response[] = $row;
     }
     if(!$success){
       throw new Exception('Error al traer los comentarios solicitados');
