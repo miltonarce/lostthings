@@ -36,7 +36,7 @@ Class ItemsController extends BaseController{
       View::renderJson([
         'status' => 1,
         'message' => 'Item creado exitosamente.',
-        'data' => $data
+        'data' => $item
       ]);
     }catch(Exeption $e){
       View::renderJson([

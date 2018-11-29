@@ -12,7 +12,7 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
       usuario: "",
       nombre: "",
       apellido: "",
-      fecha_alta: getDate()
+      fecha_alta: Utils.getDate()
     };
 
     /**
@@ -95,16 +95,6 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         errors.apellido === null &&
         errors.usuario === null
       );
-    }
-
-    /**
-     * Permite crear la fecha del alta del usuario para enviar al backend de php
-     * en el formato que entiende mySQL
-     * @return string
-     */
-    function getDate() {
-      let date = new Date();
-      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
     }
 
   }

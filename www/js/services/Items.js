@@ -25,7 +25,7 @@ angular.module("lostThings.services").factory("Items", [
      * @param {Object} item
      */
     function publishItem(item) {
-      return $http.post(`${API_SERVER}/items`);
+      return $http.post(`${API_SERVER}/items`, item);
     }
 
     /**

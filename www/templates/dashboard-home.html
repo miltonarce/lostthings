@@ -1,9 +1,9 @@
 <ion-view title="Home">
     <!-- Se agrega al navbar el button de búsqueda -->
     <ion-nav-bar  class="bar-stable">
-        <ion-nav-buttons side="right">
-          <button class="button icon-left ion-search button-search" ng-click="toggleSearch()"></button>
-        </ion-nav-buttons>
+      <ion-nav-buttons side="right">
+        <button class="button icon-left ion-search button-search" ng-click="toggleSearch()"></button>
+      </ion-nav-buttons>
     </ion-nav-bar>
     <ion-content class="padding background-content">
       <!-- Muestra si el usuario toca el toggle, el formulario para buscar un item especifico -->
@@ -25,7 +25,7 @@
       <ion-list ng-if="items.length > 0">
         <ion-item class="list card" ng-repeat="item in items" ng-click="goDetail(item.idpublicacion)">
             <div class="item item-avatar">
-              <!-- Poner el avatar cuando se registre con imagen ... {{item.usuario.avatar}} -->
+              <!-- FIXME , utilizar el avatar del user, agregar campo despues desde PHP -->
               <img ng-src="img/avatar.png" alt="avatar">
               <h2 class="text-bold">agregar user</h2>
               <p>{{item.fecha_publicacion}}</p>
@@ -35,8 +35,7 @@
               <img class="full-image" ng-src="" alt="{{item.titulo}}">
               <p>{{item.descripcion}}</p>
               <span class="subdued locate-block">
-                <ion-icon name="pin"></ion-icon>
-                {{item.ubicacion}}
+                <ion-icon name="pin"></ion-icon>{{item.ubicacion}}
               </span>
             </div>
         </ion-item>

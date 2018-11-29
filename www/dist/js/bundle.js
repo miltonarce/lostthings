@@ -250,6 +250,7 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
   "Authentication",
   "Utils",
   function($scope, $state, Authentication, Utils) {
+
     //Request Login
     $scope.user = { email: "", password: "" };
 
@@ -295,7 +296,9 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
       }
       return errors;
     }
+    
   }
+
 ]);
 
 angular
@@ -420,10 +423,21 @@ angular
 	'$state',
 	'Utils',
 	'Items',
-	function($scope, $state, Utils, Items) {
+	'Authentication',
+	function($scope, $state, Utils, Items, Authentication) {
+
+		//Información del usuario
+		$scope.userData = Authentication.getUserData();
 			
 		//Request Publish
-		$scope.item = { name: '', description: '', pic: null };
+		$scope.item = { 
+			titulo: '', 
+			descripcion: '', 
+			ubicacion: '', 
+			img: null, 
+			fecha_publicacion: Utils.getDate(),
+			fkidusuario: $scope.userData.idusuario
+		};
 		
 		/**
 		 * Permite publicar un articulo para que se pueda encontrar
@@ -434,10 +448,14 @@ angular
 		 */
 		$scope.publish = function(formPublish, item) {
 			$scope.errors = validateFields(formPublish);
-			if ($scope.errors.name === null && $scope.errors.description === null && $scope.errors.pic === null) {
-				Items.publishItem(item).then(() =>  {
+			if (isValidForm($scope.errors)) {
+				console.log('request', $scope.item)
+				Items.publishItem($scope.item).then(response =>  {
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>')
-						 .then(() => $state.go('dashboard.home'));
+						 .then(() => {
+							let idNewItem = response.data.data.id;
+							$state.go('detail', { 'id': 1 });
+						});
 				}).catch(_error => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
 			}
 		}
@@ -448,21 +466,39 @@ angular
 		 * @return errors
 		 */
 		function validateFields(formPublish) {
-			let errors = { name: null, description: null, pic: null };
-			if (formPublish.name.$invalid) {
-				if (formPublish.name.$error.required) {
-					errors.name = 'El campo nombre no puede ser vacío';
+			let errors = { titulo: null, descripcion: null, ubicacion: null, img: null };
+			if (formPublish.titulo.$invalid) {
+				if (formPublish.titulo.$error.required) {
+					errors.titulo = 'El campo nombre no puede ser vacío';
 				}
 			}
-			if (formPublish.description.$invalid) {
-				if (formPublish.description.$error.required) {
-					errors.description = 'El campo descripción no puede ser vacío';
+			if (formPublish.descripcion.$invalid) {
+				if (formPublish.descripcion.$error.required) {
+					errors.descripcion = 'El campo descripción no puede ser vacío';
+				}
+			}
+			if (formPublish.ubicacion.$invalid) {
+				if (formPublish.ubicacion.$error.required) {
+					errors.ubicacion = 'El campo ubicación no puede ser vacío, ya que sirve para reducir la búsqueda';
 				}
 			}
 			if (formPublish.file.$error.maxsize) {
-				errors.pic = 'La imagen no puede exceder 1MB';
+				errors.img = 'La imagen no puede exceder 1MB';
 			}
 			return errors;
+		}
+
+		/**
+		 * Permite saber si el formulario es valido
+		 *	@returns boolean
+		*/
+		function isValidForm(errors) {
+			return (
+				errors.titulo === null &&
+				errors.descripcion === null &&
+				errors.ubicacion === null &&
+				errors.img === null
+			);
 		}
 
 	}
@@ -481,7 +517,7 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
       usuario: "",
       nombre: "",
       apellido: "",
-      fecha_alta: getDate()
+      fecha_alta: Utils.getDate()
     };
 
     /**
@@ -564,16 +600,6 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         errors.apellido === null &&
         errors.usuario === null
       );
-    }
-
-    /**
-     * Permite crear la fecha del alta del usuario para enviar al backend de php
-     * en el formato que entiende mySQL
-     * @return string
-     */
-    function getDate() {
-      let date = new Date();
-      return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
     }
 
   }
@@ -701,7 +727,7 @@ angular.module("lostThings.services").factory("Items", [
      * @param {Object} item
      */
     function publishItem(item) {
-      return $http.post(`${API_SERVER}/items`);
+      return $http.post(`${API_SERVER}/items`, item);
     }
 
     /**
@@ -783,9 +809,22 @@ angular
 			return $ionicPopup.alert({ title: title, template: text, cssClass:'lost-things-popup', okText: 'Aceptar' });
 		}
 
+		/**
+		 * Permite crear la fecha del alta del usuario para enviar al backend de php
+		 * en el formato que entiende mySQL
+		 * @return string
+		 */
+		function getDate() {
+			let date = new Date();
+			return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+		}
+
         return {
-            showPopup: showPopup
-        }
+			showPopup: showPopup,
+			getDate: getDate
+		}
+		
+
 
     }
 ]);

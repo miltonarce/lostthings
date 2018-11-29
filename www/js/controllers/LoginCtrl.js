@@ -4,6 +4,7 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
   "Authentication",
   "Utils",
   function($scope, $state, Authentication, Utils) {
+
     //Request Login
     $scope.user = { email: "", password: "" };
 
@@ -49,5 +50,7 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
       }
       return errors;
     }
+    
   }
+
 ]);

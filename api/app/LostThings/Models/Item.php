@@ -64,7 +64,7 @@ class Item implements JsonSerializable{
     ]);
     
     if($success) {
-        $row['idpublicacion.'] = $db->lastInsertId();
+        $row['idpublicacion'] = $db->lastInsertId();
         $this->loadDataArray($row);
     } else {
         throw new Exception('Error al insertar el item en la base de datos.');
