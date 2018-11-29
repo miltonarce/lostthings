@@ -12,14 +12,7 @@ angular
 		$scope.userData = Authentication.getUserData();
 			
 		//Request Publish
-		$scope.item = { 
-			titulo: '', 
-			descripcion: '', 
-			ubicacion: '', 
-			img: null, 
-			fecha_publicacion: Utils.getDate(),
-			fkidusuario: $scope.userData.idusuario
-		};
+		$scope.item = defaultRequest();
 		
 		/**
 		 * Permite publicar un articulo para que se pueda encontrar
@@ -34,8 +27,9 @@ angular
 				Items.publishItem($scope.item).then(response =>  {
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>')
 						 .then(() => {
-							let idNewItem = response.data.data.id;
-							$state.go('detail', { 'id': 1 });
+							let idNewItem = response.data.data.idpublicacion;
+							$scope.item = defaultRequest();
+							$state.go('detail', { 'id': idNewItem });
 						});
 				}).catch(_error => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
 			}
@@ -80,6 +74,21 @@ angular
 				errors.ubicacion === null &&
 				errors.img === null
 			);
+		}
+
+		/**
+		 * Permite generar el request default para publicar un item
+		 * @return Object
+		 */
+		function defaultRequest() {
+			return { 
+				titulo: '', 
+				descripcion: '', 
+				ubicacion: '', 
+				img: null, 
+				fecha_publicacion: Utils.getDate(),
+				fkidusuario: $scope.userData.idusuario
+			};
 		}
 
 	}

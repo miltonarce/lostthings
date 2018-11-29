@@ -72,7 +72,7 @@ angular
 			if (isValidForm($scope.errors)) {
 				Items.edit($scope.item.idpublicacion, $scope.requestEdit).then(response =>  {
 					if (response.status === 1) {
-						Utils.showPopup('Editar', response.data.message).then(() => $state.go('dashboard.home'));
+						Utils.showPopup('Editar', 'Se actualizó el item').then(() => $state.go('dashboard.home'));
 					} else {
 						Utils.showPopup('Editar', response.data.message);
 					}

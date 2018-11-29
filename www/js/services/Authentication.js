@@ -3,16 +3,20 @@ angular.module("lostThings.services").factory("Authentication", [
   "API_SERVER",
   function($http, API_SERVER) {
 
+    //Variables para mantener el estado del token y la info del user
+    let userData = null;
+    let token = null;
+
     /**
      * Permite autenticar al usuario contra la API de PHP
      * @param {Object} user
-     * @return boolean
+     * @return Promise
      */
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(response) {
         if (response.data.status === 1) {
-          setUserData(response.data.data.user);
-          setToken(response.data.data.token);
+          userData = response.data.data.user;
+          token = response.data.data.token;
           return true;
         }
         return false;
@@ -20,17 +24,18 @@ angular.module("lostThings.services").factory("Authentication", [
     }
 
     /**
-     * Permite eliminar el token del usuario y la data del mismo del localStorage
+     * Permite eliminar el token del usuario y la data del mismo
      * @returns void
      */
     function logout() {
-      localStorage.clear();
+      userData = null;
+      token = null;
     }
 
     /**
      * Permite registrar al usuario utilizando la API de PHP
      * @param {Object} user
-     * @returns Object
+     * @returns Promise
      */
     function register(user) {
       return $http.post(`${API_SERVER}/register`, user).then(function(res) {
@@ -47,31 +52,15 @@ angular.module("lostThings.services").factory("Authentication", [
      * @return boolean
      */
     function isLogged() {
-      return getToken() !== null;
+      return token !== null;
     }
 
     /**
-     * Permite guardar el token en el localStorage
-     * @param {string} token 
-     */
-    function setToken(token) {
-      localStorage.setItem('token', token);
-    }
-
-     /**
      * Permite obtener el token JWT
      * @return {string}
      */
     function getToken() {
-      return localStorage.getItem('token');
-    }
-
-    /** Permit guardar la informacion del usuario en el localStorage
-     * @param {Object} userData
-     * @returns void
-     */
-    function setUserData(userData) {
-      localStorage.setItem('userData', JSON.stringify(userData));
+      return token;
     }
 
     /**
@@ -79,7 +68,7 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns {Object} userData
      */
     function getUserData() {
-      return JSON.parse(localStorage.getItem('userData'));
+      return userData;
     }
 
     return {
@@ -90,5 +79,6 @@ angular.module("lostThings.services").factory("Authentication", [
       getToken: getToken,
       logout: logout
     };
+    
   }
 ]);

@@ -1,7 +1,6 @@
 
 angular
-.module('lostThings.services')
-.factory('Profile', 
+.module('lostThings.services').factory('Profile', 
     ["$http",
     "API_SERVER",
     function($http, API_SERVER){

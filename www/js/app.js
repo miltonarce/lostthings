@@ -1,13 +1,12 @@
 /**
  * Módulos que utiliza la App
- * lostThings.controllers : Este módulo se encarga de manejar todos los controllers
+ * lostThings.controllers: Este módulo se encarga de manejar todos los controllers
  * lostThings.services: Este módulo se encarga de manejar todos los services
  * naif.base64: Este módulo es un módulo externo, que da una directiva para poder obtener
  * de forma rápida el base64 de un archivo de imagen, más info en el git del user
  * Instalación npm install angular-base64-upload --save
  * https://github.com/adonespitogo/angular-base64-upload
  */
-
 angular
   .module("lostThings", [
     "ionic",
@@ -24,36 +23,29 @@ angular
         StatusBar.styleDefault();
       }
     });
-
     //Permite validar cuando cambia el state si tiene permisos el usuario para acceder a una view especifica
     $rootScope.$on("$stateChangeStart", function(event, toState) {
       if (toState.data != undefined && toState.data.requiresAuth) {
         if (!Authentication.isLogged()) {
           event.preventDefault();
-          Utils.showPopup(
-            "Usuario no autorizado",
-            "No se puede acceder a esta sección sin estar autenticado."
-          ).then(() => $state.go("login"));
+          Utils.showPopup("Usuario no autorizado", "No se puede acceder a esta sección sin estar autenticado.").then(() => $state.go("login"));
         }
       }
     });
   })
   .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     /*
-    Rutas de la aplicacion, hay 2 views las cuales no
-    dependen de tab, ya que se necesita que no dependendan del tab
-    estas son Login y Register, una vez que ingresan a la aplicacion
-    el dashboard es el main view (tabs)
-  */
+      Rutas de la aplicacion, hay 3 views las cuales no
+      dependen de tab, ya que se necesita que no dependendan del tab
+      estas son Login ,Register, Detail una vez que ingresan a la aplicacion
+      el dashboard es el main view (tabs)
+    */
     $stateProvider
-
-      //View abstract que sirve de base para los tabs del dashboard
       .state("dashboard", {
         url: "/dashboard",
         abstract: true,
         templateUrl: "templates/dashboard.html"
       })
-      //Tabs
       .state("dashboard.home", {
         url: "/home",
         views: {
@@ -87,6 +79,7 @@ angular
           requiresAuth: true
         }
       })
+      //Estas views no dependen del dashboard, ya que no se quiere mostrar los tabs...
       .state("detail", {
         url: "/detail/:id",
         templateUrl: "templates/detail.html",
@@ -95,7 +88,6 @@ angular
           requiresAuth: true
         }
       })
-      //Estas views no dependen del dashboard, ya que no se quiere mostrar los tabs...
       .state("login", {
         url: "/login",
         templateUrl: "templates/login.html",
@@ -106,10 +98,8 @@ angular
         templateUrl: "templates/register.html",
         controller: "RegisterCtrl"
       });
-
     //Por default se muestra la view de login...
     $urlRouterProvider.otherwise("/login");
-
     //Se configura el texto del button back a mostrar...
     $ionicConfigProvider.backButton.text("Atrás");
   })

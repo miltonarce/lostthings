@@ -1,13 +1,12 @@
 /**
  * Módulos que utiliza la App
- * lostThings.controllers : Este módulo se encarga de manejar todos los controllers
+ * lostThings.controllers: Este módulo se encarga de manejar todos los controllers
  * lostThings.services: Este módulo se encarga de manejar todos los services
  * naif.base64: Este módulo es un módulo externo, que da una directiva para poder obtener
  * de forma rápida el base64 de un archivo de imagen, más info en el git del user
  * Instalación npm install angular-base64-upload --save
  * https://github.com/adonespitogo/angular-base64-upload
  */
-
 angular
   .module("lostThings", [
     "ionic",
@@ -24,36 +23,29 @@ angular
         StatusBar.styleDefault();
       }
     });
-
     //Permite validar cuando cambia el state si tiene permisos el usuario para acceder a una view especifica
     $rootScope.$on("$stateChangeStart", function(event, toState) {
       if (toState.data != undefined && toState.data.requiresAuth) {
         if (!Authentication.isLogged()) {
           event.preventDefault();
-          Utils.showPopup(
-            "Usuario no autorizado",
-            "No se puede acceder a esta sección sin estar autenticado."
-          ).then(() => $state.go("login"));
+          Utils.showPopup("Usuario no autorizado", "No se puede acceder a esta sección sin estar autenticado.").then(() => $state.go("login"));
         }
       }
     });
   })
   .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     /*
-    Rutas de la aplicacion, hay 2 views las cuales no
-    dependen de tab, ya que se necesita que no dependendan del tab
-    estas son Login y Register, una vez que ingresan a la aplicacion
-    el dashboard es el main view (tabs)
-  */
+      Rutas de la aplicacion, hay 3 views las cuales no
+      dependen de tab, ya que se necesita que no dependendan del tab
+      estas son Login ,Register, Detail una vez que ingresan a la aplicacion
+      el dashboard es el main view (tabs)
+    */
     $stateProvider
-
-      //View abstract que sirve de base para los tabs del dashboard
       .state("dashboard", {
         url: "/dashboard",
         abstract: true,
         templateUrl: "templates/dashboard.html"
       })
-      //Tabs
       .state("dashboard.home", {
         url: "/home",
         views: {
@@ -87,6 +79,7 @@ angular
           requiresAuth: true
         }
       })
+      //Estas views no dependen del dashboard, ya que no se quiere mostrar los tabs...
       .state("detail", {
         url: "/detail/:id",
         templateUrl: "templates/detail.html",
@@ -95,7 +88,6 @@ angular
           requiresAuth: true
         }
       })
-      //Estas views no dependen del dashboard, ya que no se quiere mostrar los tabs...
       .state("login", {
         url: "/login",
         templateUrl: "templates/login.html",
@@ -106,10 +98,8 @@ angular
         templateUrl: "templates/register.html",
         controller: "RegisterCtrl"
       });
-
     //Por default se muestra la view de login...
     $urlRouterProvider.otherwise("/login");
-
     //Se configura el texto del button back a mostrar...
     $ionicConfigProvider.backButton.text("Atrás");
   })
@@ -194,7 +184,7 @@ angular
 			if (isValidForm($scope.errors)) {
 				Items.edit($scope.item.idpublicacion, $scope.requestEdit).then(response =>  {
 					if (response.status === 1) {
-						Utils.showPopup('Editar', response.data.message).then(() => $state.go('dashboard.home'));
+						Utils.showPopup('Editar', 'Se actualizó el item').then(() => $state.go('dashboard.home'));
 					} else {
 						Utils.showPopup('Editar', response.data.message);
 					}
@@ -315,9 +305,7 @@ angular.module('lostThings.controllers')
 			Items.searchItems(search).then(res => {
 				$scope.items = res.data;
 				$scope.$apply();
-			}).catch(_err => {
-				Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`);
-			});
+			}).catch(_err => Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`));
 		}
 
 		/**
@@ -543,14 +531,7 @@ angular
 		$scope.userData = Authentication.getUserData();
 			
 		//Request Publish
-		$scope.item = { 
-			titulo: '', 
-			descripcion: '', 
-			ubicacion: '', 
-			img: null, 
-			fecha_publicacion: Utils.getDate(),
-			fkidusuario: $scope.userData.idusuario
-		};
+		$scope.item = defaultRequest();
 		
 		/**
 		 * Permite publicar un articulo para que se pueda encontrar
@@ -565,8 +546,9 @@ angular
 				Items.publishItem($scope.item).then(response =>  {
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>')
 						 .then(() => {
-							let idNewItem = response.data.data.id;
-							$state.go('detail', { 'id': 1 });
+							let idNewItem = response.data.data.idpublicacion;
+							$scope.item = defaultRequest();
+							$state.go('detail', { 'id': idNewItem });
 						});
 				}).catch(_error => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
 			}
@@ -611,6 +593,21 @@ angular
 				errors.ubicacion === null &&
 				errors.img === null
 			);
+		}
+
+		/**
+		 * Permite generar el request default para publicar un item
+		 * @return Object
+		 */
+		function defaultRequest() {
+			return { 
+				titulo: '', 
+				descripcion: '', 
+				ubicacion: '', 
+				img: null, 
+				fecha_publicacion: Utils.getDate(),
+				fkidusuario: $scope.userData.idusuario
+			};
 		}
 
 	}
@@ -722,16 +719,20 @@ angular.module("lostThings.services").factory("Authentication", [
   "API_SERVER",
   function($http, API_SERVER) {
 
+    //Variables para mantener el estado del token y la info del user
+    let userData = null;
+    let token = null;
+
     /**
      * Permite autenticar al usuario contra la API de PHP
      * @param {Object} user
-     * @return boolean
+     * @return Promise
      */
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(response) {
         if (response.data.status === 1) {
-          setUserData(response.data.data.user);
-          setToken(response.data.data.token);
+          userData = response.data.data.user;
+          token = response.data.data.token;
           return true;
         }
         return false;
@@ -739,17 +740,18 @@ angular.module("lostThings.services").factory("Authentication", [
     }
 
     /**
-     * Permite eliminar el token del usuario y la data del mismo del localStorage
+     * Permite eliminar el token del usuario y la data del mismo
      * @returns void
      */
     function logout() {
-      localStorage.clear();
+      userData = null;
+      token = null;
     }
 
     /**
      * Permite registrar al usuario utilizando la API de PHP
      * @param {Object} user
-     * @returns Object
+     * @returns Promise
      */
     function register(user) {
       return $http.post(`${API_SERVER}/register`, user).then(function(res) {
@@ -766,31 +768,15 @@ angular.module("lostThings.services").factory("Authentication", [
      * @return boolean
      */
     function isLogged() {
-      return getToken() !== null;
+      return token !== null;
     }
 
     /**
-     * Permite guardar el token en el localStorage
-     * @param {string} token 
-     */
-    function setToken(token) {
-      localStorage.setItem('token', token);
-    }
-
-     /**
      * Permite obtener el token JWT
      * @return {string}
      */
     function getToken() {
-      return localStorage.getItem('token');
-    }
-
-    /** Permit guardar la informacion del usuario en el localStorage
-     * @param {Object} userData
-     * @returns void
-     */
-    function setUserData(userData) {
-      localStorage.setItem('userData', JSON.stringify(userData));
+      return token;
     }
 
     /**
@@ -798,7 +784,7 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns {Object} userData
      */
     function getUserData() {
-      return JSON.parse(localStorage.getItem('userData'));
+      return userData;
     }
 
     return {
@@ -809,6 +795,7 @@ angular.module("lostThings.services").factory("Authentication", [
       getToken: getToken,
       logout: logout
     };
+    
   }
 ]);
 
@@ -835,8 +822,10 @@ angular.module("lostThings.services").factory("Items", [
     }
 
     /**
-     * Permite publicar un item para mostrarse en el listado
+     * Permite publicar un item para mostrarse en el listado,
+     * antes de enviar se manipula el request y se genera el base64 para la imagen...
      * @param {Object} item
+     * @returns Promise
      */
     function publishItem(item) {
       item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
@@ -874,12 +863,11 @@ angular.module("lostThings.services").factory("Items", [
 
     /**
      * Permite comentar una publicación
-     * @param {Object} item
+     * @param {Object} comment
+     * @returns Promise
      */
-    function commentPublication(item, idUser) {
-      //return $http.get(`${API_SERVER}/items/id=${id}`);
-      commentPublicationMock.descripcion = item.description;
-      return new Promise((resolve, reject) => resolve(commentPublicationMock));
+    function commentPublication(comment) {
+      return $http.post(`${API_SERVER}/comments`, comment);
     }
 
     return {
@@ -892,12 +880,12 @@ angular.module("lostThings.services").factory("Items", [
       commentPublication: commentPublication
     };
   }
+  
 ]);
 
 
 angular
-.module('lostThings.services')
-.factory('Profile', 
+.module('lostThings.services').factory('Profile', 
     ["$http",
     "API_SERVER",
     function($http, API_SERVER){
@@ -958,6 +946,7 @@ angular
 		 * Permite crear un popup de confirmación
 		 * @param {string} title
 		 * @param {string} text
+		 * @returns Promise
 		 */
 		function showConfirm(title, text) {
 			return $ionicPopup.confirm({ title: title, template: text,  cssClass:'lost-things-popup', okText: 'Aceptar', cancelText: 'Cancelar' });

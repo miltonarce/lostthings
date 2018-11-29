@@ -21,8 +21,10 @@ angular.module("lostThings.services").factory("Items", [
     }
 
     /**
-     * Permite publicar un item para mostrarse en el listado
+     * Permite publicar un item para mostrarse en el listado,
+     * antes de enviar se manipula el request y se genera el base64 para la imagen...
      * @param {Object} item
+     * @returns Promise
      */
     function publishItem(item) {
       item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
@@ -60,12 +62,11 @@ angular.module("lostThings.services").factory("Items", [
 
     /**
      * Permite comentar una publicación
-     * @param {Object} item
+     * @param {Object} comment
+     * @returns Promise
      */
-    function commentPublication(item, idUser) {
-      //return $http.get(`${API_SERVER}/items/id=${id}`);
-      commentPublicationMock.descripcion = item.description;
-      return new Promise((resolve, reject) => resolve(commentPublicationMock));
+    function commentPublication(comment) {
+      return $http.post(`${API_SERVER}/comments`, comment);
     }
 
     return {
@@ -78,4 +79,5 @@ angular.module("lostThings.services").factory("Items", [
       commentPublication: commentPublication
     };
   }
+  
 ]);

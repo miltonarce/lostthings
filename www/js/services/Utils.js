@@ -28,6 +28,7 @@ angular
 		 * Permite crear un popup de confirmación
 		 * @param {string} title
 		 * @param {string} text
+		 * @returns Promise
 		 */
 		function showConfirm(title, text) {
 			return $ionicPopup.confirm({ title: title, template: text,  cssClass:'lost-things-popup', okText: 'Aceptar', cancelText: 'Cancelar' });
