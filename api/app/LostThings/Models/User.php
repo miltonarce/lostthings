@@ -28,6 +28,25 @@ class User
       return false;
     }
   }
+  /**
+   *  @param $id - id extraido de la funcion checkislogged
+   * @return bool - retorna true en caso de que el usuario
+   * exista, si no devolvera false
+   */
+  public function getById($userID)
+	{
+		$db = DBConnection::getConnection();
+		$query = "SELECT * FROM usuarios
+				WHERE idusuario = ?";
+		$stmt = $db->prepare($query);
+		$stmt->execute([$userID]);
+		if($row = $stmt->fetch()) {
+			$this->loadDataArray($row);
+			return true;
+		} else {
+			return false;
+		}
+	}
 /**
  * Esta clase crea un nuevo usuario y lo inserta en la DB
  * @param array $row - con los datos mandados en el form

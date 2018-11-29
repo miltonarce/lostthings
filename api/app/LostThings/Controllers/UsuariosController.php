@@ -6,7 +6,7 @@ use LostThings\Models\User;
 use LostThings\Core\View;
 use LostThings\Core\Route;
 
-class UsuariosController{
+class UsuariosController extends BaseController{
   /**
   * Metodo para  crear usuarios
   * @return bool 1 se creo el elemento 0 no se creo
@@ -35,5 +35,22 @@ class UsuariosController{
         'message' => $e
       ]);
     }
+  }
+
+  public function profile(){
+    $userID = $this->checkUserIsLogged();
+
+    $user = new User;
+    $user->getById($userID);
+
+    View::renderJson([
+      'status' => 1,
+			'data' => [
+				'idusuario' 		=> $user->idusuario,
+				'usuario' 	=> $user->usuario,
+				'email' 	=> $user->email,
+			]
+		]);
+    ])
   }
 }
