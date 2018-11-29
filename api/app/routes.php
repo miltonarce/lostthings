@@ -16,5 +16,5 @@ Route::add('PUT', '/items/{id}', 'ItemsController@edit');
 Route::add('DELETE' , '/items/{id}', 'ItemsController@delete');
 Route::add('POST', '/register', 'UsuariosController@create');
 Route::add('GET', '/profile', 'UsuariosController@profile');
-
+Route::add('GET', '/coments', 'ComentsController@byPublication');
 
