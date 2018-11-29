@@ -67,6 +67,16 @@ angular
 		}
 
 		/**
+		 * Permite cerrar la sesión del usuario, borra el token del mismo
+		 * redirige al login
+		 * @returns void
+		 */
+		$scope.logout = function() {
+			Authentication.logout();
+			$state.go('login');
+		}
+
+		/**
 		 * Permite validar los datos ingresados por el usuario
 		 * @param {Object} formEdit
 		 * @return errors

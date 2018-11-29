@@ -49,8 +49,8 @@ class UsuariosController extends BaseController{
 				'idusuario' 		=> $user->idusuario,
 				'usuario' 	=> $user->usuario,
 				'email' 	=> $user->email,
-			]
-		]);
-    ])
+      ]
+    ]);
   }
+
 }
