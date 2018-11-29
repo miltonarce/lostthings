@@ -5,29 +5,25 @@
             <button class="button button-clear button-positive" ng-click="toggleEnableEdit()">{{!enableEdit ? 'Modificar' : 'Cancelar'}}</button>
         </div>
         <div class="list" ng-if="!enableEdit">
-            <ion-item class="item item-icon-left">
-                <i class="icon ion-person"></i> {{userData.usuario}}
-            </ion-item>
-            <ion-item class="item item-icon-left">
-                <i class="icon ion-email"></i> {{userData.email}}
-            </ion-item>
+            <ion-item class="item">Nombre: {{userData.nombre}}</ion-item>
+            <ion-item class="item">Apellido: {{userData.apellido}}</ion-item>
         </div>
         <div class="padding" ng-if="enableEdit">
-            <form name="formEdit" ng-submit="editProfile(formEdit, userData)" novalidate>
+            <form name="formEdit" ng-submit="editProfile(formEdit, requestEdit)" novalidate>
                 <div class="list">
                     <label class="item item-input item-stacked-label item-form">
-                        <span class="input-label">Email</span>
-                        <input name="email" type="email" placeholder="Ingresa tu email" ng-model="userData.email" required />
+                        <span class="input-label">Nombre</span>
+                        <input name="nombre" type="text" placeholder="Ingresa tu nombre" ng-model="requestEdit.nombre" required />
                     </label>
-                    <div class="invalid-form" ng-show="errors.email">
-                        <span>{{ errors.email }}</span>
+                    <div class="invalid-form" ng-show="errors.nombre">
+                        <span>{{ errors.nombre }}</span>
                     </div>
                     <label class="item item-input item-stacked-label item-form">
-                        <span class="input-label">Usuario</span>
-                        <input name="usuario" type="text" placeholder="Ingresa tu nombre de usuario" ng-model="userData.usuario" required />
+                        <span class="input-label">Apellido</span>
+                        <input name="apellido" type="text" placeholder="Ingresa tu apellido" ng-model="requestEdit.apellido" required />
                     </label>
-                    <div class="invalid-form" ng-show="errors.usuario">
-                        <span>{{ errors.usuario }}</span>
+                    <div class="invalid-form" ng-show="errors.apellido">
+                        <span>{{ errors.apellido }}</span>
                     </div>
                 </div>
                 <button type="submit" class="button button-dark button-block">Modificar</button>

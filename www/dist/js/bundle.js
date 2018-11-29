@@ -415,7 +415,11 @@ angular
 		//Obtengo la información del usuario
 		$scope.userData = Authentication.getUserData();
 
+		//Request para cambiar la contraseña
 		$scope.requestPassword = { idUser: $scope.userData.idusuario, oldPassword: '', newPassword: '' } ;
+
+		//Request para editar los datos
+		$scope.requestEdit = { idUser: $scope.userData.idusuario, nombre: '', apellido: '' };
 
 		//Flag para mostrar el formulario de edición
 		$scope.enableEdit = false;
@@ -435,8 +439,8 @@ angular
 		 */
 		$scope.editProfile = function(formEdit, user) {
 			$scope.errors = validateFields(formEdit);
-			if ($scope.errors.usuario === null && $scope.errors.email === null) {
-			 Profile.edit($scope.userData).then(response => {
+			if ($scope.errors.nombre === null && $scope.errors.apellido === null) {
+			 Profile.edit($scope.requestEdit).then(response => {
 				if (response.status === 1) {
 					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!");
 				} else {
@@ -473,20 +477,17 @@ angular
 		 */
 		function validateFields(formEdit) {
 			let errors = {
-				email: null,
-				usuario: null,
+				nombre: null,
+				apellido: null,
 			};
-			if (formEdit.email.$invalid) {
-				if (formEdit.email.$error.required) {
-					errors.email = "El campo email no puede ser vacío";
-				}
-				if (formEdit.email.$error.email) {
-					errors.email = "No es un email válido";
+			if (formEdit.nombre.$invalid) {
+				if (formEdit.nombre.$error.required) {
+					errors.nombre = "El campo nombre no puede ser vacío";
 				}
 			}
-			if (formEdit.usuario.$invalid) {
-				if (formEdit.usuario.$error.required) {
-					errors.usuario = "El campo usuario no puede ser vacío";
+			if (formEdit.apellido.$invalid) {
+				if (formEdit.apellido.$error.required) {
+					errors.apellido = "El campo apellido no puede ser vacío";
 				}
 			}
 			return errors;
@@ -888,15 +889,24 @@ angular
 .module('lostThings.services').factory('Profile', 
     ["$http",
     "API_SERVER",
-    function($http, API_SERVER){
+    "Authentication",
+    function($http, API_SERVER, Authentication){
         
+        //Header default para el token
+        const defaultHeader = {
+            headers: {
+                'HTTP_X_TOKEN' : Authentication.getToken()
+            }
+        };
+
         /**
-         * Permite editar los datos del usuario
+         * Permite editar los datos del usuario, se envia en el HEADER 
+         * el api key del jwt...
          * @param userData
          * @returns Promise
          */
         function edit(userData) {
-            return $http.put(`${API_SERVER}/profile`, userData);
+            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
         /**
@@ -904,9 +914,7 @@ angular
          * @param {Object} requestPassword 
          */
         function changePassword(requestPassword) {
-            //poner despues el valor real
-            //return $http.put()
-            return new Promise((resolve, reject) => resolve({data: { status: 1 , msg: 'todo ok'}}));
+            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
         return {

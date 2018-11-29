@@ -3,15 +3,24 @@ angular
 .module('lostThings.services').factory('Profile', 
     ["$http",
     "API_SERVER",
-    function($http, API_SERVER){
+    "Authentication",
+    function($http, API_SERVER, Authentication){
         
+        //Header default para el token
+        const defaultHeader = {
+            headers: {
+                'HTTP_X_TOKEN' : Authentication.getToken()
+            }
+        };
+
         /**
-         * Permite editar los datos del usuario
+         * Permite editar los datos del usuario, se envia en el HEADER 
+         * el api key del jwt...
          * @param userData
          * @returns Promise
          */
         function edit(userData) {
-            return $http.put(`${API_SERVER}/profile`, userData);
+            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
         /**
@@ -19,9 +28,7 @@ angular
          * @param {Object} requestPassword 
          */
         function changePassword(requestPassword) {
-            //poner despues el valor real
-            //return $http.put()
-            return new Promise((resolve, reject) => resolve({data: { status: 1 , msg: 'todo ok'}}));
+            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
         return {
