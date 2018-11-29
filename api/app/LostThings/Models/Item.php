@@ -79,7 +79,7 @@ class Item implements JsonSerializable{
                     descripcion = ':descripcion',
                     img = ':img',
                     fecha_publicacion = ':fecha_publicacion',
-                    ubicacion = ':ubicacion',
+                    ubicacion = ':ubicacion'
                   WHERE  idpublicacion = ':idpublicacion' AND fkidusuario = ':fkidusuario'";
                   
     $stmt = $db->prepare($query);
@@ -94,10 +94,10 @@ class Item implements JsonSerializable{
     ]);
     
     if($success) {
-        $row['idpublicacion.'] = $db->lastInsertId();
+        $row['idpublicacion'] = $db->lastInsertId();
         $this->loadDataArray($row);
     } else {
-        throw new Exception('Error al insertar el item en la base de datos.');
+        throw new Exception('Error al editar el item en la base de datos.');
     }
   }
   

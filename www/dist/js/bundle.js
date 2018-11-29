@@ -824,6 +824,7 @@ angular.module("lostThings.services").factory("Items", [
      * @param {Object} item
      */
     function publishItem(item) {
+      item.img = item.img ? item.img.base64 : null;
       return $http.post(`${API_SERVER}/items`, item);
     }
 
@@ -833,8 +834,9 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      ///return $http.get(`${API_SERVER}/items/id=${id}`);
       return new Promise((resolve,reject) => resolve(mockgetDetail))
+
+      //return $http.get(`${API_SERVER}/items/${id}`);
     }
 
     /**
@@ -845,7 +847,16 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function edit(id, item) {
-      return $http.put(`${API_SERVER}/items/id?=${id}`, item);
+      return $http.put(`${API_SERVER}/items/${id}`, item);
+    }
+
+    /**
+     * Permite eliminar una publicación por el id de la misma
+     * @param {number} id 
+     * @returns Promise
+     */
+    function remove(id) {
+      return $http.delete(`${API_SERVER}/items/${id}`);
     }
 
     /**
@@ -864,6 +875,7 @@ angular.module("lostThings.services").factory("Items", [
       publishItem: publishItem,
       getDetail: getDetail,
       edit: edit,
+      remove: remove,
       commentPublication: commentPublication
     };
   }

@@ -55,6 +55,8 @@ Class ItemsController extends BaseController{
     try{
       $item = new Item;
       $item->edit([
+        'idpublicacion' => $id,
+        'fkidusuario' => $data['fkidusuario'],
         'titulo' => $data['titulo'],
         'descripcion' => $data['descripcion'],
         'img' => $data['img'],

@@ -15,12 +15,14 @@ const searchItemsMock = [{
 const mockgetDetail = {
     data: {
         data: {
-            idpublicacion: '33',
-            fecha_publicacion: '24/12/2018',
-            img: 'https://via.placeholder.com/350x150',
-            descripcion: 'Nuevo item publicado texto mock',
-            titulo: 'Notebook perdida',
-            ubicacion: 'Jonte',
+            "idpublicacion": "4",
+            "titulo": "FA",
+            "descripcion": "FE",
+            "img": null,
+            "fecha_publicacion": "2018-08-10",
+            "ubicacion": "AAA",
+            "fkidusuario": "2",
+            "usuario": "matias.torre",
             comentarios: [
                 {
                     usuario: 'Veronica',
