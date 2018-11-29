@@ -55,13 +55,11 @@ Class ItemsController extends BaseController{
     try{
       $item = new Item;
       $item->edit([
-        'idpublicacion' => $id,
         'titulo' => $data['titulo'],
         'descripcion' => $data['descripcion'],
         'img' => $data['img'],
         'fecha_publicacion' => $data['fecha_publicacion'],
         'ubicacion' => $data['ubicacion'],
-        'fkidusuario' => $data['fkidusuario']
       ]);
 
       View::renderJson([

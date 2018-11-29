@@ -34,7 +34,19 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      return $http.get(`${API_SERVER}/items/id=${id}`);
+      ///return $http.get(`${API_SERVER}/items/id=${id}`);
+      return new Promise((resolve,reject) => resolve(mockgetDetail))
+    }
+
+    /**
+     * Permite editar una publicación, se envia el id del mismo y el item
+     * con los datos a modificar...
+     * @param {number} id 
+     * @param {Object} item 
+     * @returns Promise
+     */
+    function edit(id, item) {
+      return $http.put(`${API_SERVER}/items/id?=${id}`, item);
     }
 
     /**
@@ -52,6 +64,7 @@ angular.module("lostThings.services").factory("Items", [
       searchItems: searchItems,
       publishItem: publishItem,
       getDetail: getDetail,
+      edit: edit,
       commentPublication: commentPublication
     };
   }

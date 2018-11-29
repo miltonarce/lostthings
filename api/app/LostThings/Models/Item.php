@@ -80,9 +80,8 @@ class Item implements JsonSerializable{
                     img = ':img',
                     fecha_publicacion = ':fecha_publicacion',
                     ubicacion = ':ubicacion',
-                    fkidusuario = ':fkidusuario'
-                  WHERE  idpublicacion = :idpublicacion";
-
+                  WHERE  idpublicacion = :idpublicacion AND fkidusuario = ':fkidusuario'";
+                  
     $stmt = $db->prepare($query);
     $success = $stmt->execute([
       'idpublicacion' => $row['idpublicacion'],

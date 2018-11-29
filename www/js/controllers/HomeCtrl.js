@@ -69,7 +69,7 @@ angular.module('lostThings.controllers')
 		 * @returns void
 		 */
 		$scope.goDetail = function(id) {
-			$state.go('detail', { 'id': id });
+			$state.go('detail', { 'id': 3 });
 		}
 
 	}

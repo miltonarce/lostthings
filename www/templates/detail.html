@@ -2,40 +2,87 @@
     <!-- Se agrega el botón back porque las tabs tienen su propio history y no reconoce el back... -->
     <ion-nav-bar  class="bar-stable">
         <ion-nav-buttons side="left">
-            <a class="button icon-left ion-chevron-left button-clear" href="/#dashboard/home">Atrás</a>
+            <a class="button icon-left ion-chevron-left button-clear" href="#/dashboard/home">Atrás</a>
+        </ion-nav-buttons>
+        <ion-nav-buttons side="right">
+            <button class="button button-clear" ng-click="toggleEdit()">{{ !showEditable ? 'Editar' : 'Cancelar'}}</button>
         </ion-nav-buttons>
     </ion-nav-bar>
     <ion-content class="background-content">
-        <div class="padding">
-            <h1 class="title-item-detail">{{item.nombre}}</h1>
-            <div>
-                <img class="img-responsive pic-item" ng-src="{{item.foto}}" alt="{{item.nombre}}">
+        <!-- Si no esta en modo de edición muestra los datos... -->
+        <div ng-if="!showEditable">
+            <div class="padding">
+                <h1 class="title-item-detail">{{item.titulo}}</h1>
+                <div>
+                    <img class="img-responsive pic-item" ng-src="{{item.img}}" alt="{{item.titulo}}">
+                </div>
+                <p>{{item.descripcion}}</p>
+                <p>Ubicación: {{item.ubicacion}}</p>
             </div>
-            <p>{{item.descripcion}}</p>
+            <div>
+                <h2 class="title-comments">Comentarios</h2>
+                <div>
+                    <ion-list class="list">
+                        <ion-item ng-repeat="comentario in item.comentarios" class="item item-avatar item-comments">
+                            <img ng-src="{{comentario.avatar}}">
+                            <p>{{comentario.usuario}}</p>
+                            <p>{{comentario.descripcion}}</p>
+                        </ion-item>
+                    </ion-list>
+                </div>
+                <div class="padding">
+                    <!-- Form Comments -->
+                    <form name="formComments" ng-submit="addComment(formComments, comment)" novalidate>
+                        <div class="container-form-input-comment">
+                            <textarea name="description" ng-model="comment.description" rows="4" placeholder="Escribi tu comentario..." required></textarea>        
+                        </div>  
+                        <div class="invalid-form" ng-show="errors.description">
+                            <span>{{errors.description}}</span>
+                        </div>
+                        <button type="submit" class="button button-dark button-block">Comentar</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div>
-            <h2 class="title-comments">Comentarios</h2>
-           <div>
-                <ion-list class="list">
-                    <ion-item ng-repeat="comentario in item.comentarios" class="item item-avatar item-comments">
-                        <img ng-src="{{comentario.avatar}}">
-                        <p>{{comentario.usuario}}</p>
-                        <p>{{comentario.descripcion}}</p>
-                    </ion-item>
-                </ion-list>
-           </div>
-           <div class="padding">
-                <!-- Form Comments -->
-                <form name="formComments" ng-submit="addComment(formComments, comment)" novalidate>
-                    <div class="container-form-input-comment">
-                        <textarea name="description" ng-model="comment.description" rows="4" placeholder="Escribi tu comentario..." required></textarea>        
-                    </div>  
-                    <div class="invalid-form" ng-show="errors.description">
-                        <span>{{errors.description}}</span>
+        <!-- Si esta en modo edición, muestra el formulario-->
+        <!-- FIXME, si hay tiempo hacer un ng-include, es el mismo form que publish... -->
+        <div ng-if="showEditable">
+            <form name="formEdit" ng-submit="edit(formEdit, requestEdit)" novalidate>
+                <div class="list">
+                    <label class="item item-input item-stacked-label item-form">
+                        <span class="input-label">Nombre del ítem</span>
+                        <input name="titulo" type="text" placeholder="Ejemplo: Anteojos Ray Ban" ng-model="requestEdit.titulo" required>
+                    </label>
+                    <div class="invalid-form" ng-show="errors.titulo">
+                        <span>{{errors.titulo}}</span>
                     </div>
-                    <button type="submit" class="button button-dark button-block">Comentar</button>
-                </form>
-           </div>
+                    <label class="item item-input item-stacked-label item-form">
+                        <span class="input-label">Descripción del mismo</span>
+                        <textarea name="descripcion" ng-model="requestEdit.descripcion" rows="4"
+                        placeholder="Ejemplo: Lo perdí en la facultad de medicina el jueves pasado..." required></textarea>
+                    </label>
+                    <div class="invalid-form" ng-show="errors.descripcion">
+                        <span>{{errors.descripcion}}</span>
+                    </div>
+                    <label class="item item-input item-stacked-label item-form">
+                        <span class="input-label">Ubicación</span>
+                        <input name="ubicacion" type="text" placeholder="¿Dónde lo perdiste?" ng-model="requestEdit.ubicacion" required>
+                    </label>
+                    <div class="invalid-form" ng-show="errors.ubicacion">
+                        <span>{{errors.ubicacion}}</span>
+                    </div>
+                    <div class="padding container-image-pic">
+                        <p>¿Posees alguna foto?</p>
+                        <input type="file" name="file" ng-model="requestEdit.img" maxsize="1000" base-sixty-four-input>
+                    </div>
+                    <div class="invalid-form" ng-show="errors.img">
+                        <span>{{errors.img}}</span>
+                    </div>
+                </div>
+                <div class="padding">
+                    <button type="submit" class="button button-dark button-block">Modificar</button>
+                </div>
+            </form>
         </div>
     </ion-content>
 </ion-view>
