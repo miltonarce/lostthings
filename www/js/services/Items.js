@@ -35,9 +35,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      return new Promise((resolve,reject) => resolve(mockgetDetail))
-
-      //return $http.get(`${API_SERVER}/items/${id}`);
+      return $http.get(`${API_SERVER}/items/${id}`);
     }
 
     /**

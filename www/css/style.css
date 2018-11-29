@@ -78,6 +78,7 @@ ion-tabs.tabs-color-active-positive .tab-item.activated {
 }
 .lost-things-popup .popup-buttons .button {
     background-color: #212121;
+    color: #fff;
 }
 .button-search {
     border-color: none;

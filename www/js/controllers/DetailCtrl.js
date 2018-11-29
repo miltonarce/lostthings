@@ -2,11 +2,12 @@ angular
 .module('lostThings.controllers')
 .controller('DetailCtrl', [
 	'$scope',
+	'$state',
 	'$stateParams',
 	'Utils',
 	'Items',
 	'Authentication',
-	function($scope, $stateParams, Utils, Items, Authentication) {
+	function($scope, $state, $stateParams, Utils, Items, Authentication) {
 		
 		//Contenido de la publicacion
 		$scope.item = null;
@@ -77,6 +78,20 @@ angular
 					}
 				}).catch(_error => Utils.showPopup('Editar', '¡Ups se produjo un error al actualizar su publicación'));
 			} 
+		}
+
+		/**
+		 * Permite eliminar una publicación por el id de la misma
+		 * @param id
+		 */
+		$scope.removeItem = function() {
+			Utils.showConfirm('Eliminar', '¿Estás seguro de eliminar?').then(accept => {
+				if (accept) {
+					Items.remove($scope.item.idpublicacion).then(res => {
+						Utils.showPopup('Eliminar', res.data.message).then(() => $state.go('dashboard.home'));
+					}).catch(_err => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
+				}
+			})
 		}
 
 		/**

@@ -15,6 +15,28 @@ Class ItemsController extends BaseController{
     $items = $item->all();
     View::renderJson($items);
   }
+
+  /**
+   * Permite obtener la informacion de una publicacion por el id de la misma
+   */
+  public function getById() {
+    $params = Route::getUrlParameters();
+    $id = $params['id'];
+    try {
+      $item = new Item;
+      View::renderJson([
+        'status' => 1,
+        'message' => 'Item creado exitosamente.',
+        'data' => $item->getById($id)
+      ]);
+    }catch(Exception $e) {
+      View::renderJson([
+        'status' => 0,
+        'message' => $e
+      ]);
+    }
+  }
+
  /**
   * Metodo para  crear o publicar items
   * @return bool 1 se creo el elemento 0 no se creo
@@ -82,15 +104,15 @@ Class ItemsController extends BaseController{
     $id = $params['id'];
     try {
 			$item = new Item;
-			$producto->delete($id);
+			$item->delete($id);
 			View::renderJson([
 				'status' => 1,
-				'message' => 'El elemento fue eliminado correctamente',
+				'message' => 'Se eliminó correctamente la publicación',
 			]);
 		} catch(Exception $e) {
 			View::renderJson([
 				'status' => 0,
-				'message' => 'Hubo un error, no se pudo eliminar el elemento.'
+				'message' => 'Hubo un error, no se pudo eliminar la publicación.'
 			]);
 		}
   }

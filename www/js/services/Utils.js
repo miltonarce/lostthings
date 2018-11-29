@@ -24,12 +24,20 @@ angular
 			return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 		}
 
+		/**
+		 * Permite crear un popup de confirmación
+		 * @param {string} title
+		 * @param {string} text
+		 */
+		function showConfirm(title, text) {
+			return $ionicPopup.confirm({ title: title, template: text,  cssClass:'lost-things-popup', okText: 'Aceptar', cancelText: 'Cancelar' });
+		}
+
         return {
 			showPopup: showPopup,
-			getDate: getDate
+			getDate: getDate,
+			showConfirm: showConfirm
 		}
-		
-
 
     }
 ]);

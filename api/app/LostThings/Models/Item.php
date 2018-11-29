@@ -48,6 +48,19 @@ class Item implements JsonSerializable{
     return $response;
   }
 
+  public function getById($id) {
+    $db = DBConnection::getConnection();
+    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, p.fkidusuario, us.usuario 
+    FROM publicaciones p 
+    JOIN usuarios AS us ON us.idusuario = p.fkidusuario WHERE p.idpublicacion = :id";
+    $stmt = $db->prepare($query);
+    $stmt->execute(['id' => $id]);
+    $row = $stmt->fetch();
+    $item = new Item;
+    $item->loadDataArray($row);
+    return $item;
+  }
+
   public function create($row)
   {
     $db = DBConnection::getConnection();

@@ -12,34 +12,6 @@ const searchItemsMock = [{
     }
 }];
 
-const mockgetDetail = {
-    data: {
-        data: {
-            "idpublicacion": "4",
-            "titulo": "FA",
-            "descripcion": "FE",
-            "img": null,
-            "fecha_publicacion": "2018-08-10",
-            "ubicacion": "AAA",
-            "fkidusuario": "2",
-            "usuario": "matias.torre",
-            comentarios: [
-                {
-                    usuario: 'Veronica',
-                    avatar: 'https://randomuser.me/api/portraits/women/81.jpg',
-                    descripcion: 'Esto es horrible'
-                },
-                {
-                    usuario: 'Juan',
-                    avatar: 'https://randomuser.me/api/portraits/men/33.jpg',
-                    descripcion: 'testing mobile'
-                }
-            ]
-        },
-        status: 1
-    }
-}
-
 const commentPublicationMock = {
     id: '222',
     usuario: 'Veronica',
