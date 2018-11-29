@@ -19,22 +19,12 @@ Class ItemsController extends BaseController{
   /**
    * Permite obtener la informacion de una publicacion por el id de la misma
    */
-  public function getById() {
+  public function detail() {
     $params = Route::getUrlParameters();
     $id = $params['id'];
-    try {
       $item = new Item;
-      View::renderJson([
-        'status' => 1,
-        'message' => 'Item creado exitosamente.',
-        'data' => $item->getById($id)
-      ]);
-    }catch(Exception $e) {
-      View::renderJson([
-        'status' => 0,
-        'message' => $e
-      ]);
-    }
+      $item->detail($id)
+      View::renderJson($item);
   }
 
  /**
