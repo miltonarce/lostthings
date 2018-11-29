@@ -23,10 +23,10 @@
                 <h2 class="title-comments">Comentarios</h2>
                 <div>
                     <ion-list class="list">
-                        <ion-item ng-repeat="comentario in item.comentarios" class="item item-avatar item-comments">
-                            <img ng-src="{{comentario.avatar}}">
-                            <p>{{comentario.usuario}}</p>
-                            <p>{{comentario.descripcion}}</p>
+                        <ion-item ng-repeat="c in comentarios" class="item item-avatar item-comments">
+                            <img ng-src="img/avatar.png" alt="avatar usuario {{c.usuario}}">
+                            <p>{{c.usuario}}</p>
+                            <p>{{c.comentario}}</p>
                         </ion-item>
                     </ion-list>
                 </div>
@@ -34,10 +34,10 @@
                     <!-- Form Comments -->
                     <form name="formComments" ng-submit="addComment(formComments, comment)" novalidate>
                         <div class="container-form-input-comment">
-                            <textarea name="description" ng-model="comment.description" rows="4" placeholder="Escribi tu comentario..." required></textarea>        
+                            <textarea name="comentario" ng-model="comment.comentario" rows="4" placeholder="Escribi tu comentario..." required></textarea>        
                         </div>  
-                        <div class="invalid-form" ng-show="errors.description">
-                            <span>{{errors.description}}</span>
+                        <div class="invalid-form" ng-show="errors.comentario">
+                            <span>{{errors.comentario}}</span>
                         </div>
                         <button type="submit" class="button button-dark button-block">Comentar</button>
                     </form>

@@ -6,11 +6,15 @@ angular
 	'$stateParams',
 	'Utils',
 	'Items',
+	'Comments',
 	'Authentication',
-	function($scope, $state, $stateParams, Utils, Items, Authentication) {
+	function($scope, $state, $stateParams, Utils, Items, Comments, Authentication) {
 		
 		//Contenido de la publicacion
 		$scope.item = null;
+
+		//Comentarios de la publicación
+		$scope.comentarios = [];
 
 		//Flag modo edición
 		$scope.showEditable = false;
@@ -26,10 +30,14 @@ angular
 
 		//Obtengo el detalle de la publicación
 		Items.getDetail($stateParams.id).then(function(res) {
-			let item = res.data.data;
+			let item = res.data;
 			$scope.item = item;
 			$scope.requestEdit = createDefaultRequest(item, idUser);
 		}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
+
+		Comments.getComments($stateParams.id).then(function(res) {
+			$scope.comentarios = res.data;
+		}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
 
 		/**
 		 * Permite comentar una publicacion, realiza las validaciones y 
@@ -39,10 +47,10 @@ angular
 		 * @returns void
 		 */
 		$scope.addComment = function(formComments, comment) {
-			$scope.errors = { description: null };
-			if (formComments.description.$invalid) {
-				if (formComments.description.$error.required) {
-					$scope.errors.description = 'El campo no puede ser vacío';
+			$scope.errors = { comentario: null };
+			if (formComments.comentario.$invalid) {
+				if (formComments.comentario.$error.required) {
+					$scope.errors.comentario = 'El campo no puede ser vacío';
 				}
 			} else {
 				Items.commentPublication(comment, idUser).then(res => {
