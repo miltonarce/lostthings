@@ -15,7 +15,7 @@ class Item implements JsonSerializable{
   protected $fecha_publicacion;
   protected $ubicacion;
   protected $fkidusuario;
-  protected $fkuser; 
+  protected $usuario; 
 
   protected $props = ['idpublicacion','titulo','descripcion','img','fecha_publicacion','ubicacion','fkidusuario', 'usuario'];
 
@@ -28,13 +28,13 @@ class Item implements JsonSerializable{
       'fecha_publicacion' => $this->fecha_publicacion,
       'ubicacion' => $this->ubicacion,
       'fkidusuario' => $this->fkidusuario,
-      'usuario' => $this->fkuser
+      'usuario' => $this->usuario
     ];
   }
 
   public function all(){
     $db = DBConnection::getConnection();
-    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, us.usuario 
+    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, p.fkidusuario, us.usuario 
     FROM publicaciones p 
     JOIN usuarios AS us ON us.idusuario = p.fkidusuario ORDER BY p.fecha_publicacion";
     $stmt = $db->prepare($query);

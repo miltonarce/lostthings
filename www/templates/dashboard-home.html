@@ -25,13 +25,12 @@
       <ion-list ng-if="items.length > 0">
         <ion-item class="list card" ng-repeat="item in items" ng-click="goDetail(item.idpublicacion)">
             <div class="item item-avatar">
-              <!-- FIXME , utilizar el avatar del user, agregar campo despues desde PHP -->
               <img ng-src="img/avatar.png" alt="avatar">
-              <h2 class="text-bold">agregar user</h2>
+              <p class="text-bold">{{item.usuario}}</p>
               <p>{{item.fecha_publicacion}}</p>
             </div>
             <div class="item item-body">
-              <h3>{{item.titulo}}</h3>
+              <p>{{item.titulo}}</p>
               <img class="full-image" ng-src="" alt="{{item.titulo}}">
               <p>{{item.descripcion}}</p>
               <span class="subdued locate-block">
