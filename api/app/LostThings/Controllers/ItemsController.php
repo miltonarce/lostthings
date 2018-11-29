@@ -17,6 +17,7 @@ Class ItemsController extends BaseController{
   }
  /**
   * Metodo para  crear o publicar items
+  * @return bool 1 se creo el elemento 0 no se creo
   */
   public function create(){
     $d_Post = file_get_contents('php://input');
@@ -24,6 +25,37 @@ Class ItemsController extends BaseController{
     try{
       $item = new Item;
       $item->create([
+        'titulo' => $data['titulo'],
+        'descripcion' => $data['descripcion'],
+        'img' => $data['img'],
+        'fecha_publicacion' => $data['fecha_publicacion'],
+        'ubicacion' => $data['ubicacion'],
+        'fkidusuario' => $data['fkidusuario']
+      ]);
+
+      View::renderJson([
+        'status' => 1,
+        'message' => 'Item creado exitosamente.',
+        'data' => $data
+      ]);
+    }catch(Exeption $e){
+      View::renderJson([
+        'status' => 0,
+        'message' => $e
+      ]);
+    }
+  }
+  public function edit()
+  {
+    $params = Route::getUrlParameters();
+    $id = $params['id'];
+    $d_Post = file_get_contents('php://input');
+    $data = json_decode($d_Post, true);
+
+    try{
+      $item = new Item;
+      $item->edit([
+        'idpublicacion' => $id,
         'titulo' => $data['titulo'],
         'descripcion' => $data['descripcion'],
         'img' => $data['img'],

@@ -7,6 +7,10 @@ use LostThings\Core\View;
 use LostThings\Core\Route;
 
 class UsuariosController{
+  /**
+  * Metodo para  crear usuarios
+  * @return bool 1 se creo el elemento 0 no se creo
+  */
   public function create(){
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
