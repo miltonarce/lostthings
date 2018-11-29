@@ -31,7 +31,6 @@ angular
 		$scope.publish = function(formPublish, item) {
 			$scope.errors = validateFields(formPublish);
 			if (isValidForm($scope.errors)) {
-				console.log('request', $scope.item)
 				Items.publishItem($scope.item).then(response =>  {
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>')
 						 .then(() => {
