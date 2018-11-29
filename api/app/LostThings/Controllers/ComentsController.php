@@ -8,9 +8,9 @@ use LostThings\Core\Route;
 
 Class ComentsController extends BaseController{
    
-  public function getItemsComents(){
+  public function all(){
     $params = Route::getUrlParameters();
-    $id = $params['id'];
+    $id = $params['idPublish'];
     try{
       $item = new Item;
       $items = $item->getItemsComents($id);
