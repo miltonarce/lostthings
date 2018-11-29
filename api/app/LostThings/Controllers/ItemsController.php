@@ -74,4 +74,22 @@ Class ItemsController extends BaseController{
       ]);
     }
   }
+  public function delete()
+	{
+		$params = Route::getUrlParameters();
+    $id = $params['id'];
+    try {
+			$item = new Item;
+			$producto->delete($id);
+			View::renderJson([
+				'status' => 1,
+				'message' => 'El elemento fue eliminado correctamente',
+			]);
+		} catch(Exception $e) {
+			View::renderJson([
+				'status' => 0,
+				'message' => 'Hubo un error, no se pudo eliminar el elemento.'
+			]);
+		}
+  }
 }

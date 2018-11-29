@@ -80,7 +80,7 @@ class Item implements JsonSerializable{
                     img = ':img',
                     fecha_publicacion = ':fecha_publicacion',
                     ubicacion = ':ubicacion',
-                  WHERE  idpublicacion = :idpublicacion AND fkidusuario = ':fkidusuario'";
+                  WHERE  idpublicacion = ':idpublicacion' AND fkidusuario = ':fkidusuario'";
                   
     $stmt = $db->prepare($query);
     $success = $stmt->execute([
@@ -100,7 +100,12 @@ class Item implements JsonSerializable{
         throw new Exception('Error al insertar el item en la base de datos.');
     }
   }
-
+  
+  public function delete($id)
+  {
+    $db = DBConnection::getConnection();
+    $query = "DELETE FROM publicaciones WHERE id = ':id' LIMIT 1";
+  }
   public function loadDataArray($row){
     foreach($this->props as $prop){
       if(isset($row[$prop])){
