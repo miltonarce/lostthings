@@ -67,7 +67,7 @@ class Item implements JsonSerializable{
     $query = "SELECT  c.idcomentario, c.comentario, c.fecha_publicacion, c.fkidpublicacion, c.fkidusuario, u.usuario 
     FROM comentarios AS c JOIN usuarios AS u WHERE c.fkidpublicacion = :id AND c.fkidusuario = u.idusuario";
     $stmt = $db->prepare($query);
-    $success = $stmt->execute();
+    $success = $stmt->execute(['id' => $id]);
     $response = [];
     while($row = $stmt->fetch()){
       $response[] = $item;
