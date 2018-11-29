@@ -27,6 +27,9 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `comentarios`
 --
+DROP DATABASE IF EXISTS  `app_clientes-mobile`;
+CREATE DATABASE `app_clientes-mobile`;
+USE `app_clientes-mobile`;
 
 DROP TABLE IF EXISTS `comentarios`;
 CREATE TABLE IF NOT EXISTS `comentarios` (
@@ -59,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `publicaciones` (
   `idpublicacion` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `titulo` varchar(100) NOT NULL,
   `descripcion` text NOT NULL,
-  `img` varchar(100) DEFAULT NULL,
+  `img` text DEFAULT NULL,
   `fecha_publicacion` date DEFAULT NULL,
   `ubicacion` text NOT NULL,
   `fkidusuario` int(10) UNSIGNED NOT NULL,
@@ -92,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `fecha_alta` date DEFAULT NULL,
   `password` varchar(60) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `img` varchar(100) DEFAULT NULL,
+  `img` text DEFAULT NULL,
   PRIMARY KEY (`idusuario`),
   UNIQUE KEY `idusuario_UNIQUE` (`idusuario`),
   UNIQUE KEY `user_UNIQUE` (`usuario`),

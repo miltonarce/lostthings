@@ -2,6 +2,7 @@
 namespace LostThings\Models;
 
 use LostThings\DB\DBConnection;
+use Exception;
 
 class User
 {
@@ -45,6 +46,10 @@ class User
         'password' => $row['password'],
         'email' => $row['email']
     ]); 
+
+    if(!$success){
+      throw new Exception('No se pudo agregar el usuario en la base de datos');
+    }
   }
 
 

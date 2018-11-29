@@ -17,14 +17,13 @@ class UsuariosController{
         'nombre' => $data['nombre'],
         'apellido' => $data['apellido'],
         'fecha_alta' => $data['fecha_alta'],
-        'password' => $data['password'],
+        'password' => password_hash($data['password'], PASSWORD_DEFAULT),
         'email' => $data['email']
       ]);
 
       View::renderJson([
         'status' => 1,
-        'message' => 'Usuario creado exitosamente.',
-        'data' => $data
+        'message' => 'Usuario creado exitosamente.'
       ]);
     }catch(Exeption $e){
       View::renderJson([

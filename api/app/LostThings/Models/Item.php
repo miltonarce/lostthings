@@ -4,6 +4,7 @@ namespace LostThings\Models;
 
 use LostThings\DB\DBConnection;
 use JsonSerializable;
+use Exception;
 
 class Item implements JsonSerializable{
 
@@ -44,6 +45,29 @@ class Item implements JsonSerializable{
     }
     return $response;
   }
+
+  public function create($row)
+  {
+    $db = DBConnection::getConnection();
+    $query = "INSERT INTO publicaciones (titulo, descripcion, img, fecha_publicacion, ubicacion, fkidusuario)
+            VALUES (:titulo, :descripcion, :img, :fecha_publicacion, :ubicacion, :fkidusuario)";
+    $stmt = $db->prepare($query);
+    $success = $stmt->execute([
+      'titulo' => $row['titulo'],
+      'descripcion' => $row['descripcion'],
+      'img' => $row['img'],
+      'fecha_publicacion' => $row['fecha_publicacion'],
+      'ubicacion' => $row['ubicacion'],
+      'fkidusuario' => $row['fkidusuario']
+    ]);
+    
+    if($success) {
+        $row['idpublicacion.'] = $db->lastInsertId();
+        $this->loadDataArray($row);
+    } else {
+        throw new Exception('Error al insertar el item en la base de datos.');
+    }
+	}
 
   public function loadDataArray($row){
     foreach($this->props as $prop){
