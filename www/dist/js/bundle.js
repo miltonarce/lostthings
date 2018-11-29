@@ -839,7 +839,7 @@ angular.module("lostThings.services").factory("Items", [
      * @param {Object} item
      */
     function publishItem(item) {
-      item.img = item.img ? item.img.base64 : null;
+      item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
       return $http.post(`${API_SERVER}/items`, item);
     }
 
