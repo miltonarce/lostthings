@@ -61,7 +61,7 @@ public function genToken($userClass){
 	 * @param string $token
 	 * @return array|boolean
 	 */
-public function isTokenValid($token){
+public static function isTokenValid($token){
   if($token == "null" || empty($token)){
     return false;
   }
