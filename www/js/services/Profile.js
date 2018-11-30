@@ -9,7 +9,7 @@ angular
         //Header default para el token
         const defaultHeader = {
             headers: {
-                'HTTP_X_TOKEN' : Authentication.getToken()
+                'X-Token' : Authentication.getToken()
             }
         };
 
@@ -31,9 +31,18 @@ angular
             return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
+        /**
+         * Permite obtener la información del usuario adicional
+         * @returns Promise
+         */
+        function getAdditionalInfo() {
+            return $http.get(`${API_SERVER}/profile`, defaultHeader)
+        }
+
         return {
             edit: edit,
-            changePassword: changePassword
+            changePassword: changePassword,
+            getAdditionalInfo: getAdditionalInfo
         }
 
     }

@@ -20,6 +20,10 @@ angular
 		//Flag para mostrar el formulario de edición
 		$scope.enableEdit = false;
 
+		Profile.getAdditionalInfo().then(function(response) {
+			console.log('response', response)
+		}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+
 		/**
 		 * Permite habilitar / deshabilitar el formulario de edición
 		 * @returns void
