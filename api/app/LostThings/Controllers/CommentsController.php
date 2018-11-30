@@ -6,7 +6,7 @@ use LostThings\Models\Item;
 use LostThings\Core\View;
 use LostThings\Core\Route;
 
-Class ComentsController extends BaseController{
+Class CommentsController extends BaseController{
    
   public function all(){
     $params = Route::getUrlParameters();
