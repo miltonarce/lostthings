@@ -16,14 +16,14 @@ angular
 		//Comentarios de la publicación
 		$scope.comentarios = [];
 
-		//Flag modo edición
-		$scope.showEditable = false;
-
 		//Información del usuario logueado
 		const idUser = Authentication.getUserData().idusuario;
 
 		//Al ingresar a la view, obtiene el detalle de la publicacion, con los comentarios
 		$scope.$on('$ionicView.beforeEnter', function() {
+
+			//Flag modo edición
+			$scope.showEditable = false;
 
 			//Request para editar la publicación
 			$scope.requestEdit = {};
@@ -59,7 +59,7 @@ angular
 				let idPublish = $scope.item.idpublicacion;
 				Comments.publish(idPublish, $scope.comment).then(res => {
 					if (res.status === 1) {
-						//$scope.item.comentarios = $scope.item.comentarios.concat(res.data.data);
+						$scope.item.comentarios = $scope.item.comentarios.concat(res.data.data);
 						$scope.comment = getDefaultRequest();
 						$scope.$apply();
 					} else {

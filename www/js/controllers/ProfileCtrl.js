@@ -17,12 +17,15 @@ angular
 		//Request para editar los datos
 		$scope.requestEdit = { idUser: $scope.userData.idusuario, nombre: '', apellido: '' };
 
-		//Flag para mostrar el formulario de edición
-		$scope.enableEdit = false;
-
-		Profile.getAdditionalInfo().then(function(response) {
-			console.log('response', response)
-		}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+		
+		$scope.$on('$ionicView.beforeEnter', function() {
+			//Flag para mostrar el formulario de edición
+			$scope.enableEdit = false;
+			
+			Profile.getAdditionalInfo().then(function(response) {
+				console.log('response', response)
+			}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+		});
 
 		/**
 		 * Permite habilitar / deshabilitar el formulario de edición

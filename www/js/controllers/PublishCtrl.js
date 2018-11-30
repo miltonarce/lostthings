@@ -27,9 +27,7 @@ angular
 				Items.publishItem($scope.item).then(response =>  {
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>')
 						 .then(() => {
-							let idNewItem = response.data.data.idpublicacion;
-							$scope.item = defaultRequest();
-							$state.go('detail', { 'id': idNewItem });
+							$state.go('dashboard.home');
 						});
 				}).catch(_error => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
 			}
