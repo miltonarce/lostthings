@@ -444,7 +444,7 @@ angular
 			$scope.userData = Authentication.getUserData();
 
 			//Request para cambiar la contraseña
-			$scope.requestPassword = { password: '', newPassword: '' } ;
+			$scope.requestPassword = { password: '', newpassword: '' } ;
 
 			//Request para editar los datos
 			$scope.requestEdit = { nombre: '', apellido: '' };
@@ -496,7 +496,7 @@ angular
 		 */
 		$scope.changePassword = function(formChangePassword, requestPassword) {
 			$scope.errorsFormChangePassword = validateFieldsPassword(formChangePassword);
-			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newPassword === null) {
+			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
 				Profile.changePassword($scope.userData.idusuario, $scope.requestPassword).then(response => {
 					if (response.data.status === 1) {
 						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard'));
@@ -548,16 +548,16 @@ angular
 		function validateFieldsPassword(formChangePassword) {
 			let errors = {
 				password: null,
-				newPassword: null
+				newpassword: null
 			};
 			if (formChangePassword.password.$invalid) {
 				if (formChangePassword.password.$error.required) {
 					errors.password = "Su password actual no puede ser vacía";
 				}
 			}
-			if (formChangePassword.newPassword.$invalid) {
-				if (formChangePassword.newPassword.$error.required) {
-					errors.newPassword = "Su nuevo password no puede ser vacío";
+			if (formChangePassword.newpassword.$invalid) {
+				if (formChangePassword.newpassword.$error.required) {
+					errors.newpassword = "Su nuevo password no puede ser vacío";
 				}
 			}
 			return errors;
@@ -965,20 +965,47 @@ angular.module("lostThings.services").factory("Profile", [
       }
     };
 
-    /**
-     * Permite editar los datos del usuario, se envia en el HEADER
-     * el api key del jwt...
-     * @param {number} idUser
-     * @param userData
-     * @returns Promise
-     */
-    function edit(idUser, userData) {
-      return $http.put(
-        `${API_SERVER}/profile/${idUser}`,
-        userData,
-        defaultHeader
-      );
-    }
+angular
+.module('lostThings.services').factory('Profile', 
+    ["$http",
+    "API_SERVER",
+    "Authentication",
+    function($http, API_SERVER, Authentication){
+        
+        //Header default para el token
+        const defaultHeader = {
+            headers: {
+                'X-Token' : Authentication.getToken()
+            }
+        };
+
+        /**
+         * Permite editar los datos del usuario, se envia en el HEADER 
+         * el api key del jwt...
+         * @param {number} idUser
+         * @param userData
+         * @returns Promise
+         */
+        function edit(idUser, userData) {
+            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
+        }
+
+        /**
+         * Permite modificar la contraseña que posee el usuario
+         * @param {number} idUser
+         * @param {Object} requestPassword 
+         */
+        function changePassword(idUser, requestPassword) {
+            return $http.put(`${API_SERVER}/profile/${idUser}`, requestPassword, defaultHeader);
+        }
+
+        /**
+         * Permite obtener la información del usuario adicional
+         * @returns Promise
+         */
+        function getAdditionalInfo() {
+            return $http.get(`${API_SERVER}/profile`, defaultHeader)
+        }
 
     /**
      * Permite modificar la contraseña que posee el usuario

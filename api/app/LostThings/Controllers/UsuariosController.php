@@ -80,7 +80,7 @@ class UsuariosController extends BaseController{
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
     
-    if($data['nombre'] && $data['apellido']){
+    if(!empty($data['nombre']) && !empty($data['apellido'])){
       try{  
       $user = new User;
         $user->editdata([
@@ -99,7 +99,7 @@ class UsuariosController extends BaseController{
           'message' => $e
         ]);
       }
-    }else if($data['password'] && $data['newpassword']){
+    }else if(!empty($data['password']) && !empty($data['newpassword'])){
       try{  
       $user = new User;
       $user->editpass([

@@ -78,20 +78,53 @@
             >
               <span>{{ errorsFormChangePassword.oldPassword }}</span>
             </div>
-            <label class="item item-input">
-              <input
-                name="newPassword"
-                type="password"
-                placeholder="Nuevo password"
-                ng-model="requestPassword.newPassword"
-                required
-              />
-            </label>
-            <div
-              class="invalid-form"
-              ng-show="errorsFormChangePassword.newPassword"
-            >
-              <span>{{ errorsFormChangePassword.newPassword }}</span>
+            <div>
+              <form
+                name="formChangePassword"
+                ng-submit="changePassword(formChangePassword, requestPassword)"
+                novalidate
+              >
+                <div class="list list-inset">
+                  <label class="item item-input">
+                    <input
+                      name="password"
+                      type="password"
+                      placeholder="Ingresa tu password actual"
+                      ng-model="requestPassword.password"
+                      required
+                    />
+                  </label>
+                  <div
+                    class="invalid-form"
+                    ng-show="errorsFormChangePassword.password"
+                  >
+                    <span>{{ errorsFormChangePassword.password }}</span>
+                  </div>
+                  <label class="item item-input">
+                    <input
+                      name="newpassword"
+                      type="password"
+                      placeholder="Nuevo password"
+                      ng-model="requestPassword.newpassword"
+                      required
+                    />
+                  </label>
+                  <div
+                    class="invalid-form"
+                    ng-show="errorsFormChangePassword.newpassword"
+                  >
+                    <span>{{ errorsFormChangePassword.newpassword }}</span>
+                  </div>
+                  <div class="padding">
+                    <button
+                      type="submit"
+                      class="button button-dark button-small"
+                    >
+                      Modificar
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
             <div class="padding">
               <button type="submit" class="button button-dark button-small">
