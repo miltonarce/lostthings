@@ -60,23 +60,13 @@ angular.module("lostThings.services").factory("Items", [
       return $http.delete(`${API_SERVER}/items/${id}`);
     }
 
-    /**
-     * Permite comentar una publicación
-     * @param {Object} comment
-     * @returns Promise
-     */
-    function commentPublication(comment) {
-      return $http.post(`${API_SERVER}/comments`, comment);
-    }
-
     return {
       getAllItems: getAllItems,
       searchItems: searchItems,
       publishItem: publishItem,
       getDetail: getDetail,
       edit: edit,
-      remove: remove,
-      commentPublication: commentPublication
+      remove: remove
     };
   }
   

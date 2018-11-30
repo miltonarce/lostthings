@@ -31,7 +31,7 @@ Class ComentsController extends BaseController{
     try{
       $item = new Item;
       $item->createComment([
-        'fkidpublicacion' => $id,
+        'fkidpublicacion' => $idpublicacion,
         'fkidusuario' => $data['idusuario'],
         'comentario' => $data['comentario'],
         'fecha_publicacion' => $data['fecha_publicacion']

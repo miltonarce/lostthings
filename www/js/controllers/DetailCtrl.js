@@ -26,7 +26,7 @@ angular
 		$scope.requestEdit = {};
 
 		//Request comentario
-		$scope.comment = { description: '', idUser: idUser };
+		$scope.comment = { comentario: '', idusuario: idUser, fecha_publicacion: Utils.getDate() };
 
 		//Obtengo el detalle de la publicación
 		Items.getDetail($stateParams.id).then(function(res) {
@@ -53,10 +53,15 @@ angular
 					$scope.errors.comentario = 'El campo no puede ser vacío';
 				}
 			} else {
-				Items.commentPublication(comment, idUser).then(res => {
-					$scope.item.comentarios = $scope.item.comentarios.concat(res);
-					$scope.comment = '';
-					$scope.$apply();
+				let idPublish = $scope.item.idpublicacion;
+				Comments.publish(idPublish, $scope.comment).then(res => {
+					if (res.status === 1) {
+						$scope.item.comentarios = $scope.item.comentarios.concat(res.data.data);
+						$scope.comment = '';
+						$scope.$apply();
+					} else {
+						Utils.showPopup('Comentar', res.data.message);
+					}
 				}).catch(_err => Utils.showPopup('Comentar', 'Se produjo un error al comentar'));
 			}
 		}
