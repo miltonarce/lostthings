@@ -124,8 +124,8 @@ class Item implements JsonSerializable{
     $query = "DELETE FROM publicaciones WHERE idpublicacion = ':idpublicacion' LIMIT 1";
     $stmt = $db->prepare($query);
     $success = $stmt->execute(['idpublicacion' => $id]);
-    if(!$success){
-      throw new Exception('Error al borrar el item en la base de datos.');
+    if($success){
+      throw new Exception('Error al borrar el item en la base de datos.'.$success);
     }
   }
   public function loadDataArray($row){
