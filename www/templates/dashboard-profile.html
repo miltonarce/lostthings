@@ -1,62 +1,111 @@
 <ion-view title="Perfil">
-    <ion-content>
-        <div class="item item-divider container-modify-profile">
-            <h1 class="title-profile">Mis datos</h1>
-            <button class="button button-clear button-positive" ng-click="toggleEnableEdit()">{{!enableEdit ? 'Modificar' : 'Cancelar'}}</button>
+  <ion-content>
+    <div class="item item-divider container-modify-profile">
+      <h1 class="title-profile">Mis datos</h1>
+      <button
+        class="button button-clear button-positive"
+        ng-click="toggleEnableEdit()"
+      >
+        {{ !enableEdit ? "Modificar" : "Cancelar" }}
+      </button>
+    </div>
+    <div class="list" ng-if="!enableEdit">
+      <ion-item class="item">Nombre: {{ userData.nombre }}</ion-item>
+      <ion-item class="item">Apellido: {{ userData.apellido }}</ion-item>
+    </div>
+    <div class="padding" ng-if="enableEdit">
+      <form
+        name="formEdit"
+        ng-submit="editProfile(formEdit, requestEdit)"
+        novalidate
+      >
+        <div class="list">
+          <label class="item item-input item-stacked-label item-form">
+            <span class="input-label">Nombre</span>
+            <input
+              name="nombre"
+              type="text"
+              placeholder="Ingresa tu nombre"
+              ng-model="requestEdit.nombre"
+              required
+            />
+          </label>
+          <div class="invalid-form" ng-show="errors.nombre">
+            <span>{{ errors.nombre }}</span>
+          </div>
+          <label class="item item-input item-stacked-label item-form">
+            <span class="input-label">Apellido</span>
+            <input
+              name="apellido"
+              type="text"
+              placeholder="Ingresa tu apellido"
+              ng-model="requestEdit.apellido"
+              required
+            />
+          </label>
+          <div class="invalid-form" ng-show="errors.apellido">
+            <span>{{ errors.apellido }}</span>
+          </div>
         </div>
-        <div class="list" ng-if="!enableEdit">
-            <ion-item class="item">Nombre: {{userData.nombre}}</ion-item>
-            <ion-item class="item">Apellido: {{userData.apellido}}</ion-item>
-        </div>
-        <div class="padding" ng-if="enableEdit">
-            <form name="formEdit" ng-submit="editProfile(formEdit, requestEdit)" novalidate>
-                <div class="list">
-                    <label class="item item-input item-stacked-label item-form">
-                        <span class="input-label">Nombre</span>
-                        <input name="nombre" type="text" placeholder="Ingresa tu nombre" ng-model="requestEdit.nombre" required />
-                    </label>
-                    <div class="invalid-form" ng-show="errors.nombre">
-                        <span>{{ errors.nombre }}</span>
-                    </div>
-                    <label class="item item-input item-stacked-label item-form">
-                        <span class="input-label">Apellido</span>
-                        <input name="apellido" type="text" placeholder="Ingresa tu apellido" ng-model="requestEdit.apellido" required />
-                    </label>
-                    <div class="invalid-form" ng-show="errors.apellido">
-                        <span>{{ errors.apellido }}</span>
-                    </div>
-                </div>
-                <button type="submit" class="button button-dark button-block">Modificar</button>
-            </form>
-        </div>
-        <div>
-            <div class="item item-divider">
-                <h1 class="title-profile">Password</h1>
+        <button type="submit" class="button button-dark button-block">
+          Modificar
+        </button>
+      </form>
+    </div>
+    <div>
+      <div class="item item-divider">
+        <h1 class="title-profile">Password</h1>
+      </div>
+      <div>
+        <form
+          name="formChangePassword"
+          ng-submit="changePassword(formChangePassword, requestPassword)"
+          novalidate
+        >
+          <div class="list list-inset">
+            <label class="item item-input">
+              <input
+                name="oldPassword"
+                type="password"
+                placeholder="Ingresa tu password actual"
+                ng-model="requestPassword.oldPassword"
+                required
+              />
+            </label>
+            <div
+              class="invalid-form"
+              ng-show="errorsFormChangePassword.oldPassword"
+            >
+              <span>{{ errorsFormChangePassword.oldPassword }}</span>
             </div>
-            <div>
-                <form name="formChangePassword" ng-submit="changePassword(formChangePassword, requestPassword)" novalidate>
-                    <div class="list list-inset">
-                        <label class="item item-input">
-                            <input name="oldPassword" type="password" placeholder="Ingresa tu password actual" ng-model="requestPassword.oldPassword" required />
-                        </label>
-                        <div class="invalid-form" ng-show="errorsFormChangePassword.oldPassword">
-                            <span>{{ errorsFormChangePassword.oldPassword }}</span>
-                        </div>
-                        <label class="item item-input">
-                            <input name="newPassword" type="password" placeholder="Nuevo password" ng-model="requestPassword.newPassword" required/>
-                        </label>
-                        <div class="invalid-form" ng-show="errorsFormChangePassword.newPassword">
-                            <span>{{ errorsFormChangePassword.newPassword }}</span>
-                        </div>
-                        <div class="padding">
-                            <button type="submit" class="button button-dark button-small">Modificar</button>
-                        </div>
-                    </div>
-                </form>
+            <label class="item item-input">
+              <input
+                name="newPassword"
+                type="password"
+                placeholder="Nuevo password"
+                ng-model="requestPassword.newPassword"
+                required
+              />
+            </label>
+            <div
+              class="invalid-form"
+              ng-show="errorsFormChangePassword.newPassword"
+            >
+              <span>{{ errorsFormChangePassword.newPassword }}</span>
             </div>
-        </div>
-        <div class="text-center">
-            <button class="button button-clear button-positive" ng-click="logout()">Cerrar Sesión</button>
-        </div>
-    </ion-content>
+            <div class="padding">
+              <button type="submit" class="button button-dark button-small">
+                Modificar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="text-center">
+      <button class="button button-clear button-positive" ng-click="logout()">
+        Cerrar Sesión
+      </button>
+    </div>
+  </ion-content>
 </ion-view>

@@ -76,7 +76,7 @@ class UsuariosController extends BaseController{
   public function edit()
   {
     $params = Route::getUrlParameters();
-    $id = $params['id'];
+    $id = $params['idUser'];
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
     
