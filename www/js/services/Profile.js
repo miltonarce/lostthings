@@ -16,19 +16,21 @@ angular
         /**
          * Permite editar los datos del usuario, se envia en el HEADER 
          * el api key del jwt...
+         * @param {number} idUser
          * @param userData
          * @returns Promise
          */
-        function edit(userData) {
-            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
+        function edit(idUser, userData) {
+            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
         }
 
         /**
          * Permite modificar la contraseña que posee el usuario
+         * @param {number} idUser
          * @param {Object} requestPassword 
          */
-        function changePassword(requestPassword) {
-            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
+        function changePassword(idUser, requestPassword) {
+            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
         }
 
         /**

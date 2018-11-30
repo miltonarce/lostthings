@@ -14,10 +14,10 @@ angular
 			$scope.userData = Authentication.getUserData();
 
 			//Request para cambiar la contraseña
-			$scope.requestPassword = { idUser: $scope.userData.idusuario, oldPassword: '', newPassword: '' } ;
+			$scope.requestPassword = { password: '', newPassword: '' } ;
 
 			//Request para editar los datos
-			$scope.requestEdit = { idUser: $scope.userData.idusuario, nombre: '', apellido: '' };
+			$scope.requestEdit = { nombre: '', apellido: '' };
 
 			//Flag para mostrar el formulario de edición
 			$scope.enableEdit = false;
@@ -47,9 +47,9 @@ angular
 		$scope.editProfile = function(formEdit, user) {
 			$scope.errors = validateFields(formEdit);
 			if ($scope.errors.nombre === null && $scope.errors.apellido === null) {
-			 Profile.edit($scope.requestEdit).then(response => {
+			 Profile.edit($scope.userData.idusuario, $scope.requestEdit).then(response => {
 				if (response.status === 1) {
-					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!");
+					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => $state.go('dashboard'));
 				} else {
 					Utils.showPopup("Perfil", "No se pudo actualizar su perfil, intente más tarde");
 				}
@@ -66,10 +66,10 @@ angular
 		 */
 		$scope.changePassword = function(formChangePassword, requestPassword) {
 			$scope.errorsFormChangePassword = validateFieldsPassword(formChangePassword);
-			if ($scope.errorsFormChangePassword.oldPassword === null && $scope.errorsFormChangePassword.newPassword === null) {
-				Profile.changePassword($scope.requestPassword).then(response => {
-					if (response.status === 1) {
-						Utils.showPopup("Perfil", "Se actualizó correctamente su password!");
+			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newPassword === null) {
+				Profile.changePassword($scope.userData.idusuario, $scope.requestPassword).then(response => {
+					if (response.data.status === 1) {
+						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard'));
 					} else {
 						Utils.showPopup("Perfil", "No se pudo actualizar su password, intente más tarde");
 					}
@@ -117,12 +117,12 @@ angular
 		 */
 		function validateFieldsPassword(formChangePassword) {
 			let errors = {
-				oldPassword: null,
+				password: null,
 				newPassword: null
 			};
-			if (formChangePassword.oldPassword.$invalid) {
-				if (formChangePassword.oldPassword.$error.required) {
-					errors.oldPassword = "Su password actual no puede ser vacía";
+			if (formChangePassword.password.$invalid) {
+				if (formChangePassword.password.$error.required) {
+					errors.password = "Su password actual no puede ser vacía";
 				}
 			}
 			if (formChangePassword.newPassword.$invalid) {
