@@ -17,4 +17,4 @@ Route::add('DELETE' , '/items/{id}', 'ItemsController@delete');
 Route::add('POST', '/register', 'UsuariosController@create');
 Route::add('GET', '/profile', 'UsuariosController@profile');
 Route::add('GET', '/comments/{idPublish}', 'ComentsController@all');
-
+Route::add('POST', '/comments/{idPublish}', 'ComentsController@publishComent');
