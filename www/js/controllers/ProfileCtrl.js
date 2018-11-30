@@ -14,7 +14,7 @@ angular
 			$scope.userData = Authentication.getUserData();
 
 			//Request para cambiar la contraseña
-			$scope.requestPassword = { password: '', newPassword: '' } ;
+			$scope.requestPassword = { password: '', newpassword: '' } ;
 
 			//Request para editar los datos
 			$scope.requestEdit = { nombre: '', apellido: '' };
@@ -66,7 +66,7 @@ angular
 		 */
 		$scope.changePassword = function(formChangePassword, requestPassword) {
 			$scope.errorsFormChangePassword = validateFieldsPassword(formChangePassword);
-			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newPassword === null) {
+			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
 				Profile.changePassword($scope.userData.idusuario, $scope.requestPassword).then(response => {
 					if (response.data.status === 1) {
 						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard'));
@@ -118,16 +118,16 @@ angular
 		function validateFieldsPassword(formChangePassword) {
 			let errors = {
 				password: null,
-				newPassword: null
+				newpassword: null
 			};
 			if (formChangePassword.password.$invalid) {
 				if (formChangePassword.password.$error.required) {
 					errors.password = "Su password actual no puede ser vacía";
 				}
 			}
-			if (formChangePassword.newPassword.$invalid) {
-				if (formChangePassword.newPassword.$error.required) {
-					errors.newPassword = "Su nuevo password no puede ser vacío";
+			if (formChangePassword.newpassword.$invalid) {
+				if (formChangePassword.newpassword.$error.required) {
+					errors.newpassword = "Su nuevo password no puede ser vacío";
 				}
 			}
 			return errors;
