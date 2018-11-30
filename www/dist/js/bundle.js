@@ -499,7 +499,7 @@ angular
 			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
 				Profile.changePassword($scope.userData.idusuario, $scope.requestPassword).then(response => {
 					if (response.data.status === 1) {
-						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard'));
+						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard.home'));
 					} else {
 						Utils.showPopup("Perfil", "No se pudo actualizar su password, intente más tarde");
 					}
