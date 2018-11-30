@@ -101,13 +101,17 @@ angular
 		 * @param id
 		 */
 		$scope.removeItem = function() {
-			Utils.showConfirm('Eliminar', '¿Estás seguro de eliminar?').then(accept => {
-				if (accept) {
-					Items.remove($scope.item.idpublicacion).then(res => {
-						Utils.showPopup('Eliminar', res.data.message).then(() => $state.go('dashboard.home'));
-					}).catch(_err => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
-				}
-			})
+			if ( $scope.item.fkidusuario === idUser) {
+				Utils.showConfirm('Eliminar', '¿Estás seguro de eliminar?').then(accept => {
+					if (accept) {
+						Items.remove($scope.item.idpublicacion).then(res => {
+							Utils.showPopup('Eliminar', res.data.message).then(() => $state.go('dashboard.home'));
+						}).catch(_err => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
+					}
+				});
+			} else {
+				Utils.showPopup('Eliminar', 'No puedes eliminar una publicación que no es tuya');
+			}
 		}
 
 		/**
