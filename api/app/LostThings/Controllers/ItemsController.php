@@ -4,6 +4,7 @@ namespace LostThings\Controllers;
 
 use LostThings\Models\Item;
 use LostThings\Core\View;
+use LostThings\Core\Validator;
 use LostThings\Core\Route;
 
 Class ItemsController extends BaseController{
@@ -42,28 +43,44 @@ Class ItemsController extends BaseController{
   public function create(){
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
-    try{
-      $item = new Item;
-      $item->create([
-        'titulo' => $data['titulo'],
-        'descripcion' => $data['descripcion'],
-        'img' => $data['img'],
-        'fecha_publicacion' => $data['fecha_publicacion'],
-        'ubicacion' => $data['ubicacion'],
-        'fkidusuario' => $data['fkidusuario']
-      ]);
 
-      View::renderJson([
-        'status' => 1,
-        'message' => 'Item creado exitosamente.',
-        'data' => $item
-      ]);
-    }catch(Exeption $e){
+    $validator = new Validator($data, [
+      'titulo' => ['required'],
+      'descripcion' => ['required'],
+      'fecha_publicacion' => ['required'],
+      'ubicacion' => ['required'],
+      'fkidusuario' => ['required']
+    ]);
+
+    if ($validator->passes()) {
+      try {
+          $item = new Item;
+          $item->create([
+            'titulo' => $data['titulo'],
+            'descripcion' => $data['descripcion'],
+            'img' => $data['img'],
+            'fecha_publicacion' => $data['fecha_publicacion'],
+            'ubicacion' => $data['ubicacion'],
+            'fkidusuario' => $data['fkidusuario']
+          ]);
+          View::renderJson([
+            'status' => 1,
+            'message' => 'Item creado exitosamente.',
+            'data' => $item
+          ]);
+      } catch(Exeption $e) {
+        View::renderJson([
+          'status' => 0,
+          'message' => $e
+        ]);
+      }
+    } else {
       View::renderJson([
         'status' => 0,
-        'message' => $e
+        'error' => $validator->getErrores()
       ]);
     }
+    
   }
   public function edit()
   {
@@ -72,29 +89,44 @@ Class ItemsController extends BaseController{
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
 
-    try{
-      $item = new Item;
-      $item->edit([
-        'idpublicacion' => $id,
-        'fkidusuario' => $data['fkidusuario'],
-        'titulo' => $data['titulo'],
-        'descripcion' => $data['descripcion'],
-        'img' => $data['img'],
-        'fecha_publicacion' => $data['fecha_publicacion'],
-        'ubicacion' => $data['ubicacion'],
-      ]);
+    $validator = new Validator($data, [
+      'fkidusuario' => ['required'],
+      'titulo' => ['required'],
+      'descripcion' => ['required'],
+      'fecha_publicacion' => ['required'],
+      'ubicacion' => ['required']
+    ]);
 
-      View::renderJson([
-        'status' => 1,
-        'message' => 'Item creado exitosamente.',
-        'data' => $data
-      ]);
-    }catch(Exeption $e){
+    if ($validator->passes()) {
+      try {
+        $item = new Item;
+        $item->edit([
+          'idpublicacion' => $id,
+          'fkidusuario' => $data['fkidusuario'],
+          'titulo' => $data['titulo'],
+          'descripcion' => $data['descripcion'],
+          'img' => $data['img'],
+          'fecha_publicacion' => $data['fecha_publicacion'],
+          'ubicacion' => $data['ubicacion'],
+        ]);
+        View::renderJson([
+          'status' => 1,
+          'message' => 'Item creado exitosamente.',
+          'data' => $data
+        ]);
+      } catch(Exeption $e){
+        View::renderJson([
+          'status' => 0,
+          'message' => $e
+        ]);
+      }
+    } else {
       View::renderJson([
         'status' => 0,
-        'message' => $e
+        'error' => $validator->getErrores()
       ]);
     }
+   
   }
   public function delete()
 	{
