@@ -57,28 +57,6 @@
         <h1 class="title-profile">Password</h1>
       </div>
       <div>
-        <form
-          name="formChangePassword"
-          ng-submit="changePassword(formChangePassword, requestPassword)"
-          novalidate
-        >
-          <div class="list list-inset">
-            <label class="item item-input">
-              <input
-                name="oldPassword"
-                type="password"
-                placeholder="Ingresa tu password actual"
-                ng-model="requestPassword.oldPassword"
-                required
-              />
-            </label>
-            <div
-              class="invalid-form"
-              ng-show="errorsFormChangePassword.oldPassword"
-            >
-              <span>{{ errorsFormChangePassword.oldPassword }}</span>
-            </div>
-            <div>
               <form
                 name="formChangePassword"
                 ng-submit="changePassword(formChangePassword, requestPassword)"
@@ -125,11 +103,6 @@
                   </div>
                 </div>
               </form>
-            </div>
-            <div class="padding">
-              <button type="submit" class="button button-dark button-small">
-                Modificar
-              </button>
             </div>
           </div>
         </form>
