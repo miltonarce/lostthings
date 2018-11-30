@@ -137,7 +137,7 @@ Class ItemsController extends BaseController{
 			$item->delete($id);
 			View::renderJson([
 				'status' => 1,
-				'message' => 'Se eliminó correctamente la publicación'.$id,
+				'message' => 'Se eliminó correctamente la publicación'
 			]);
 		} catch(Exception $e) {
 			View::renderJson([
