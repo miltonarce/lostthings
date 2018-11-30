@@ -104,8 +104,8 @@ class UsuariosController extends BaseController{
       $user = new User;
       $user->editpass([
         'idusuario' => $id,
-        'password' => $data['password'],
-        'newpassword' => $data['newpassword']
+        'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+        'newpassword' => password_hash($data['newpassword'], PASSWORD_DEFAULT)
       ]);
       View::renderJson([
         'status' => 1,

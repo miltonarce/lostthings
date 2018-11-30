@@ -87,8 +87,8 @@ class User
     $stmt = $db->prepare($query);
     $success = $stmt->execute([
       'nombre' => $row['nombre'],
-      'apellido' => $row['apellido']
-      'idusuario' => $row['idusuario'],
+      'apellido' => $row['apellido'],
+      'idusuario' => $row['idusuario']
     ]);
     
     if(!$success){
