@@ -7,6 +7,9 @@ use Exception;
 class User
 {
   public $id;
+  public $nombre;
+  public $apellido;
+  public $fecha_alta;
   public $user;
   public $email;
   public $pass;
@@ -17,7 +20,7 @@ class User
  */
   public function getByEmail($email){
     $db = DBConnection::getConnection();
-    $query = "SELECT idusuario, usuario, password, email FROM usuarios
+    $query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios
     WHERE email = ?";
     $stmt = $db->prepare($query);
     $stmt->execute([$email]);
@@ -36,7 +39,7 @@ class User
   public function getById($userID)
 	{
 		$db = DBConnection::getConnection();
-		$query = "SELECT nombre, apellido, usuario, email FROM usuarios
+		$query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios
 				WHERE idusuario = ?";
 		$stmt = $db->prepare($query);
 		$stmt->execute([$userID]);
@@ -78,6 +81,9 @@ class User
    */
   public function loadDataArray($row){
     $this->id = $row['idusuario'];
+    $this->nombre = $row['nombre'];
+    $this->apellido = $row['apellido'];
+    $this->fecha_alta = $row['fecha_alta'];
     $this->user = $row['usuario'];
     $this->email = $row['email'];
     $this->pass = $row['password'];
