@@ -443,14 +443,15 @@ angular
 
 		//Request para editar los datos
 		$scope.requestEdit = { idUser: $scope.userData.idusuario, nombre: '', apellido: '' };
-
 		
 		$scope.$on('$ionicView.beforeEnter', function() {
 			//Flag para mostrar el formulario de edición
 			$scope.enableEdit = false;
-			
 			Profile.getAdditionalInfo().then(function(response) {
-				console.log('response', response)
+				$scope.userData.nombre = response.data.data.nombre;
+				$scope.userData.apellido = response.data.data.apellido;
+				$scope.requestEdit.nombre = response.data.data.nombre;
+				$scope.requestEdit.apellido = response.data.data.apellido;
 			}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
 		});
 
