@@ -37,10 +37,10 @@
                 <form name="formChangePassword" ng-submit="changePassword(formChangePassword, requestPassword)" novalidate>
                     <div class="list list-inset">
                         <label class="item item-input">
-                            <input name="oldPassword" type="password" placeholder="Ingresa tu password actual" ng-model="requestPassword.oldPassword" required />
+                            <input name="password" type="password" placeholder="Ingresa tu password actual" ng-model="requestPassword.password" required />
                         </label>
-                        <div class="invalid-form" ng-show="errorsFormChangePassword.oldPassword">
-                            <span>{{ errorsFormChangePassword.oldPassword }}</span>
+                        <div class="invalid-form" ng-show="errorsFormChangePassword.password">
+                            <span>{{ errorsFormChangePassword.password }}</span>
                         </div>
                         <label class="item item-input">
                             <input name="newPassword" type="password" placeholder="Nuevo password" ng-model="requestPassword.newPassword" required/>

@@ -985,7 +985,7 @@ angular
          * @param {Object} requestPassword 
          */
         function changePassword(idUser, requestPassword) {
-            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
+            return $http.put(`${API_SERVER}/profile/${idUser}`, requestPassword, defaultHeader);
         }
 
         /**
