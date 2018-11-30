@@ -36,7 +36,7 @@ class User
   public function getById($userID)
 	{
 		$db = DBConnection::getConnection();
-		$query = "SELECT nombre, apellido FROM usuarios
+		$query = "SELECT nombre, apellido, usuario, email FROM usuarios
 				WHERE idusuario = ?";
 		$stmt = $db->prepare($query);
 		$stmt->execute([$userID]);
