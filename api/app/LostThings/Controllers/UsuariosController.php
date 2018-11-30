@@ -73,4 +73,56 @@ class UsuariosController extends BaseController{
     ]);
   }
 
+  public function edit()
+  {
+    $params = Route::getUrlParameters();
+    $id = $params['id'];
+    $d_Post = file_get_contents('php://input');
+    $data = json_decode($d_Post, true);
+    
+    if($data['nombre'] && $data['apellido']){
+      try{  
+      $user = new User;
+        $user->editdata([
+          'idusuario' => $id,
+          'nombre' => $data['nombre'],
+          'apellido' => $data['apellido']
+        ]);
+        View::renderJson([
+          'status' => 1,
+          'message' => 'Perfil editado exitosamente.',
+          'data' => $data
+        ]);
+      }catch(Exception $e){
+        View::renderJson([
+          'status' => 0,
+          'message' => $e
+        ]);
+      }
+    }else if($data['password'] && $data['newpassword']){
+      try{  
+      $user = new User;
+      $user->editpass([
+        'idusuario' => $id,
+        'password' => $data['password'],
+        'newpassword' => $data['newpassword']
+      ]);
+      View::renderJson([
+        'status' => 1,
+        'message' => 'Password modificada exitosamente.',
+        'data' => $data
+      ]);
+    }catch(Exception $e){
+      View::renderJson([
+        'status' => 0,
+        'message' => $e
+      ]);
+    }
+    }else{
+      View::renderJson([
+        'status' => 0,
+        'message' => 'No paso los parametros deseados.'
+      ]);
+    }
+
 }

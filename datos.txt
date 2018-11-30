@@ -1,0 +1,10 @@
+Carrera : Diseño Web
+materia : Clientes Web Mobile y Programación 3 
+cuatrimestre : Segundo cuatrimestre
+año : 2018
+turno : Turno Noche
+comisión : W1041 y W1043
+apellido : Arce y Torre
+nombre : Milton y Matias
+docente : Santiago Gallino.
+carácter de entrega (2do parcial).

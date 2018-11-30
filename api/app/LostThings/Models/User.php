@@ -73,7 +73,50 @@ class User
       throw new Exception('No se pudo agregar el usuario en la base de datos');
     }
   }
-
+  /**
+   * edit de datos 
+   */
+  public function editdata($row){
+    $db = DBConnection::getConnection();
+    $query = "UPDATE usuarios 
+                  SET 
+                    nombre = ':nombre',
+                    apellido = ':apellido'
+                  WHERE  idusuario = ':idusuario'";
+                  
+    $stmt = $db->prepare($query);
+    $success = $stmt->execute([
+      'idusuario' => $row['idusuario'],
+      'nombre' => $row['nombre'],
+      'apellido' => $row['apellido']
+    ]);
+    
+    if(!$success){
+      throw new Exception('No se pudo editar el usuario en la base de datos');
+    }
+  }
+  /**
+   * edit de password
+   */
+  public function editpass($row){
+    $db = DBConnection::getConnection();
+    $query = "UPDATE usuarios 
+                  SET 
+                    password = ':newpassword'
+                  WHERE  idusuario = ':idusuario' AND password = ':password'";
+                  
+    $stmt = $db->prepare($query);
+    $success = $stmt->execute([
+      'idusuario' => $row['idusuario'],
+      'password' => $row['password'],
+      'newpassword' => $row['newpassword']
+    ]);
+    
+    if(!$success){
+      throw new Exception('No se pudo editar el usuario en la base de datos');
+    }
+  }
+  
 
   /**
    * Carga datps de la $row en el objeto
