@@ -432,6 +432,10 @@ angular
 		//Flag para mostrar el formulario de edición
 		$scope.enableEdit = false;
 
+		Profile.getAdditionalInfo().then(function(response) {
+			console.log('response', response)
+		}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+
 		/**
 		 * Permite habilitar / deshabilitar el formulario de edición
 		 * @returns void
@@ -935,7 +939,7 @@ angular
         //Header default para el token
         const defaultHeader = {
             headers: {
-                'HTTP_X_TOKEN' : Authentication.getToken()
+                'X-Token' : Authentication.getToken()
             }
         };
 
@@ -957,9 +961,18 @@ angular
             return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
+        /**
+         * Permite obtener la información del usuario adicional
+         * @returns Promise
+         */
+        function getAdditionalInfo() {
+            return $http.get(`${API_SERVER}/profile`, defaultHeader)
+        }
+
         return {
             edit: edit,
-            changePassword: changePassword
+            changePassword: changePassword,
+            getAdditionalInfo: getAdditionalInfo
         }
 
     }
