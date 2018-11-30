@@ -170,10 +170,9 @@ angular
 			} else {
 				let idPublish = $scope.item.idpublicacion;
 				Comments.publish(idPublish, $scope.comment).then(res => {
-					if (res.status === 1) {
-						$scope.item.comentarios = $scope.item.comentarios.concat(res.data.data);
+					if (res.data.status === 1) {
+						$scope.comentarios.push(res.data.data);
 						$scope.comment = getDefaultRequest();
-						$scope.$apply();
 					} else {
 						Utils.showPopup('Comentar', res.data.message);
 					}
@@ -213,13 +212,17 @@ angular
 		 * @param id
 		 */
 		$scope.removeItem = function() {
-			Utils.showConfirm('Eliminar', '¿Estás seguro de eliminar?').then(accept => {
-				if (accept) {
-					Items.remove($scope.item.idpublicacion).then(res => {
-						Utils.showPopup('Eliminar', res.data.message).then(() => $state.go('dashboard.home'));
-					}).catch(_err => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
-				}
-			})
+			if ( $scope.item.fkidusuario === idUser) {
+				Utils.showConfirm('Eliminar', '¿Estás seguro de eliminar?').then(accept => {
+					if (accept) {
+						Items.remove($scope.item.idpublicacion).then(res => {
+							Utils.showPopup('Eliminar', res.data.message).then(() => $state.go('dashboard.home'));
+						}).catch(_err => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
+					}
+				});
+			} else {
+				Utils.showPopup('Eliminar', 'No puedes eliminar una publicación que no es tuya');
+			}
 		}
 
 		/**
@@ -434,25 +437,28 @@ angular
 	'Profile',
 	'Utils',
 	function($scope, $state, Authentication, Profile, Utils) {
-
-		//Obtengo la información del usuario
-		$scope.userData = Authentication.getUserData();
-
-		//Request para cambiar la contraseña
-		$scope.requestPassword = { idUser: $scope.userData.idusuario, oldPassword: '', newPassword: '' } ;
-
-		//Request para editar los datos
-		$scope.requestEdit = { idUser: $scope.userData.idusuario, nombre: '', apellido: '' };
 		
 		$scope.$on('$ionicView.beforeEnter', function() {
+
+			//Obtengo la información del usuario
+			$scope.userData = Authentication.getUserData();
+
+			//Request para cambiar la contraseña
+			$scope.requestPassword = { idUser: $scope.userData.idusuario, oldPassword: '', newPassword: '' } ;
+
+			//Request para editar los datos
+			$scope.requestEdit = { idUser: $scope.userData.idusuario, nombre: '', apellido: '' };
+
 			//Flag para mostrar el formulario de edición
 			$scope.enableEdit = false;
+
 			Profile.getAdditionalInfo().then(function(response) {
 				$scope.userData.nombre = response.data.data.nombre;
 				$scope.userData.apellido = response.data.data.apellido;
 				$scope.requestEdit.nombre = response.data.data.nombre;
 				$scope.requestEdit.apellido = response.data.data.apellido;
 			}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+			
 		});
 
 		/**
@@ -569,11 +575,12 @@ angular
 	'Authentication',
 	function($scope, $state, Utils, Items, Authentication) {
 
-		//Información del usuario
-		$scope.userData = Authentication.getUserData();
-			
-		//Request Publish
-		$scope.item = defaultRequest();
+		$scope.$on('$ionicView.beforeEnter', function() {
+			//Información del usuario
+			$scope.userData = Authentication.getUserData();
+			//Request Publish
+			$scope.item = defaultRequest();
+	    });	
 		
 		/**
 		 * Permite publicar un articulo para que se pueda encontrar
