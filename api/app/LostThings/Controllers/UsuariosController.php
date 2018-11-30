@@ -46,7 +46,7 @@ class UsuariosController extends BaseController{
     View::renderJson([
       'status' => 1,
 			'data' => [
-				'idusuario' 		=> $user->idusuario,
+				'idusuario' 		=> $user->id,
 				'usuario' 	=> $user->usuario,
 				'email' 	=> $user->email,
       ]
