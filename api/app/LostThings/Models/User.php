@@ -20,7 +20,7 @@ class User
  */
   public function getByEmail($email){
     $db = DBConnection::getConnection();
-    $query = "SELECT idusuario, usuario, password, email FROM usuarios
+    $query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios
     WHERE email = ?";
     $stmt = $db->prepare($query);
     $stmt->execute([$email]);
@@ -39,7 +39,7 @@ class User
   public function getById($userID)
 	{
 		$db = DBConnection::getConnection();
-		$query = "SELECT nombre, apellido, usuario, email FROM usuarios
+		$query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios
 				WHERE idusuario = ?";
 		$stmt = $db->prepare($query);
 		$stmt->execute([$userID]);

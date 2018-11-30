@@ -49,6 +49,7 @@ class UsuariosController extends BaseController{
         'idusuario' 		=> $user->id,
         'nombre' 		=> $user->nombre,
         'apellido' 		=> $user->apellido,
+        'fecha_alta' 		=> $user->fecha_alta,
 				'usuario' 	=> $user->usuario,
 				'email' 	=> $user->email,
       ]
