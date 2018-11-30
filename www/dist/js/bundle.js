@@ -576,11 +576,12 @@ angular
 	'Authentication',
 	function($scope, $state, Utils, Items, Authentication) {
 
-		//Información del usuario
-		$scope.userData = Authentication.getUserData();
-			
-		//Request Publish
-		$scope.item = defaultRequest();
+		$scope.$on('$ionicView.beforeEnter', function() {
+			//Información del usuario
+			$scope.userData = Authentication.getUserData();
+			//Request Publish
+			$scope.item = defaultRequest();
+	    });	
 		
 		/**
 		 * Permite publicar un articulo para que se pueda encontrar
