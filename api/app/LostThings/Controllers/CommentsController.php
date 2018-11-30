@@ -5,6 +5,7 @@ namespace LostThings\Controllers;
 use LostThings\Models\Item;
 use LostThings\Core\View;
 use LostThings\Core\Route;
+use LostThings\Models\Comments;
 
 Class CommentsController extends BaseController{
    
