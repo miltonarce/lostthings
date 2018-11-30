@@ -131,8 +131,6 @@ angular
 		//Información del usuario logueado
 		const idUser = Authentication.getUserData().idusuario;
 
-		console.log('idUser', idUser)
-
 		//Al ingresar a la view, obtiene el detalle de la publicacion, con los comentarios
 		$scope.$on('$ionicView.beforeEnter', function() {
 
