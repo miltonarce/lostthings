@@ -7,6 +7,9 @@ use Exception;
 class User
 {
   public $id;
+  public $nombre;
+  public $apellido;
+  public $fecha_alta;
   public $user;
   public $email;
   public $pass;
@@ -78,6 +81,9 @@ class User
    */
   public function loadDataArray($row){
     $this->id = $row['idusuario'];
+    $this->nombre = $row['nombre'];
+    $this->apellido = $row['apellido'];
+    $this->fecha_alta = $row['fecha_alta'];
     $this->user = $row['usuario'];
     $this->email = $row['email'];
     $this->pass = $row['password'];
