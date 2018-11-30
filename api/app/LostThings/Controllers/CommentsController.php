@@ -4,6 +4,7 @@ namespace LostThings\Controllers;
 
 use LostThings\Models\Item;
 use LostThings\Core\View;
+use LostThings\Core\Validator;
 use LostThings\Core\Route;
 use LostThings\Models\Comments;
 
@@ -29,26 +30,40 @@ Class CommentsController extends BaseController{
     $idpublicacion = $params['idPublish'];
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
-    try{
-      $comments = new Comments;
-      $comments->createComment([
-        'fkidpublicacion' => $idpublicacion,
-        'fkidusuario' => $data['idusuario'],
-        'comentario' => $data['comentario'],
-        'fecha_publicacion' => $data['fecha_publicacion']
-      ]);
 
-      View::renderJson([
-        'status' => 1,
-        'message' => 'Comentario creado exitosamente.',
-        'data' => $comments
-      ]);
-    }catch(Exeption $e){
+    $validator = new Validator($data, [
+      'idusuario' => ['required'],
+      'comentario' => ['required'],
+      'fecha_publicacion' => ['required']
+    ]);
+
+    if ($validator->passes()) {
+      try {
+          $comments = new Comments;
+          $comments->createComment([
+            'fkidpublicacion' => $idpublicacion,
+            'fkidusuario' => $data['idusuario'],
+            'comentario' => $data['comentario'],
+            'fecha_publicacion' => $data['fecha_publicacion']
+          ]);
+          View::renderJson([
+            'status' => 1,
+            'message' => 'Comentario creado exitosamente.',
+            'data' => $comments
+          ]);
+      } catch(Exeption $e){
+        View::renderJson([
+          'status' => 0,
+          'message' => $e
+        ]);
+      }
+    } else {
       View::renderJson([
         'status' => 0,
-        'message' => $e
+        'error' => $validator->getErrores()
       ]);
     }
+
   }
 
 }
