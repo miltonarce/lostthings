@@ -12,9 +12,9 @@ Class ComentsController extends BaseController{
     $params = Route::getUrlParameters();
     $id = $params['idPublish'];
     try{
-      $item = new Item;
-      $items = $item->getItemsComents($id);
-      View::renderJson($items);
+      $comments = new Comments;
+      $comments = $comments->getItemsComents($id);
+      View::renderJson($comments);
     }catch(Exception $e){
       View::renderJson([
       'status' => 0,
@@ -29,8 +29,8 @@ Class ComentsController extends BaseController{
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
     try{
-      $item = new Item;
-      $item->createComment([
+      $comments = new Comments;
+      $comments->createComment([
         'fkidpublicacion' => $id,
         'fkidusuario' => $data['idusuario'],
         'comentario' => $data['comentario'],
@@ -40,7 +40,7 @@ Class ComentsController extends BaseController{
       View::renderJson([
         'status' => 1,
         'message' => 'Comentario creado exitosamente.',
-        'data' => $item
+        'data' => $comments
       ]);
     }catch(Exeption $e){
       View::renderJson([
