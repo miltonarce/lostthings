@@ -22,22 +22,25 @@ angular
 		//Información del usuario logueado
 		const idUser = Authentication.getUserData().idusuario;
 
-		//Request para editar la publicación
-		$scope.requestEdit = {};
+		//Al ingresar a la view, obtiene el detalle de la publicacion, con los comentarios
+		$scope.$on('$ionicView.beforeEnter', function() {
 
-		//Request comentario
-		$scope.comment = { comentario: '', idusuario: idUser, fecha_publicacion: Utils.getDate() };
+			//Request para editar la publicación
+			$scope.requestEdit = {};
 
-		//Obtengo el detalle de la publicación
-		Items.getDetail($stateParams.id).then(function(res) {
-			let item = res.data;
-			$scope.item = item;
-			$scope.requestEdit = createDefaultRequest(item, idUser);
-		}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
+			//Request comentario
+			$scope.comment = getDefaultRequest();
 
-		Comments.getComments($stateParams.id).then(function(res) {
-			$scope.comentarios = res.data;
-		}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
+			//Obtengo el detalle de la publicación
+			Items.getDetail($stateParams.id).then(function(res) {
+				let item = res.data;
+				$scope.item = item;
+				$scope.requestEdit = createDefaultRequest(item, idUser);
+			}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
+			Comments.getComments($stateParams.id).then(function(res) {
+				$scope.comentarios = res.data;
+			}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
+	    });	
 
 		/**
 		 * Permite comentar una publicacion, realiza las validaciones y 
@@ -56,8 +59,8 @@ angular
 				let idPublish = $scope.item.idpublicacion;
 				Comments.publish(idPublish, $scope.comment).then(res => {
 					if (res.status === 1) {
-						$scope.item.comentarios = $scope.item.comentarios.concat(res.data.data);
-						$scope.comment = '';
+						//$scope.item.comentarios = $scope.item.comentarios.concat(res.data.data);
+						$scope.comment = getDefaultRequest();
 						$scope.$apply();
 					} else {
 						Utils.showPopup('Comentar', res.data.message);
@@ -167,6 +170,13 @@ angular
 			}
 		}
 
+		function getDefaultRequest() {
+			return { 
+				comentario: '', 
+				idusuario: idUser, 
+				fecha_publicacion: Utils.getDate() 
+			};
+		}
 
 	}
 ]);
