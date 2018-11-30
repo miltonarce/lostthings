@@ -124,5 +124,5 @@ class UsuariosController extends BaseController{
         'message' => 'No paso los parametros deseados.'
       ]);
     }
-
+  }
 }
