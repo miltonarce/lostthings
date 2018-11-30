@@ -58,10 +58,9 @@ angular
 			} else {
 				let idPublish = $scope.item.idpublicacion;
 				Comments.publish(idPublish, $scope.comment).then(res => {
-					if (res.status === 1) {
-						$scope.item.comentarios = $scope.item.comentarios.concat(res.data.data);
+					if (res.data.status === 1) {
+						$scope.comentarios.push(res.data.data);
 						$scope.comment = getDefaultRequest();
-						$scope.$apply();
 					} else {
 						Utils.showPopup('Comentar', res.data.message);
 					}
