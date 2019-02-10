@@ -55,6 +55,18 @@ angular
           }
         }
       })
+      .state("dashboard.friends", {
+        url: "/friends",
+        views: {
+          "tab-friends": {
+            templateUrl: "templates/dashboard-friends.html",
+            controller: "FriendsCtrl"
+          }
+        },
+        data: {
+          requiresAuth: true
+        }
+      })
       .state("dashboard.publish", {
         url: "/publish",
         views: {
@@ -87,6 +99,19 @@ angular
         data: {
           requiresAuth: true
         }
+      })
+      .state("chat", {
+        url: "/chat",
+        templateUrl: "templates/chat.html",
+        controller: "ChatCtrl",
+        data: {
+          requiresAuth: true
+        }
+      })
+      .state("profile", {
+        url: "/profile",
+        templateUrl: "templates/profile.html",
+        controller: "ProfileUserCtrl",
       })
       .state("login", {
         url: "/login",

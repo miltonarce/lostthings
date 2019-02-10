@@ -12,6 +12,23 @@ angular.module("lostThings.services").factory("Items", [
     }
 
     /**
+     * Permite obtener los items que publico el usuario
+     * @param {number} idUser
+     * @returns Promise
+     */
+    function getItemsByUser(idUser) {
+      return Promise.resolve([{
+        descripcion: "Encontre una tarjeta sube en el edificio",
+        fecha_publicacion: "2018-10-30",
+        fkidusuario: "2",
+        idpublicacion: "4",
+        img: "",
+        titulo: "Tarjeta Sube",
+        ubicacion: "Esmeralda 950"
+      }]);
+    }
+
+    /**
      * Permite buscar los items por el valor ingresado como parametro
      * @param {string} search
      * returns Promise
@@ -62,11 +79,12 @@ angular.module("lostThings.services").factory("Items", [
 
     return {
       getAllItems: getAllItems,
+      getItemsByUser: getItemsByUser,
       searchItems: searchItems,
       publishItem: publishItem,
       getDetail: getDetail,
       edit: edit,
-      remove: remove
+      remove: remove,
     };
   }
   

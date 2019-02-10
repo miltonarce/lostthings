@@ -55,6 +55,18 @@ angular
           }
         }
       })
+      .state("dashboard.friends", {
+        url: "/friends",
+        views: {
+          "tab-friends": {
+            templateUrl: "templates/dashboard-friends.html",
+            controller: "FriendsCtrl"
+          }
+        },
+        data: {
+          requiresAuth: true
+        }
+      })
       .state("dashboard.publish", {
         url: "/publish",
         views: {
@@ -88,6 +100,19 @@ angular
           requiresAuth: true
         }
       })
+      .state("chat", {
+        url: "/chat",
+        templateUrl: "templates/chat.html",
+        controller: "ChatCtrl",
+        data: {
+          requiresAuth: true
+        }
+      })
+      .state("profile", {
+        url: "/profile",
+        templateUrl: "templates/profile.html",
+        controller: "ProfileUserCtrl",
+      })
       .state("login", {
         url: "/login",
         templateUrl: "templates/login.html",
@@ -109,6 +134,21 @@ angular
 angular.module("lostThings.services", []);
 //Módulo para los controllers
 angular.module("lostThings.controllers", []);
+
+angular
+.module('lostThings.controllers')
+.controller('ChatCtrl', [
+	'$scope',
+	'$state',
+	'$stateParams',
+	'Utils',
+	'Authentication',
+	'Chat',
+	function($scope, $state, $stateParams, Utils, Authentication, Chat) {
+		
+	}
+]);
+
 
 angular
 .module('lostThings.controllers')
@@ -292,6 +332,116 @@ angular
 				fecha_publicacion: Utils.getDate() 
 			};
 		}
+
+	}
+]);
+
+
+angular
+.module('lostThings.controllers')
+.controller('FriendsCtrl', [
+	'$scope',
+	'$state',
+	'$stateParams',
+    'Utils',
+    'Users',
+	function($scope, $state, $stateParams, Utils, Users) {
+
+        //NgModel para el input del autocompletado
+        $scope.search = '';
+        //Lista de usuarios por default vacía
+        $scope.users = [];
+        //Lista de amigos por default vacía
+        $scope.friends = [];
+
+        //Al ingresar a la view, actualiza la lista de amigos
+		$scope.$on('$ionicView.beforeEnter', function() {
+			$scope.getFriendsByUser();
+        });	
+
+        /**
+		 * Permite actualizar la lista de amigos
+		 * Emite un evento para decirle que termino y que corte el refresh...
+		 * @returns void
+		 */
+		$scope.doRefresh = function() {
+            Users.getFriendsByUser().then(friends => {
+                $scope.friends = friends;
+				$scope.$broadcast('scroll.refreshComplete');
+            }).catch(() => {
+                $scope.$broadcast('scroll.refreshComplete');
+                Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`);
+            });
+        }
+        
+        /**
+         * Permite buscar si existen usuarios con el valor ingresado por el usuario,
+         * consulta la API de amigos de PHP para obtener los resultados, se realiza si el
+         * usuario ingresa mas de 2 carácteres
+         * @param {string} search 
+         * @returns void
+         */
+        $scope.searchFriends = function(search) {
+            if (search.length >= 2) {
+               Users.search(search)
+                    .then(users => $scope.users = users)
+                    .catch(() => Utils.showPopup('Amigos', `Se produjo al buscar los amigos por el campo ${input}`));
+            }
+        }
+
+        /**
+         * Permite buscar los amigos que posee el usuario
+         * @returns void
+         */
+        $scope.getFriendsByUser = function() {
+            Users.getFriendsByUser()
+                 .then(friends => $scope.friends = friends)
+                 .catch(() => Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`));
+        }
+
+        /**
+         * Permite agregar un usuario a la lista de amigos de la persona que esta logueada
+         * @param {Object} user
+         * @returns void
+         */
+        $scope.addFriend = function(user) {
+            Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
+                if (accept) {
+                    Users.addFriend(user.id)
+                         .then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
+                         .catch(() => Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`));
+                }
+            });
+        }
+
+        /**
+         * Permite eliminar a un usuario de la lista de amigos de la persona logueada
+         * @param {Object} user
+         * @returns void
+         */
+        $scope.deleteFriend = function(user) {
+            Users.deleteFriend(user.usuarioid)
+                .then()
+                .catch(() => Utils.showPopup('Amigos', `Se produjo un error al eliminar al usuario ${user.usuario}`));
+        }
+
+        /**
+         * Permite iniciar una conversación un usuario X, no es necesario que sea amigo para iniciarla
+         * @param {Object} user
+         * @returns void
+         */
+        $scope.startChat = function(user) {
+            $state.go('chat', { user: user });
+        }
+
+        /**
+         * Permite ir al perfil del usuario seleccionado por el id
+         * @param {number} idUser
+         * @returns void
+         */
+        $scope.showProfile = function(idUser) {
+            $state.go('profile', {'id': idUser });
+        }
 
 	}
 ]);
@@ -561,6 +711,87 @@ angular
 				}
 			}
 			return errors;
+		}
+
+	}
+]);
+angular
+.module('lostThings.controllers')
+.controller('ProfileUserCtrl', [
+	'$scope',
+	'$state',
+	'Authentication',
+	'Users',
+	'Items',
+	'Utils',
+	function($scope, $state, Authentication, Users, Items, Utils) {
+
+		$scope.profile = null;
+		$scope.items = [];
+		
+		//Al ingresar a la view, se trae toda la info del perfil del usuario, ya que puede variar...
+		$scope.$on('$ionicView.beforeEnter', function() {
+			$scope.getAllInfo();
+		});
+
+		/**
+		 * Permite obtener toda la información necesaria para cargar esta view
+		 * la lista de publicaciones que publico el usuario, como tambien la info de su
+		 * perfil, se hace uso de Promise all para poder realizar de manera mas facil
+		 * las 2 peticiones, si falla una, ya no sirve y se muestra una notificación.
+		 * @returns void
+		 */
+		$scope.getAllInfo = function() {
+			Promise.all([
+				Users.getProfileUser(),
+				Items.getItemsByUser(),
+			]).then(results => {
+				$scope.profile = results[0];
+				$scope.items = results[1];
+				$scope.$apply();
+			}).catch(() => Utils.showPopup('Perfil', `Se produjo un error al obtener la información del perfil del usuario`));
+		}
+
+		 /**
+		 * Permite iniciar una conversación un usuario X, no es necesario que sea amigo para iniciarla
+		 * @param {Object} user
+		 * @returns void
+		 */
+		$scope.startChat = function(user) {
+			$state.go('chat', { user: user });
+		}
+
+		/**
+		 * Permite verificar si el usuario logueado es amigo de la persona que esta mirando el
+		 * perfil
+		 * @returns boolean
+		 */
+		$scope.isFriend = function(idUser) {
+			return false;
+		}
+
+		  /**
+		 * Permite agregar un usuario a la lista de amigos de la persona que esta logueada
+		 * @param {Object} user
+		 * @returns void
+		 */
+		$scope.addFriend = function(user) {
+			Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
+				if (accept) {
+					Users.addFriend(user.id)
+					.then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
+					.catch(() => Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`));
+				}
+			});
+		}
+
+		/**
+		 * Permite ir al detalle de una publicación
+		 * @param {number} id
+		 * @returns void
+		 */
+		$scope.goDetail = function(id) {
+			$state.go('detail', { 'id': id });
 		}
 
 	}
@@ -848,6 +1079,23 @@ angular.module("lostThings.services").factory("Authentication", [
 
 angular
 .module('lostThings.services')
+.factory('Chat', 
+    ["$http", 
+    "API_SERVER",
+    "Authentication",
+    function($http, API_SERVER, Authentication){
+
+        function test() {
+            
+        }
+
+        return {
+            test: test
+        }
+    }
+]);
+angular
+.module('lostThings.services')
 .factory('Comments', 
     ["$http", 
     "API_SERVER",
@@ -890,6 +1138,23 @@ angular.module("lostThings.services").factory("Items", [
      */
     function getAllItems() {
       return $http.get(`${API_SERVER}/items`);
+    }
+
+    /**
+     * Permite obtener los items que publico el usuario
+     * @param {number} idUser
+     * @returns Promise
+     */
+    function getItemsByUser(idUser) {
+      return Promise.resolve([{
+        descripcion: "Encontre una tarjeta sube en el edificio",
+        fecha_publicacion: "2018-10-30",
+        fkidusuario: "2",
+        idpublicacion: "4",
+        img: "",
+        titulo: "Tarjeta Sube",
+        ubicacion: "Esmeralda 950"
+      }]);
     }
 
     /**
@@ -943,11 +1208,12 @@ angular.module("lostThings.services").factory("Items", [
 
     return {
       getAllItems: getAllItems,
+      getItemsByUser: getItemsByUser,
       searchItems: searchItems,
       publishItem: publishItem,
       getDetail: getDetail,
       edit: edit,
-      remove: remove
+      remove: remove,
     };
   }
   
@@ -1011,6 +1277,119 @@ angular
   }
 ]);
 
+angular
+.module('lostThings.services')
+.factory('Users', 
+    ["$http", 
+    "API_SERVER",
+    "Authentication",
+    function($http, API_SERVER, Authentication){
+
+
+        /**
+         * Permite obtener el id del usuario que inicio sesión
+         * @returns number
+         */
+        function getIdUserLogged() {
+            return Authentication.getUserData().idusuario;
+        }
+      
+        /**
+         * Permite buscar personas por el nickname o el nombre
+         * @param {string} name 
+         * @returns Promise
+         */
+        function search(name) {
+            return Promise.resolve([{
+                id: 33,
+                usuario: 'Facundo',
+                lastname: 'Perez',
+                email: 'facundo@gmail.com',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png'
+            },
+            {
+                id: 2,
+                usuario: 'aa',
+                lastname: 'aa',
+                email: 'aa@gmail.com',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png'
+            },
+            ])
+        }
+
+        /**
+         * Permite obtener los amigos que posee el usuario logueado por el id del mismo
+         * @returns Promise
+         */
+        function getFriendsByUser() {
+            let idUser = getIdUserLogged();
+            return Promise.resolve([{
+                id: 33,
+                usuario: 'Pepe',
+                lastname: 'Perez',
+                email: 'fafa@gmail.com',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png',
+                fecha_creacion: '22-03-2017'
+            },
+            {
+                id: 44,
+                usuario: 'Pepe',
+                lastname: 'Perez',
+                email: 'fafa@gmail.com',
+                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png',
+                fecha_creacion: '22-03-2017'
+            }])
+        }
+
+        /**
+         * Permite agregar un amigo al listado de amigos que posee el usuario
+         * @param {number} userIdFriend
+         */
+        function addFriend(userIdFriend) {
+            let idUser = getIdUserLogged();
+            return Promise.resolve({
+                status: 1,
+                msg: 'Se envio la solicitud'
+            });
+        }
+
+        /**
+         * Permite eliminar un amigo de la lista de amigos del usuario
+         */
+        function deleteFriend(userIdFriend) {
+            let idUser = getIdUserLogged();
+            return Promise.resolve({
+                status: 1,
+                msg: 'Se elimino el amigo...'
+            });
+        }
+
+        /**
+         * Permite obtener el perfil completo de un usuario por el id del mismo
+         * @param {number} userId
+         * @returns Promise
+         */
+        function getProfileUser(userId) {
+            return Promise.resolve({
+                idusuario: 1,
+                usuario: 'Belu',
+                nombre: 'Belen',
+                apellido: 'Perez',
+                email: 'belen3@gmail.com',
+                img: 'https://randomuser.me/api/portraits/women/96.jpg'
+            });
+        }
+
+        return {
+            search: search,
+            getFriendsByUser: getFriendsByUser,
+            addFriend: addFriend,
+            deleteFriend: deleteFriend,
+            getProfileUser: getProfileUser
+        }
+
+    }
+]);
 angular
 .module('lostThings.services')
 .factory('Utils', 

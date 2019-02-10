@@ -1,0 +1,61 @@
+<ion-view title="Amigos">
+    <ion-content>
+        <div class="bar bar-header item-input-inset">
+            <form novalidate class="form-friends">
+                <label class="item-input-wrapper">
+                    <i class="icon ion-ios-search placeholder-icon"></i>
+                    <input type="search" placeholder="Buscar amigos" ng-keyup="searchFriends(search)" ng-model="search" >
+                </label>
+            </form>
+        </div>
+        <div ng-if="search.length > 2">
+           <div ng-if="users.length > 0">
+                <p class="text-info-result-friends">Se encontraron {{users.length}} resultados</p>
+                <ion-list>
+                    <ion-item ng-repeat="user in users" class="item-friends">
+                        <div class="item-avatar avatar-friends" ng-click="showProfile(user.idusuario)">
+                            <img ng-src="{{user.img}}" alt="usuario {{user.usuario}}">
+                            <h3>{{user.usuario}}</h3>
+                            <p>{{user.email}}</p>
+                        </div>
+                        <div>
+                            <a class="subdued" ng-click="addFriend(user)">
+                                <i class="icon ion-person-add icon-friend-actions"></i>
+                            </a>
+                            <a class="subdued" ng-click="startChat(user)">
+                                <i class="icon ion-chatbubbles icon-friend-actions"></i>	
+                            </a>
+                        </div>
+                    </ion-item>
+                </ion-list>
+            </div> 
+            <div ng-if="users.length === 0">
+                <p class="text-center">No se encontraron resultados</p>
+            </div>
+        </div>
+        <div ng-if="search.length === 0">
+            <h2 class="padding">Mis Amigos</h2>
+            <ion-refresher pulling-text="Actualizando lista de amigos..." on-refresh="doRefresh()"></ion-refresher>
+            <ion-list ng-if="friends.length > 0">
+                <div class="friend-list-container">
+                    <div ng-repeat="friend in friends" class="friend-card-container">
+                        <div class="friend-card-content">
+                            <a ng-click="showProfile(user.idusuario)">
+                                <img class="img-friend" ng-src="{{friend.img}}" alt="avatar from {{friend.usuario}}">
+                            </a>
+                            <div class="friend-card-description">
+                                <p class="friend-card-title">{{friend.usuario}}</p>
+                                <p class="friend-card-time">Amigos desde {{friend.fecha_creacion}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ion-list>
+            <div class="container-no-friends" ng-if="friends.length === 0">
+                <i class="icon ion-happy-outline icon-smile"></i>	
+                <p class="no-friends-text">No posees ningún amigo, porque no agregas alguno?</p>
+            </div>
+        </div>
+    </ion-content>
+  </ion-view>
+  

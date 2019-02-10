@@ -84,15 +84,135 @@ ion-tabs.tabs-color-active-positive .tab-item.activated {
     border-color: none;
     color: red;
 }
-.form-search {
+.form-search, .form-friends {
     display: flex;
     justify-content: space-around;
     flex-wrap: nowrap;
+}
+.form-friends {
+    width: 100%;
+}
+.avatar-friends {
+    padding-left: 52px;
+    color: #444;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 .form-search .form-search-input {
     flex: 1;
     margin-right: 1em;
     border-radius: 0.5em;
+}
+.item-friends {
+    display: flex; 
+    justify-content:space-around; 
+    align-items:center;
+    padding: 0;
+}
+.item-friends h3 {
+    font-weight: 800;
+}
+.text-info-result-friends {
+    font-weight: 700;
+    color: #FFA726;
+    text-align: right;
+    padding-right: 1em;
+}
+.icon-friend-actions {
+    font-size: 2em;
+}
+.icon-smile {
+    font-size: 2.4em;
+    color: #FFA726;
+    margin-bottom: 0.2em;
+}
+.friend-list-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+}
+.friend-card-container {
+    background-color:#f5f5f5;
+    border-radius: 0.3em;
+}
+.friend-card-content {
+    padding: 1em; 
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.friend-card-description {
+    margin-top: 0.4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.friend-card-title {
+    font-weight: bold;
+    color:#212121;
+}
+.friend-card-time {
+    color:#777;
+    font-size: 0.7em;
+}
+.img-friend {
+    width: 122px;
+    border-radius: 50%;
+    height: 122px;
+}
+.container-no-friends {
+    display:flex; 
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+    flex-direction: column;
+}
+.no-friends-text {
+    width: 75%;
+    text-align: center;
+}
+.profile-item-detail {
+    border: none !important;
+    border-style:none !important;
+    background-color: #EEEEEE !important;
+}
+.profile-item-detail > .item-content {
+    background-color: #EEEEEE !important;
+}
+.profile-box-shadow {
+    box-shadow: 0.1em 0.2em 0.2em 0.1em #dedede;
+}
+.profile-container-view {
+    background-color:#EEEEEE; 
+    display:flex; 
+    justify-content: center; 
+    align-items: center;
+    flex-direction: column;
+}
+.profile-container-view img {
+    margin-bottom: 1em;
+}
+.profile-container-view p {
+    color:#777;
+}
+.profile-container-view h2 {
+    margin: 0;
+    font-weight: 700;
+    color: #212121;
+}
+.profile-container-list-actions {
+    padding: 0.5em;
+    background-color: #eeeeee;
+    border-top: 0.1em solid #e0e0ee;
+}
+.profile-title-publications {
+    margin: 0; 
+    padding-top: 1em;
+    padding-left: 0.4em;
 }
 button.button.icon-left.ion-search.button-search {
     color: #fff;

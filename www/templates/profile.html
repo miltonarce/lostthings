@@ -1,0 +1,50 @@
+<ion-view title="Perfil">
+    <ion-nav-bar class="bar-stable">
+        <ion-nav-buttons side="left">
+            <a class="button icon-left ion-chevron-left button-clear" href="#/dashboard/friends">Atrás</a>
+        </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-content class="background-content">
+        <div class="profile-box-shadow ">
+            <div class="padding profile-container-view">
+                <img ng-if="profile.img" class="img-friend" ng-src="{{profile.img}}" alt="avatar from {{profile.usuario}}">
+                <p>Hola, mi nombre es</p>
+                <h2>{{profile.nombre ? profile.nombre : profile.usuario}}</h2>
+            </div>
+            <div class="list profile-container-list-actions">
+                <ion-item class="item item-icon-left profile-item-detail" ng-if="isFriend(profile.idusuario)">
+                    <i class="icon ion-checkmark-round"></i>Amigos
+                </ion-item>
+                <ion-item class="item item-icon-left profile-item-detail" ng-if="!isFriend(profile.idusuario)" ng-click="addFriend(profile)">
+                    <i class="icon ion-paper-airplane"></i>Enviar solicitud de amistad
+                </ion-item>
+                <ion-item class="item item-icon-left profile-item-detail">
+                    <i class="icon ion-email"></i>{{profile.email}}
+                </ion-item>
+                <ion-item class="item item-icon-left profile-item-detail" ng-click="startChat(profile)">
+                    <i class="icon ion-chatbubbles"></i>Enviar mensaje
+                </ion-item>
+            </div>
+        </div>
+        <div>
+            <h2 class="profile-title-publications">Publicaciones</h2>
+            <ion-list ng-if="items.length > 0">
+                <ion-item class="list card" ng-repeat="item in items" ng-click="goDetail(item.idpublicacion)">
+                    <div class="item item-body">
+                        <p class="text-right">{{item.fecha_publicacion}}</p>
+                        <p>{{item.titulo}}</p>
+                        <img ng-if="item.img" class="full-image" ng-src="{{item.img}}" alt="{{item.titulo}}">
+                        <p>{{item.descripcion}}</p>
+                        <span class="subdued locate-block">
+                            <ion-icon name="pin"></ion-icon>{{item.ubicacion}}
+                        </span>
+                    </div>
+                </ion-item>
+            </ion-list>
+            <div ng-if="items.length === 0" class="padding container-not-results">
+                <p class="not-results-text">No se encontraron publicaciones</p>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
+    
