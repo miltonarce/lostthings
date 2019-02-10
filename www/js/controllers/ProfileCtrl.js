@@ -43,11 +43,12 @@ angular
 		 * Permite editar el perfil del usuario con los datos recibidos
 		 * @param {Object} formEdit
 		 * @param {Object} user
+		 * @returns void
 		 */
 		$scope.editProfile = function(formEdit, user) {
 			$scope.errors = validateFields(formEdit);
 			if ($scope.errors.nombre === null && $scope.errors.apellido === null) {
-			 Profile.edit($scope.userData.idusuario, $scope.requestEdit).then(response => {
+			 Profile.edit($scope.requestEdit).then(response => {
 				if (response.status === 1) {
 					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => $state.go('dashboard'));
 				} else {
@@ -67,7 +68,7 @@ angular
 		$scope.changePassword = function(formChangePassword, requestPassword) {
 			$scope.errorsFormChangePassword = validateFieldsPassword(formChangePassword);
 			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
-				Profile.changePassword($scope.userData.idusuario, $scope.requestPassword).then(response => {
+				Profile.changePassword($scope.requestPassword).then(response => {
 					if (response.data.status === 1) {
 						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard.home'));
 					} else {
@@ -90,7 +91,7 @@ angular
 		/**
 		 * Permite validar los datos ingresados por el usuario
 		 * @param {Object} formEdit
-		 * @return errors
+		 * @returns errors
 		 */
 		function validateFields(formEdit) {
 			let errors = {

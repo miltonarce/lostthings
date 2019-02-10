@@ -14,13 +14,16 @@
                 <ion-list>
                     <ion-item ng-repeat="user in users" class="item-friends">
                         <div class="item-avatar avatar-friends" ng-click="showProfile(user.idusuario)">
-                            <img ng-src="{{user.img}}" alt="usuario {{user.usuario}}">
+                            <img ng-src="{{user.img ? user.img : 'img/avatar.png' }}" alt="avatar from {{user.usuario}}">
                             <h3>{{user.usuario}}</h3>
                             <p>{{user.email}}</p>
                         </div>
                         <div>
-                            <a class="subdued" ng-click="addFriend(user)">
+                            <a class="subdued" ng-click="addFriend(user)" ng-if="!user.isFriend">
                                 <i class="icon ion-person-add icon-friend-actions"></i>
+                            </a>
+                            <a class="subdued delete-friend-btn" ng-click="deleteFriend(user.idusuario)" ng-if="user.isFriend">
+                                Eliminar
                             </a>
                             <a class="subdued" ng-click="startChat(user)">
                                 <i class="icon ion-chatbubbles icon-friend-actions"></i>	
@@ -40,12 +43,12 @@
                 <div class="friend-list-container">
                     <div ng-repeat="friend in friends" class="friend-card-container">
                         <div class="friend-card-content">
-                            <a ng-click="showProfile(user.idusuario)">
-                                <img class="img-friend" ng-src="{{friend.img}}" alt="avatar from {{friend.usuario}}">
+                            <a ng-click="showProfile(friend.idamigo)">
+                                <img class="img-friend" ng-src="{{friend.img ? friend.img : 'img/avatar.png' }}" alt="avatar from {{friend.usuario}}">
                             </a>
                             <div class="friend-card-description">
                                 <p class="friend-card-title">{{friend.usuario}}</p>
-                                <p class="friend-card-time">Amigos desde {{friend.fecha_creacion}}</p>
+                                <p class="friend-card-time">Amigos desde {{friend.fecha_amigos_desde}}</p>
                             </div>
                         </div>
                     </div>

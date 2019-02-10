@@ -37,7 +37,7 @@ angular
 		/**
 		 * Permite validar los datos ingresados por el usuario al crear un item para publicar
 		 * @param {Object} formPublish 
-		 * @return errors
+		 * @returns errors
 		 */
 		function validateFields(formPublish) {
 			let errors = { titulo: null, descripcion: null, ubicacion: null, img: null };
@@ -64,6 +64,7 @@ angular
 
 		/**
 		 * Permite saber si el formulario es valido
+		 * @param {Object} errors
 		 *	@returns boolean
 		*/
 		function isValidForm(errors) {
@@ -77,7 +78,7 @@ angular
 
 		/**
 		 * Permite generar el request default para publicar un item
-		 * @return Object
+		 * @returns Object
 		 */
 		function defaultRequest() {
 			return { 

@@ -116,13 +116,36 @@ class User
       throw new Exception('No se pudo editar el usuario en la base de datos');
     }
   }
-  
+
+  /**
+   * Permite buscar usuarios por los campos nombre, usuario, apellido realiza un like
+   * para obtener mas resultados
+   * @param string $value
+   * @return array $response
+   */
+  public function find($value) {
+    $db = DBConnection::getConnection();
+		$query = "SELECT idusuario, usuario, nombre, email, img FROM usuarios WHERE nombre LIKE :input OR apellido LIKE :input OR usuario LIKE :input ORDER BY nombre ASC";
+		$stmt = $db->prepare($query);
+		$stmt->execute(['input' => "%$value%"]);
+    $users = [];
+    while($row = $stmt->fetch()){
+      $users[] = [
+        'idusuario' => $row['idusuario'],
+        'usuario' => $row['usuario'],
+        'nombre' => $row['nombre'],
+        'email' => $row['email'],
+        'img' => $row['img']
+      ];
+    }
+    return $users;
+  }
 
   /**
    * Carga datps de la $row en el objeto
    * @param array $row
    */
-  public function loadDataArray($row){
+  private function loadDataArray($row){
     $this->id = $row['idusuario'];
     $this->nombre = $row['nombre'];
     $this->apellido = $row['apellido'];

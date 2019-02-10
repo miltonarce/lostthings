@@ -10,7 +10,7 @@ angular.module("lostThings.services").factory("Authentication", [
     /**
      * Permite autenticar al usuario contra la API de PHP
      * @param {Object} user
-     * @return Promise
+     * @returns Promise
      */
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(response) {
@@ -38,7 +38,7 @@ angular.module("lostThings.services").factory("Authentication", [
      * @returns Promise
      */
     function register(user) {
-      return $http.post(`${API_SERVER}/register`, user).then(function(res) {
+      return $http.post(`${API_SERVER}/profile`, user).then(function(res) {
         let response = res.data;
         if (response.status === 1) {
           return true;
@@ -49,7 +49,7 @@ angular.module("lostThings.services").factory("Authentication", [
 
     /**
      * Permite saber si el usuario esta logueado, valida si existe el token
-     * @return boolean
+     * @returns boolean
      */
     function isLogged() {
       return token !== null;
@@ -57,7 +57,7 @@ angular.module("lostThings.services").factory("Authentication", [
 
     /**
      * Permite obtener el token JWT
-     * @return {string}
+     * @returns {string}
      */
     function getToken() {
       return token;

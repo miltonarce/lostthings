@@ -17,21 +17,13 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getItemsByUser(idUser) {
-      return Promise.resolve([{
-        descripcion: "Encontre una tarjeta sube en el edificio",
-        fecha_publicacion: "2018-10-30",
-        fkidusuario: "2",
-        idpublicacion: "4",
-        img: "",
-        titulo: "Tarjeta Sube",
-        ubicacion: "Esmeralda 950"
-      }]);
+      return $http.get(`${API_SERVER}/items/user/${idUser}`);
     }
 
     /**
      * Permite buscar los items por el valor ingresado como parametro
      * @param {string} search
-     * returns Promise
+     * @returns Promise
      */
     function searchItems(search) {
       return $http.get(`${API_SERVER}/items?search=${search}`);
@@ -84,7 +76,7 @@ angular.module("lostThings.services").factory("Items", [
       publishItem: publishItem,
       getDetail: getDetail,
       edit: edit,
-      remove: remove,
+      remove: remove
     };
   }
   

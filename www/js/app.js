@@ -35,9 +35,9 @@ angular
   })
   .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     /*
-      Rutas de la aplicacion, hay 3 views las cuales no
+      Rutas de la aplicacion, hay 5 views las cuales no
       dependen de tab, ya que se necesita que no dependendan del tab
-      estas son Login ,Register, Detail una vez que ingresan a la aplicacion
+      estas son Login ,Register, Detail, Profile, Chat una vez que ingresan a la aplicación
       el dashboard es el main view (tabs)
     */
     $stateProvider
@@ -109,7 +109,7 @@ angular
         }
       })
       .state("profile", {
-        url: "/profile",
+        url: "/profile/:id",
         templateUrl: "templates/profile.html",
         controller: "ProfileUserCtrl",
       })

@@ -26,8 +26,8 @@ angular
 		 * @returns void
 		 */
 		$scope.doRefresh = function() {
-            Users.getFriendsByUser().then(friends => {
-                $scope.friends = friends;
+            Users.getFriendsByUser().then(res => {
+                $scope.friends = res.data;
 				$scope.$broadcast('scroll.refreshComplete');
             }).catch(() => {
                 $scope.$broadcast('scroll.refreshComplete');
@@ -45,7 +45,7 @@ angular
         $scope.searchFriends = function(search) {
             if (search.length >= 2) {
                Users.search(search)
-                    .then(users => $scope.users = users)
+                    .then(res => $scope.users = $scope.mapperUsers($scope.friends, res.data))
                     .catch(() => Utils.showPopup('Amigos', `Se produjo al buscar los amigos por el campo ${input}`));
             }
         }
@@ -56,7 +56,7 @@ angular
          */
         $scope.getFriendsByUser = function() {
             Users.getFriendsByUser()
-                 .then(friends => $scope.friends = friends)
+                 .then(res => $scope.friends = res.data)
                  .catch(() => Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`));
         }
 
@@ -77,13 +77,13 @@ angular
 
         /**
          * Permite eliminar a un usuario de la lista de amigos de la persona logueada
-         * @param {Object} user
+         * @param {number} idUser
          * @returns void
          */
-        $scope.deleteFriend = function(user) {
-            Users.deleteFriend(user.usuarioid)
+        $scope.deleteFriend = function(idUser) {
+            /*Users.deleteFriend(user.usuarioid)
                 .then()
-                .catch(() => Utils.showPopup('Amigos', `Se produjo un error al eliminar al usuario ${user.usuario}`));
+                .catch(() => Utils.showPopup('Amigos', `Se produjo un error al eliminar al usuario ${user.usuario}`));*/
         }
 
         /**
@@ -93,6 +93,34 @@ angular
          */
         $scope.startChat = function(user) {
             $state.go('chat', { user: user });
+        }
+
+        /**
+         * Permite realizar un mapper del resultado de usuarios recibidos del autocompletado,
+         * se verifica si existen amigos del usuario, si hay se agrega un flag para mostrarlo
+         * en el html
+         * @param {Array} friends
+         * @param {Array} users
+         * @return {Array} users
+         */
+        $scope.mapperUsers = function(friends, users) {
+            return users.map(user => {
+                if ($scope.isFriend(friends, user.idusuario)) {
+                    return { ...user, isFriend: true };
+                }
+                return user;
+            });
+        }
+
+        /**
+         * Permite verificar si en la lista de amigos del usuario, el id recibido
+         * por parametro es amigo de el
+         * @param {Array} friends
+         * @param {number} idUser
+         * @returns boolean
+         */
+        $scope.isFriend = function(friends, idUser) {
+            return friends.findIndex(friend => friend.idamigo === idUser) !== -1;
         }
 
         /**

@@ -27,7 +27,7 @@ angular
         return {
             getComments: getComments,
             publish: publish
-        }
+        };
 
     }
 ]);

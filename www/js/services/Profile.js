@@ -12,23 +12,32 @@ angular
             }
         };
 
+         /**
+         * Permite obtener el id del usuario que inicio sesión
+         * @returns number
+         */
+        function getIdUserLogged() {
+            return Authentication.getUserData().idusuario;
+        }
+
         /**
          * Permite editar los datos del usuario, se envia en el HEADER 
          * el api key del jwt...
-         * @param {number} idUser
          * @param userData
          * @returns Promise
          */
-        function edit(idUser, userData) {
+        function edit(userData) {
+            let idUser = getIdUserLogged();
             return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
         }
 
         /**
          * Permite modificar la contraseña que posee el usuario
-         * @param {number} idUser
          * @param {Object} requestPassword 
+         * @returns Promise
          */
-        function changePassword(idUser, requestPassword) {
+        function changePassword(requestPassword) {
+            let idUser = getIdUserLogged();
             return $http.put(`${API_SERVER}/profile/${idUser}`, requestPassword, defaultHeader);
         }
 
@@ -37,15 +46,8 @@ angular
          * @returns Promise
          */
         function getAdditionalInfo() {
-            return $http.get(`${API_SERVER}/profile`, defaultHeader)
-        }
-
-        /**
-         * Permite obtener la información del usuario adicional
-         * @returns Promise
-         */
-        function getAdditionalInfo() {
-          return $http.get(`${API_SERVER}/profile`, defaultHeader);
+            let idUser = getIdUserLogged();
+            return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
         }
 
       return {

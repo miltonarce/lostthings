@@ -3,18 +3,19 @@ angular
 .controller('ProfileUserCtrl', [
 	'$scope',
 	'$state',
+	'$stateParams',
 	'Authentication',
 	'Users',
 	'Items',
 	'Utils',
-	function($scope, $state, Authentication, Users, Items, Utils) {
+	function($scope, $state, $stateParams, Authentication, Users, Items, Utils) {
 
 		$scope.profile = null;
 		$scope.items = [];
 		
 		//Al ingresar a la view, se trae toda la info del perfil del usuario, ya que puede variar...
 		$scope.$on('$ionicView.beforeEnter', function() {
-			$scope.getAllInfo();
+			$scope.getAllInfo($stateParams.id);
 		});
 
 		/**
@@ -22,15 +23,16 @@ angular
 		 * la lista de publicaciones que publico el usuario, como tambien la info de su
 		 * perfil, se hace uso de Promise all para poder realizar de manera mas facil
 		 * las 2 peticiones, si falla una, ya no sirve y se muestra una notificación.
+		 * @param {number} idUser
 		 * @returns void
 		 */
-		$scope.getAllInfo = function() {
+		$scope.getAllInfo = function(idUser) {
 			Promise.all([
-				Users.getProfileUser(),
-				Items.getItemsByUser(),
+				Users.getProfileUser(idUser),
+				Items.getItemsByUser(idUser),
 			]).then(results => {
-				$scope.profile = results[0];
-				$scope.items = results[1];
+				$scope.profile = results[0].data.data;
+				$scope.items = results[1].data;
 				$scope.$apply();
 			}).catch(() => Utils.showPopup('Perfil', `Se produjo un error al obtener la información del perfil del usuario`));
 		}
@@ -47,6 +49,7 @@ angular
 		/**
 		 * Permite verificar si el usuario logueado es amigo de la persona que esta mirando el
 		 * perfil
+		 * @param {idUser}
 		 * @returns boolean
 		 */
 		$scope.isFriend = function(idUser) {

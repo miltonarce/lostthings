@@ -146,4 +146,12 @@ Class ItemsController extends BaseController{
 			]);
 		}
   }
+
+  public function getItemsByUser() {
+    $params = Route::getUrlParameters();
+    $idUser = $params['idUser'];
+    $item = new Item;
+    $items = $item->getItemsByUser($idUser);
+    View::renderJson($items);
+  }
 }

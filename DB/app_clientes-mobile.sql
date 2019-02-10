@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.8.0
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 26-11-2018 a las 01:16:21
--- Versión del servidor: 5.7.23
--- Versión de PHP: 7.2.10
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 10-02-2019 a las 23:08:22
+-- Versión del servidor: 10.1.31-MariaDB
+-- Versión de PHP: 7.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,28 +21,57 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `app_clientes-mobile`
 --
+DROP DATABASE IF EXISTS  `app_clientes-mobile`;
+CREATE DATABASE `app_clientes-mobile`;
+USE `app_clientes-mobile`;
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `amigos`
+--
+DROP TABLE IF EXISTS `amigos`;
+CREATE TABLE `amigos` (
+  `idusuario` int(10) UNSIGNED NOT NULL,
+  `idamigo` int(10) UNSIGNED NOT NULL,
+  `fecha_alta` date NOT NULL,
+  `estado` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `amigos`
+--
+
+INSERT INTO `amigos` (`idusuario`, `idamigo`, `fecha_alta`, `estado`) VALUES
+(2, 3, '2019-01-01', 1),
+(2, 4, '2019-02-03', 1),
+(2, 5, '2019-01-15', 1),
+(2, 6, '2019-01-18', 1),
+(3, 2, '2019-01-01', 1),
+(3, 4, '2019-01-18', 1),
+(3, 8, '2019-01-18', 0),
+(3, 9, '2019-01-18', 0),
+(3, 11, '2019-01-18', 1),
+(3, 12, '2019-01-18', 1),
+(4, 2, '2019-02-03', 1),
+(4, 3, '2019-01-18', 1),
+(5, 2, '2019-01-15', 1),
+(6, 2, '2019-01-18', 1),
+(11, 3, '2019-01-18', 1),
+(12, 3, '2019-01-18', 1);
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `comentarios`
 --
-DROP DATABASE IF EXISTS  `app_clientes-mobile`;
-CREATE DATABASE `app_clientes-mobile`;
-USE `app_clientes-mobile`;
-
 DROP TABLE IF EXISTS `comentarios`;
-CREATE TABLE IF NOT EXISTS `comentarios` (
-  `idcomentario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE `comentarios` (
+  `idcomentario` int(10) UNSIGNED NOT NULL,
   `fkidusuario` int(10) UNSIGNED NOT NULL,
   `fkidpublicacion` int(10) UNSIGNED NOT NULL,
   `comentario` text NOT NULL,
-  `fecha_publicacion` date DEFAULT NULL,
-  PRIMARY KEY (`idcomentario`),
-  UNIQUE KEY `idcomentario_UNIQUE` (`idcomentario`),
-  KEY `fkidusuario_idx` (`fkidusuario`),
-  KEY `fkidpublicacion_idx` (`fkidpublicacion`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  `fecha_publicacion` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `comentarios`
@@ -50,26 +79,21 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
 
 INSERT INTO `comentarios` (`idcomentario`, `fkidusuario`, `fkidpublicacion`, `comentario`, `fecha_publicacion`) VALUES
 (1, 3, 3, 'Es mi billetera la perdí hace 2 semanas, me gustaria contactarte para recuperarla, muchas gracias.', '2018-11-20');
-
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `publicaciones`
 --
-
 DROP TABLE IF EXISTS `publicaciones`;
-CREATE TABLE IF NOT EXISTS `publicaciones` (
-  `idpublicacion` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE `publicaciones` (
+  `idpublicacion` int(10) UNSIGNED NOT NULL,
   `titulo` varchar(100) NOT NULL,
   `descripcion` text NOT NULL,
-  `img` text DEFAULT NULL,
+  `img` text,
   `fecha_publicacion` date DEFAULT NULL,
   `ubicacion` text NOT NULL,
-  `fkidusuario` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`idpublicacion`),
-  UNIQUE KEY `idpublicacion_UNIQUE` (`idpublicacion`),
-  KEY `fkidusuario_idx` (`fkidusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `fkidusuario` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `publicaciones`
@@ -88,22 +112,17 @@ INSERT INTO `publicaciones` (`idpublicacion`, `titulo`, `descripcion`, `img`, `f
 --
 -- Estructura de tabla para la tabla `usuarios`
 --
-
 DROP TABLE IF EXISTS `usuarios`;
-CREATE TABLE IF NOT EXISTS `usuarios` (
-  `idusuario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+CREATE TABLE `usuarios` (
+  `idusuario` int(10) UNSIGNED NOT NULL,
   `usuario` varchar(45) NOT NULL,
   `nombre` varchar(45) NOT NULL,
   `apellido` varchar(45) NOT NULL,
   `fecha_alta` date DEFAULT NULL,
   `password` varchar(60) NOT NULL,
   `email` varchar(100) NOT NULL,
-  `img` text DEFAULT NULL,
-  PRIMARY KEY (`idusuario`),
-  UNIQUE KEY `idusuario_UNIQUE` (`idusuario`),
-  UNIQUE KEY `user_UNIQUE` (`usuario`),
-  UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `img` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `usuarios`
@@ -112,11 +131,86 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 INSERT INTO `usuarios` (`idusuario`, `usuario`, `nombre`, `apellido`, `fecha_alta`, `password`, `email`, `img`) VALUES
 (1, 'admin', 'Admin', 'Administrador', '2018-11-20', '$2y$10$dZlL62iNlBs8YrrhUAPPeeV5sh4EQj.wj6J10JROzUNyQ5jpveKcS', 'admin@mail.com', NULL),
 (2, 'matias.torre', 'Matias', 'Torre', '2018-11-20', '$2y$10$dZlL62iNlBs8YrrhUAPPeeV5sh4EQj.wj6J10JROzUNyQ5jpveKcS', 'mtorre@mail.com', NULL),
-(3, 'milton.arce', 'Milton', 'Arce', '2018-11-20', '$2y$10$dZlL62iNlBs8YrrhUAPPeeV5sh4EQj.wj6J10JROzUNyQ5jpveKcS', 'marce@mail.com', NULL);
+(3, 'milton.arce', 'Milton', 'Arce', '2018-11-20', '$2y$10$dZlL62iNlBs8YrrhUAPPeeV5sh4EQj.wj6J10JROzUNyQ5jpveKcS', 'marce@mail.com', NULL),
+(4, 'Belu91', 'Belen', 'Rodriguez', '2019-01-10', '$2y$10$QUIsK0xlcL91/65T5fBoBOVHKBLYZ1brCrDFaT0WdySIwGKKkoDpK', 'belen91@outlook.com', NULL),
+(5, 'micaelaSerka', 'Micaela', 'Serka', '2019-01-10', '$2y$10$nsQn9E9IEmVi94HCFeiBAO/OcVOq9eFYnMC9J7rVGCYAROEAHCKxi', 'mica_serka@gmail.com', NULL),
+(6, 'gus', 'Gustavo', 'Lopez', '2019-01-10', '$2y$10$a1i45WgpvfEcfDokNqI7.eirnNkFFe3651Z/M/YBIOOWKDvdnGbpq', 'gus@gmail.com', NULL),
+(7, 'ferchu33', 'Carolina', 'Francesse', '2019-01-10', '$2y$10$0Sw5KugMtaUrTTk6XNM1AutRA4daYBsK/xsdY//puxhpG2S9hfp/.', 'ferchu@gmail.com', NULL),
+(8, 'tijera', 'Daniel', 'Torre', '2019-01-10', '$2y$10$e37gkvKD6e7ldud/VSp9J.UsALml9.m/2QK6eq3QrE.Y80lbU3HQW', 'danieltorre@outlook.com', NULL),
+(9, 'Maluma', 'Jorge', 'Flores', '2019-01-10', '$2y$10$QASG66nzH3C3waSJyJ9Ne.wN9t.iFvsXxkSOGrPbqS1.nRlkb4UHO', 'maluma@hotmail.com', NULL),
+(10, 'orne_or', 'Ornella', 'Ortigas', '2019-01-10', '$2y$10$tUQKScc7XqRgi7M4GFqbguqq5XLiphbnGyBZJfj2vtIhrt6wYRcuG', 'orne_ortigas@gmail.com', NULL),
+(11, 'nicoZen', 'Nicolas', 'Rico', '2019-01-10', '$2y$10$EB/dOAa.DBJmDmzZ9VUPuuXgXAJFOBGCmAINvXiyeoLw537oshu4m', 'nicozan@gmail.com', NULL),
+(12, 'predator', 'Martin', 'Bailo', '2019-01-10', '$2y$10$Ts21rn2c1Bh9/LYRBseS7.FeXUwkBlBFmOsL5pcQk1nFOvXObAl0W', 'predator@gmail.com', NULL);
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `amigos`
+--
+ALTER TABLE `amigos`
+  ADD PRIMARY KEY (`idusuario`,`idamigo`),
+  ADD KEY `idamigo` (`idamigo`);
+
+--
+-- Indices de la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  ADD PRIMARY KEY (`idcomentario`),
+  ADD UNIQUE KEY `idcomentario_UNIQUE` (`idcomentario`),
+  ADD KEY `fkidusuario_idx` (`fkidusuario`),
+  ADD KEY `fkidpublicacion_idx` (`fkidpublicacion`);
+
+--
+-- Indices de la tabla `publicaciones`
+--
+ALTER TABLE `publicaciones`
+  ADD PRIMARY KEY (`idpublicacion`),
+  ADD UNIQUE KEY `idpublicacion_UNIQUE` (`idpublicacion`),
+  ADD KEY `fkidusuario_idx` (`fkidusuario`);
+
+--
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`idusuario`),
+  ADD UNIQUE KEY `idusuario_UNIQUE` (`idusuario`),
+  ADD UNIQUE KEY `user_UNIQUE` (`usuario`),
+  ADD UNIQUE KEY `email_UNIQUE` (`email`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `comentarios`
+--
+ALTER TABLE `comentarios`
+  MODIFY `idcomentario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `publicaciones`
+--
+ALTER TABLE `publicaciones`
+  MODIFY `idpublicacion` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `idusuario` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Restricciones para tablas volcadas
 --
+
+--
+-- Filtros para la tabla `amigos`
+--
+ALTER TABLE `amigos`
+  ADD CONSTRAINT `amigos_ibfk_1` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `amigos_ibfk_2` FOREIGN KEY (`idamigo`) REFERENCES `usuarios` (`idusuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `comentarios`

@@ -36,10 +36,10 @@ angular
 				let item = res.data;
 				$scope.item = item;
 				$scope.requestEdit = createDefaultRequest(item, idUser);
-			}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
+			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
 			Comments.getComments($stateParams.id).then(function(res) {
 				$scope.comentarios = res.data;
-			}).catch(_err => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
+			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
 	    });	
 
 		/**
@@ -64,7 +64,7 @@ angular
 					} else {
 						Utils.showPopup('Comentar', res.data.message);
 					}
-				}).catch(_err => Utils.showPopup('Comentar', 'Se produjo un error al comentar'));
+				}).catch(() => Utils.showPopup('Comentar', 'Se produjo un error al comentar'));
 			}
 		}
 
@@ -81,6 +81,7 @@ angular
 		 * Permite actualizar el item de la publicacion
 		 * @param {Object} formEdit 
 		 * @param {Object} requestEdit 
+		 * @returns void
 		 */
 		$scope.edit = function(formEdit, requestEdit) {
 			$scope.errors = validateFields(formEdit);
@@ -91,13 +92,13 @@ angular
 					} else {
 						Utils.showPopup('Editar', response.data.message);
 					}
-				}).catch(_error => Utils.showPopup('Editar', '¡Ups se produjo un error al actualizar su publicación'));
+				}).catch(() => Utils.showPopup('Editar', '¡Ups se produjo un error al actualizar su publicación'));
 			} 
 		}
 
 		/**
 		 * Permite eliminar una publicación por el id de la misma
-		 * @param id
+		 * @returns void
 		 */
 		$scope.removeItem = function() {
 			if ( $scope.item.fkidusuario === idUser) {
@@ -173,6 +174,10 @@ angular
 			}
 		}
 
+		/**
+		 * Permite crear el request default
+		 * @returns Object
+		 */
 		function getDefaultRequest() {
 			return { 
 				comentario: '', 

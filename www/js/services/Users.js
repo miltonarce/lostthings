@@ -6,7 +6,6 @@ angular
     "Authentication",
     function($http, API_SERVER, Authentication){
 
-
         /**
          * Permite obtener el id del usuario que inicio sesión
          * @returns number
@@ -17,25 +16,11 @@ angular
       
         /**
          * Permite buscar personas por el nickname o el nombre
-         * @param {string} name 
+         * @param {string} input 
          * @returns Promise
          */
-        function search(name) {
-            return Promise.resolve([{
-                id: 33,
-                usuario: 'Facundo',
-                lastname: 'Perez',
-                email: 'facundo@gmail.com',
-                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png'
-            },
-            {
-                id: 2,
-                usuario: 'aa',
-                lastname: 'aa',
-                email: 'aa@gmail.com',
-                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png'
-            },
-            ])
+        function search(input) {
+            return $http.get(`${API_SERVER}/users/${input}`);
         }
 
         /**
@@ -44,27 +29,13 @@ angular
          */
         function getFriendsByUser() {
             let idUser = getIdUserLogged();
-            return Promise.resolve([{
-                id: 33,
-                usuario: 'Pepe',
-                lastname: 'Perez',
-                email: 'fafa@gmail.com',
-                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png',
-                fecha_creacion: '22-03-2017'
-            },
-            {
-                id: 44,
-                usuario: 'Pepe',
-                lastname: 'Perez',
-                email: 'fafa@gmail.com',
-                img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Nine_Inch_Nails_logo.svg/220px-Nine_Inch_Nails_logo.svg.png',
-                fecha_creacion: '22-03-2017'
-            }])
+            return $http.get(`${API_SERVER}/friends/${idUser}`);
         }
 
         /**
          * Permite agregar un amigo al listado de amigos que posee el usuario
          * @param {number} userIdFriend
+         * @returns Promise
          */
         function addFriend(userIdFriend) {
             let idUser = getIdUserLogged();
@@ -76,6 +47,8 @@ angular
 
         /**
          * Permite eliminar un amigo de la lista de amigos del usuario
+         * @param {number} userIdFriend
+         * @returns Promise
          */
         function deleteFriend(userIdFriend) {
             let idUser = getIdUserLogged();
@@ -87,18 +60,11 @@ angular
 
         /**
          * Permite obtener el perfil completo de un usuario por el id del mismo
-         * @param {number} userId
+         * @param {number} idUser
          * @returns Promise
          */
-        function getProfileUser(userId) {
-            return Promise.resolve({
-                idusuario: 1,
-                usuario: 'Belu',
-                nombre: 'Belen',
-                apellido: 'Perez',
-                email: 'belen3@gmail.com',
-                img: 'https://randomuser.me/api/portraits/women/96.jpg'
-            });
+        function getProfileUser(idUser) {
+            return $http.get(`${API_SERVER}/profile/${idUser}`);
         }
 
         return {
@@ -107,7 +73,7 @@ angular
             addFriend: addFriend,
             deleteFriend: deleteFriend,
             getProfileUser: getProfileUser
-        }
+        };
 
     }
 ]);

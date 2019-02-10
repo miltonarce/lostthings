@@ -18,8 +18,8 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
     /**
      * Permite registrar al usuario valida los datos recibidos, si sale todo OK
      * realiza un redirect al login
-     * @param formRegister
-     * @param user
+     * @param {Object} formRegister
+     * @param {Object} user
      * @returns void
      */
     $scope.register = function(formRegister, user) {

@@ -20,16 +20,35 @@ class Item implements JsonSerializable{
   protected $props = ['idpublicacion','titulo','descripcion','img','fecha_publicacion','ubicacion','fkidusuario', 'usuario'];
 
   public function jsonSerialize(){
-    return[
+    $defaultProperties = [
       'idpublicacion' => $this->idpublicacion,
       'titulo' => $this->titulo,
       'descripcion' => $this->descripcion,
       'img' => $this->img,
       'fecha_publicacion' => $this->fecha_publicacion,
-      'ubicacion' => $this->ubicacion,
-      'fkidusuario' => $this->fkidusuario,
-      'usuario' => $this->usuario
+      'ubicacion' => $this->ubicacion
     ];
+    if ($this->fkidusuario !== null) {
+      $defaultProperties['fkidusuario']= $this->fkidusuario;
+    }
+    if ($this->usuario !== null) {
+      $defaultProperties['usuario']= $this->usuario;
+    }
+    return $defaultProperties;
+  }
+
+  public function getItemsByUser($idUser) {
+    $db = DBConnection::getConnection();
+    $query = "SELECT idpublicacion, titulo, descripcion, img, fecha_publicacion, ubicacion FROM publicaciones WHERE fkidusuario = :idUser";
+    $stmt = $db->prepare($query);
+    $stmt->execute(['idUser' => $idUser]);
+    $items = [];
+    while($row = $stmt->fetch()){
+      $item = new Item;
+      $item->loadDataArray($row);
+      $items[] = $item;
+    }
+    return $items;
   }
 
   public function all(){
@@ -62,8 +81,6 @@ class Item implements JsonSerializable{
     } 
   }
 
-
-
   public function create($row)
   {
     $db = DBConnection::getConnection();
@@ -87,7 +104,6 @@ class Item implements JsonSerializable{
     }
   }
  
-  
   public function edit($row){
     $db = DBConnection::getConnection();
     $query = "UPDATE publicaciones 

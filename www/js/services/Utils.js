@@ -17,7 +17,7 @@ angular
 		/**
 		 * Permite crear la fecha del alta del usuario para enviar al backend de php
 		 * en el formato que entiende mySQL
-		 * @return string
+		 * @returns string
 		 */
 		function getDate() {
 			let date = new Date();
@@ -38,7 +38,7 @@ angular
 			showPopup: showPopup,
 			getDate: getDate,
 			showConfirm: showConfirm
-		}
+		};
 
     }
 ]);

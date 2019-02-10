@@ -12,6 +12,6 @@ angular
 
         return {
             test: test
-        }
+        };
     }
 ]);

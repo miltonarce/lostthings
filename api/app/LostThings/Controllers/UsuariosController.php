@@ -12,7 +12,7 @@ class UsuariosController extends BaseController{
   * Metodo para  crear usuarios
   * @return bool 1 se creo el elemento 0 no se creo
   */
-  public function create(){
+  public function createProfile(){
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
 
@@ -54,12 +54,22 @@ class UsuariosController extends BaseController{
     }
   }
 
-  public function profile(){
-    $userID = $this->checkUserIsLogged();
-
+  /**
+   * Permite obtener todos los usuarios que matcheen con la busqueda ingresada por el usuario
+   * realiza un like contra varios campos
+   */
+  public function find() {
+    $params = Route::getUrlParameters();
+    $input = $params['input'];
     $user = new User;
-    $user->getById($userID);
+    View::renderJson($user->find($input));
+  }
 
+  public function getAditionalInfo(){
+    $params = Route::getUrlParameters();
+    $id = $params['idUser'];
+    $user = new User;
+    $user->getById($id);
     View::renderJson([
       'status' => 1,
 			'data' => [
@@ -73,7 +83,7 @@ class UsuariosController extends BaseController{
     ]);
   }
 
-  public function edit()
+  public function editInfoUserLogged()
   {
     $params = Route::getUrlParameters();
     $id = $params['idUser'];
