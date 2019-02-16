@@ -7,151 +7,137 @@ use LostThings\Core\View;
 use LostThings\Core\Validator;
 use LostThings\Core\Route;
 
-Class ItemsController extends BaseController{
+/**
+ * Controller para manejar todas las acciones sobre el modelo Item
+ */
+Class ItemsController extends BaseController
+{
+
   /**
-   * Metodo que trae los items
+   * Permite obtener todas las publicaciones que estan en el sitio
+   * @return Item[]
    */
-  public function all(){
+  public function all()
+  {
     $item = new Item;
     $items = $item->all();
+    View::renderJson($items);
+  }
+  
+  /**
+   * Permite obtener las publicaciones de un usuario particular por el id del mismo,
+   * el usuario que quiere ver las publicaciones tiene que estar logueado...
+   * @return Item[]
+   */
+  public function allItemsByUser() 
+  {
+    $this->checkUserIsLogged();
+    $params = Route::getUrlParameters();
+    $idUser = $params['idUser'];
+    $item = new Item;
+    $items = $item->allItemsByUser($idUser);
     View::renderJson($items);
   }
 
   /**
    * Permite obtener la informacion de una publicacion por el id de la misma
+   * @return Item
    */
-  public function detail() {
+  public function getItem() {
+    $this->checkUserIsLogged();
     $params = Route::getUrlParameters();
     $id = $params['id'];
-    try{
+    try {
       $item = new Item;
-      $item->detail($id);
+      $item->getItem($id);
       View::renderJson($item);
-    }catch(Exception $e){
-      View::renderJson([
-      'status' => 0,
-      'message' => $e
-      ]);
+    } catch (Exception $e) {
+      View::renderJson(['status' => 0, 'message' => $e]);
     }
-    
   }
 
- /**
-  * Metodo para  crear o publicar items
-  * @return bool 1 se creo el elemento 0 no se creo
-  */
-  public function create(){
+  /**
+   * Permite publicar una publicación
+   * @return Array
+   */
+  public function save()
+  {
+    $idUser =  $this->checkUserIsLogged();
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
-
     $validator = new Validator($data, [
       'titulo' => ['required'],
       'descripcion' => ['required'],
-      'fecha_publicacion' => ['required'],
-      'ubicacion' => ['required'],
-      'fkidusuario' => ['required']
+      'ubicacion' => ['required']
     ]);
-
     if ($validator->passes()) {
       try {
           $item = new Item;
-          $item->create([
+          $item->save($idUser, [
             'titulo' => $data['titulo'],
             'descripcion' => $data['descripcion'],
             'img' => $data['img'],
-            'fecha_publicacion' => $data['fecha_publicacion'],
-            'ubicacion' => $data['ubicacion'],
-            'fkidusuario' => $data['fkidusuario']
+            'ubicacion' => $data['ubicacion']
           ]);
-          View::renderJson([
-            'status' => 1,
-            'message' => 'Item creado exitosamente.',
-            'data' => $item
-          ]);
-      } catch(Exeption $e) {
-        View::renderJson([
-          'status' => 0,
-          'message' => $e
-        ]);
+          View::renderJson(['status' => 1, 'message' => 'Item creado exitosamente.', 'data' => $item]);
+      } catch (Exeption $e) {
+        View::renderJson(['status' => 0, 'message' => $e]);
       }
     } else {
-      View::renderJson([
-        'status' => 0,
-        'error' => $validator->getErrores()
-      ]);
+      View::renderJson(['status' => 0, 'error' => $validator->getErrores()]);
     }
-    
   }
-  public function edit()
+
+  /**
+   * Permite actualizar una publicación por el id de la misma, modifica los datos recibidos 
+   * @return Array
+   */
+  public function update()
   {
+    $idUser =  $this->checkUserIsLogged();
     $params = Route::getUrlParameters();
     $id = $params['id'];
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
-
     $validator = new Validator($data, [
-      'fkidusuario' => ['required'],
       'titulo' => ['required'],
       'descripcion' => ['required'],
-      'fecha_publicacion' => ['required'],
       'ubicacion' => ['required']
     ]);
-
     if ($validator->passes()) {
       try {
         $item = new Item;
-        $item->edit([
+        $item->update($idUser, [
           'idpublicacion' => $id,
-          'fkidusuario' => $data['fkidusuario'],
           'titulo' => $data['titulo'],
           'descripcion' => $data['descripcion'],
           'img' => $data['img'],
-          'fecha_publicacion' => $data['fecha_publicacion'],
-          'ubicacion' => $data['ubicacion'],
+          'ubicacion' => $data['ubicacion']
         ]);
-        View::renderJson([
-          'status' => 1,
-          'message' => 'Item creado exitosamente.',
-          'data' => $data
-        ]);
-      } catch(Exeption $e){
-        View::renderJson([
-          'status' => 0,
-          'message' => $e
-        ]);
+        View::renderJson(['status' => 1, 'message' => 'Item creado exitosamente.', 'data' => $data]);
+      } catch (Exeption $e) {
+        View::renderJson(['status' => 0, 'message' => $e]);
       }
     } else {
-      View::renderJson([
-        'status' => 0,
-        'error' => $validator->getErrores()
-      ]);
+      View::renderJson(['status' => 0, 'error' => $validator->getErrores()]);
     }
-   
   }
+
+  /**
+   * Permite eliminar una publicación por el id recibido...
+   */
   public function delete()
 	{
+    $idUser =  $this->checkUserIsLogged();
 		$params = Route::getUrlParameters();
     $id = $params['id'];
     try {
 			$item = new Item;
-			$item->delete($id);
-			View::renderJson([
-				'status' => 1,
-				'message' => 'Se eliminó correctamente la publicación'
-			]);
-		} catch(Exception $e) {
-			View::renderJson([
-				'status' => 0,
-				'message' => $e
-			]);
+			$item->delete($idUser, $id);
+			View::renderJson(['status' => 1, 'message' => 'Se eliminó correctamente la publicación']);
+		} catch (Exception $e) {
+			View::renderJson(['status' => 0, 'message' => $e]);
 		}
   }
 
-  public function getItemsByUser() {
-    $params = Route::getUrlParameters();
-    $idUser = $params['idUser'];
-    $item = new Item;
-    $items = $item->getItemsByUser($idUser);
-    View::renderJson($items);
-  }
 }

@@ -7,132 +7,107 @@ use LostThings\Core\View;
 use LostThings\Core\Validator;
 use LostThings\Core\Route;
 
-class UsuariosController extends BaseController{
-  /**
-  * Metodo para  crear usuarios
-  * @return bool 1 se creo el elemento 0 no se creo
-  */
-  public function createProfile(){
-    $d_Post = file_get_contents('php://input');
-    $data = json_decode($d_Post, true);
+class UsuariosController extends BaseController
+{
 
-    $validator = new Validator($data, [
-      'usuario' => ['required'],
-      'nombre' => ['required'],
-      'apellido' => ['required'],
-      'fecha_alta' => ['required'],
-      'password' => ['required'],
-      'email' => ['required']
-    ]);
-
-    if ($validator->passes()) {
-      try {
-        $user = new User;
-        $user->createUser([
-          'usuario' => $data['usuario'],
-          'nombre' => $data['nombre'],
-          'apellido' => $data['apellido'],
-          'fecha_alta' => $data['fecha_alta'],
-          'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-          'email' => $data['email']
-        ]);
-        View::renderJson([
-          'status' => 1,
-          'message' => 'Usuario creado exitosamente.'
-        ]);
-      } catch(Exeption $e) {
-        View::renderJson([
-          'status' => 0,
-          'message' => $e
-        ]);
-      }
-    } else {
-      View::renderJson([
-        'status' => 0,
-        'error' => $validator->getErrores()
-      ]);
-    }
-  }
-
-  /**
+   /**
    * Permite obtener todos los usuarios que matcheen con la busqueda ingresada por el usuario
-   * realiza un like contra varios campos
+   * realiza un like contra varios campos, valida primero que el usuario este logueado...
+   * @return User[]
    */
-  public function find() {
+  public function search() 
+  {
+    $this->checkUserIsLogged();
     $params = Route::getUrlParameters();
     $input = $params['input'];
     $user = new User;
-    View::renderJson($user->find($input));
+    View::renderJson($user->search($input));
   }
 
-  public function getAditionalInfo(){
-    $params = Route::getUrlParameters();
-    $id = $params['idUser'];
+  /**
+   * Permite obtener la información adicional del usuario que esta logueado
+   * valida primero que el usuario este logueado...
+   * @return User
+   */
+  public function detail()
+  {
+    $idUser = $this->checkUserIsLogged();
     $user = new User;
-    $user->getById($id);
+    $user->getById($idUser);
     View::renderJson([
       'status' => 1,
 			'data' => [
-        'idusuario' 		=> $user->id,
-        'nombre' 		=> $user->nombre,
-        'apellido' 		=> $user->apellido,
-        'fecha_alta' 		=> $user->fecha_alta,
-				'usuario' 	=> $user->user,
-				'email' 	=> $user->email,
+        'idusuario'	=> $user->id,
+        'nombre' => $user->nombre,
+        'apellido' => $user->apellido,
+        'fecha_alta' => $user->fecha_alta,
+				'usuario' => $user->user,
+				'email' => $user->email
       ]
     ]);
   }
 
-  public function editInfoUserLogged()
+  /**
+   * Permite crear un usuario con los datos recibidos...
+   * @return Array
+   */
+  public function save()
   {
-    $params = Route::getUrlParameters();
-    $id = $params['idUser'];
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
-    
-    if(!empty($data['nombre']) && !empty($data['apellido'])){
-      try{  
-      $user = new User;
-        $user->editdata([
-          'idusuario' => $id,
+    $validator = new Validator($data, [
+      'usuario' => ['required'],
+      'nombre' => ['required'],
+      'apellido' => ['required'],
+      'password' => ['required'],
+      'email' => ['required']
+    ]);
+    if ($validator->passes()) {
+      try {
+        $user = new User;
+        $user->save([
+          'usuario' => $data['usuario'],
           'nombre' => $data['nombre'],
-          'apellido' => $data['apellido']
+          'apellido' => $data['apellido'],
+          'password' => password_hash($data['password'], PASSWORD_DEFAULT),
+          'email' => $data['email']
         ]);
-        View::renderJson([
-          'status' => 1,
-          'message' => 'Perfil editado exitosamente.',
-          'data' => $data
-        ]);
-      }catch(Exception $e){
-        View::renderJson([
-          'status' => 0,
-          'message' => $e
-        ]);
+        View::renderJson(['status' => 1, 'message' => 'Usuario creado exitosamente.']);
+      } catch(Exeption $e) {
+        View::renderJson(['status' => 0, 'message' => $e]);
       }
-    }else if(!empty($data['password']) && !empty($data['newpassword'])){
-      try{  
-      $user = new User;
-      $user->editpass([
-        'idusuario' => $id,
-        'password' => password_hash($data['password'], PASSWORD_DEFAULT),
-        'newpassword' => password_hash($data['newpassword'], PASSWORD_DEFAULT)
-      ]);
-      View::renderJson([
-        'status' => 1,
-        'message' => 'Password modificada exitosamente.',
-        'data' => $data
-      ]);
-    }catch(Exception $e){
-      View::renderJson([
-        'status' => 0,
-        'message' => $e
-      ]);
-    }
-    }else{
-      View::renderJson([
-        'status' => 0,
-        'message' => 'No paso los parametros deseados.'
-      ]);
+    } else {
+      View::renderJson(['status' => 0, 'error' => $validator->getErrores()]);
     }
   }
+
+  /**
+   * Permite actualizar los datos del usuario
+   */
+  public function update()
+  {
+    $idUser = $this->checkUserIsLogged();
+    $d_Post = file_get_contents('php://input');
+    $data = json_decode($d_Post, true);
+    if (!empty($data['nombre']) && !empty($data['apellido'])) {
+      try {  
+        $user = new User;
+        $user->update($idUser, $data['nombre'], $data['apellido']);
+        View::renderJson(['status' => 1, 'message' => 'Perfil editado exitosamente.', 'data' => $data]);
+      } catch (Exception $e) {
+        View::renderJson(['status' => 0, 'message' => $e]);
+      }
+    } else if(!empty($data['password']) && !empty($data['newpassword'])) {
+      try {  
+      $user = new User;
+      $user->updatePassword($idUser, password_hash($data['password'], PASSWORD_DEFAULT), password_hash($data['newpassword'], PASSWORD_DEFAULT));
+      View::renderJson(['status' => 1, 'message' => 'Password modificada exitosamente.', 'data' => $data]);
+    } catch (Exception $e) {
+      View::renderJson(['status' => 0, 'message' => $e]);
+    }
+    } else {
+      View::renderJson(['status' => 0, 'message' => 'No paso los parametros deseados.']);
+    }
+  }
+ 
 }

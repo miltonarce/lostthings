@@ -91,11 +91,19 @@ class Validator
 	 */
 	protected function _required($campo)
 	{
-		// Leemos el valor del campo.
 		$valor = $this->data[$campo];
 		if(empty($valor)) {
-			// Marcamos el mensaje de error.
 			$this->setError($campo, 'Este campo no debe estar vacío.');
+			return false;
+		}
+		return true;
+	}
+
+	protected function _number($campo)
+	{
+		$valor = $this->data[$campo];
+		if(!is_numeric($valor)) {
+			$this->setError($campo, 'Este campo debe ser númerico.');
 			return false;
 		}
 		return true;

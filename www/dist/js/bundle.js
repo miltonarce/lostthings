@@ -135,408 +135,6 @@ angular.module("lostThings.services", []);
 //Módulo para los controllers
 angular.module("lostThings.controllers", []);
 
-angular.module("lostThings.services").factory("Authentication", [
-  "$http",
-  "API_SERVER",
-  function($http, API_SERVER) {
-
-    //Variables para mantener el estado del token y la info del user
-    let userData = null;
-    let token = null;
-
-    /**
-     * Permite autenticar al usuario contra la API de PHP
-     * @param {Object} user
-     * @returns Promise
-     */
-    function login(user) {
-      return $http.post(`${API_SERVER}/login`, user).then(function(response) {
-        if (response.data.status === 1) {
-          userData = response.data.data.user;
-          token = response.data.data.token;
-          return true;
-        }
-        return false;
-      });
-    }
-
-    /**
-     * Permite eliminar el token del usuario y la data del mismo
-     * @returns void
-     */
-    function logout() {
-      userData = null;
-      token = null;
-    }
-
-    /**
-     * Permite registrar al usuario utilizando la API de PHP
-     * @param {Object} user
-     * @returns Promise
-     */
-    function register(user) {
-      return $http.post(`${API_SERVER}/profile`, user).then(function(res) {
-        let response = res.data;
-        if (response.status === 1) {
-          return true;
-        }
-        return false;
-      });
-    }
-
-    /**
-     * Permite saber si el usuario esta logueado, valida si existe el token
-     * @returns boolean
-     */
-    function isLogged() {
-      return token !== null;
-    }
-
-    /**
-     * Permite obtener el token JWT
-     * @returns {string}
-     */
-    function getToken() {
-      return token;
-    }
-
-    /**
-     * Permite obtener la información del usuario logueado
-     * @returns {Object} userData
-     */
-    function getUserData() {
-      return userData;
-    }
-
-    return {
-      login: login,
-      register: register,
-      isLogged: isLogged,
-      getUserData: getUserData,
-      getToken: getToken,
-      logout: logout
-    };
-    
-  }
-]);
-
-angular
-.module('lostThings.services')
-.factory('Chat', 
-    ["$http", 
-    "API_SERVER",
-    "Authentication",
-    function($http, API_SERVER, Authentication){
-
-        function test() {
-            
-        }
-
-        return {
-            test: test
-        };
-    }
-]);
-angular
-.module('lostThings.services')
-.factory('Comments', 
-    ["$http", 
-    "API_SERVER",
-    function($http, API_SERVER){
-        
-        /**
-         * Permite obtener los comentarios que posee una publicacion por el id de la publicacion
-         * @param {number} id 
-         * @returns Promise
-         */
-        function getComments(id) {
-            return $http.get(`${API_SERVER}/comments/${id}`);
-        }
-
-        /**
-         * Permite publicar un comentario a la publicacion
-         * @param {number} id 
-         * @param {Object} comment 
-         * @returns Promise
-         */
-        function publish(id, comment) {
-            return $http.post(`${API_SERVER}/comments/${id}`, comment);
-        }
-
-        return {
-            getComments: getComments,
-            publish: publish
-        };
-
-    }
-]);
-angular.module("lostThings.services").factory("Items", [
-  "$http",
-  "API_SERVER",
-  function($http, API_SERVER) {
-
-    /**
-     * Permite obtener todos los items perdidos
-     * @returns Promise
-     */
-    function getAllItems() {
-      return $http.get(`${API_SERVER}/items`);
-    }
-
-    /**
-     * Permite obtener los items que publico el usuario
-     * @param {number} idUser
-     * @returns Promise
-     */
-    function getItemsByUser(idUser) {
-      return $http.get(`${API_SERVER}/items/user/${idUser}`);
-    }
-
-    /**
-     * Permite buscar los items por el valor ingresado como parametro
-     * @param {string} search
-     * @returns Promise
-     */
-    function searchItems(search) {
-      return $http.get(`${API_SERVER}/items?search=${search}`);
-    }
-
-    /**
-     * Permite publicar un item para mostrarse en el listado,
-     * antes de enviar se manipula el request y se genera el base64 para la imagen...
-     * @param {Object} item
-     * @returns Promise
-     */
-    function publishItem(item) {
-      item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
-      return $http.post(`${API_SERVER}/items`, item);
-    }
-
-    /**
-     * Permite obtener el detalle de una publicacion
-     * @param {number} id
-     * @returns Promise
-     */
-    function getDetail(id) {
-      return $http.get(`${API_SERVER}/items/${id}`);
-    }
-
-    /**
-     * Permite editar una publicación, se envia el id del mismo y el item
-     * con los datos a modificar...
-     * @param {number} id 
-     * @param {Object} item 
-     * @returns Promise
-     */
-    function edit(id, item) {
-      return $http.put(`${API_SERVER}/items/${id}`, item);
-    }
-
-    /**
-     * Permite eliminar una publicación por el id de la misma
-     * @param {number} id 
-     * @returns Promise
-     */
-    function remove(id) {
-      return $http.delete(`${API_SERVER}/items/${id}`);
-    }
-
-    return {
-      getAllItems: getAllItems,
-      getItemsByUser: getItemsByUser,
-      searchItems: searchItems,
-      publishItem: publishItem,
-      getDetail: getDetail,
-      edit: edit,
-      remove: remove
-    };
-  }
-  
-]);
-
-angular
-.module('lostThings.services').factory('Profile', 
-    ["$http",
-    "API_SERVER",
-    "Authentication",
-    function($http, API_SERVER, Authentication){
-        
-        //Header default para el token
-        const defaultHeader = {
-            headers: {
-                'X-Token' : Authentication.getToken()
-            }
-        };
-
-         /**
-         * Permite obtener el id del usuario que inicio sesión
-         * @returns number
-         */
-        function getIdUserLogged() {
-            return Authentication.getUserData().idusuario;
-        }
-
-        /**
-         * Permite editar los datos del usuario, se envia en el HEADER 
-         * el api key del jwt...
-         * @param userData
-         * @returns Promise
-         */
-        function edit(userData) {
-            let idUser = getIdUserLogged();
-            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
-        }
-
-        /**
-         * Permite modificar la contraseña que posee el usuario
-         * @param {Object} requestPassword 
-         * @returns Promise
-         */
-        function changePassword(requestPassword) {
-            let idUser = getIdUserLogged();
-            return $http.put(`${API_SERVER}/profile/${idUser}`, requestPassword, defaultHeader);
-        }
-
-        /**
-         * Permite obtener la información del usuario adicional
-         * @returns Promise
-         */
-        function getAdditionalInfo() {
-            let idUser = getIdUserLogged();
-            return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
-        }
-
-      return {
-        edit: edit,
-        changePassword: changePassword,
-        getAdditionalInfo: getAdditionalInfo
-      };
-  }
-]);
-
-angular
-.module('lostThings.services')
-.factory('Users', 
-    ["$http", 
-    "API_SERVER",
-    "Authentication",
-    function($http, API_SERVER, Authentication){
-
-        /**
-         * Permite obtener el id del usuario que inicio sesión
-         * @returns number
-         */
-        function getIdUserLogged() {
-            return Authentication.getUserData().idusuario;
-        }
-      
-        /**
-         * Permite buscar personas por el nickname o el nombre
-         * @param {string} input 
-         * @returns Promise
-         */
-        function search(input) {
-            return $http.get(`${API_SERVER}/users/${input}`);
-        }
-
-        /**
-         * Permite obtener los amigos que posee el usuario logueado por el id del mismo
-         * @returns Promise
-         */
-        function getFriendsByUser() {
-            let idUser = getIdUserLogged();
-            return $http.get(`${API_SERVER}/friends/${idUser}`);
-        }
-
-        /**
-         * Permite agregar un amigo al listado de amigos que posee el usuario
-         * @param {number} userIdFriend
-         * @returns Promise
-         */
-        function addFriend(userIdFriend) {
-            let idUser = getIdUserLogged();
-            return Promise.resolve({
-                status: 1,
-                msg: 'Se envio la solicitud'
-            });
-        }
-
-        /**
-         * Permite eliminar un amigo de la lista de amigos del usuario
-         * @param {number} userIdFriend
-         * @returns Promise
-         */
-        function deleteFriend(userIdFriend) {
-            let idUser = getIdUserLogged();
-            return Promise.resolve({
-                status: 1,
-                msg: 'Se elimino el amigo...'
-            });
-        }
-
-        /**
-         * Permite obtener el perfil completo de un usuario por el id del mismo
-         * @param {number} idUser
-         * @returns Promise
-         */
-        function getProfileUser(idUser) {
-            return $http.get(`${API_SERVER}/profile/${idUser}`);
-        }
-
-        return {
-            search: search,
-            getFriendsByUser: getFriendsByUser,
-            addFriend: addFriend,
-            deleteFriend: deleteFriend,
-            getProfileUser: getProfileUser
-        };
-
-    }
-]);
-angular
-.module('lostThings.services')
-.factory('Utils', 
-    ['$ionicPopup', 
-    function($ionicPopup){
-        
-        /**
-		 * Permite crear una instancia del popup de ionic
-		 * @param {string} title titulo del popup
-		 * @param {string} text texto del popup, puede ser HTML
-		 * @returns Promise
-		 */
-		function showPopup(title, text) {
-			return $ionicPopup.alert({ title: title, template: text, cssClass:'lost-things-popup', okText: 'Aceptar' });
-		}
-
-		/**
-		 * Permite crear la fecha del alta del usuario para enviar al backend de php
-		 * en el formato que entiende mySQL
-		 * @returns string
-		 */
-		function getDate() {
-			let date = new Date();
-			return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-		}
-
-		/**
-		 * Permite crear un popup de confirmación
-		 * @param {string} title
-		 * @param {string} text
-		 * @returns Promise
-		 */
-		function showConfirm(title, text) {
-			return $ionicPopup.confirm({ title: title, template: text,  cssClass:'lost-things-popup', okText: 'Aceptar', cancelText: 'Cancelar' });
-		}
-
-        return {
-			showPopup: showPopup,
-			getDate: getDate,
-			showConfirm: showConfirm
-		};
-
-    }
-]);
 angular
 .module('lostThings.controllers')
 .controller('ChatCtrl', [
@@ -1432,6 +1030,408 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
   }
 ]);
 
+angular.module("lostThings.services").factory("Authentication", [
+  "$http",
+  "API_SERVER",
+  function($http, API_SERVER) {
+
+    //Variables para mantener el estado del token y la info del user
+    let userData = null;
+    let token = null;
+
+    /**
+     * Permite autenticar al usuario contra la API de PHP
+     * @param {Object} user
+     * @returns Promise
+     */
+    function login(user) {
+      return $http.post(`${API_SERVER}/login`, user).then(function(response) {
+        if (response.data.status === 1) {
+          userData = response.data.data.user;
+          token = response.data.data.token;
+          return true;
+        }
+        return false;
+      });
+    }
+
+    /**
+     * Permite eliminar el token del usuario y la data del mismo
+     * @returns void
+     */
+    function logout() {
+      userData = null;
+      token = null;
+    }
+
+    /**
+     * Permite registrar al usuario utilizando la API de PHP
+     * @param {Object} user
+     * @returns Promise
+     */
+    function register(user) {
+      return $http.post(`${API_SERVER}/profile`, user).then(function(res) {
+        let response = res.data;
+        if (response.status === 1) {
+          return true;
+        }
+        return false;
+      });
+    }
+
+    /**
+     * Permite saber si el usuario esta logueado, valida si existe el token
+     * @returns boolean
+     */
+    function isLogged() {
+      return token !== null;
+    }
+
+    /**
+     * Permite obtener el token JWT
+     * @returns {string}
+     */
+    function getToken() {
+      return token;
+    }
+
+    /**
+     * Permite obtener la información del usuario logueado
+     * @returns {Object} userData
+     */
+    function getUserData() {
+      return userData;
+    }
+
+    return {
+      login: login,
+      register: register,
+      isLogged: isLogged,
+      getUserData: getUserData,
+      getToken: getToken,
+      logout: logout
+    };
+    
+  }
+]);
+
+angular
+.module('lostThings.services')
+.factory('Chat', 
+    ["$http", 
+    "API_SERVER",
+    "Authentication",
+    function($http, API_SERVER, Authentication){
+
+        function test() {
+            
+        }
+
+        return {
+            test: test
+        };
+    }
+]);
+angular
+.module('lostThings.services')
+.factory('Comments', 
+    ["$http", 
+    "API_SERVER",
+    function($http, API_SERVER){
+        
+        /**
+         * Permite obtener los comentarios que posee una publicacion por el id de la publicacion
+         * @param {number} id 
+         * @returns Promise
+         */
+        function getComments(id) {
+            return $http.get(`${API_SERVER}/comments/${id}`);
+        }
+
+        /**
+         * Permite publicar un comentario a la publicacion
+         * @param {number} id 
+         * @param {Object} comment 
+         * @returns Promise
+         */
+        function publish(id, comment) {
+            return $http.post(`${API_SERVER}/comments/${id}`, comment);
+        }
+
+        return {
+            getComments: getComments,
+            publish: publish
+        };
+
+    }
+]);
+angular.module("lostThings.services").factory("Items", [
+  "$http",
+  "API_SERVER",
+  function($http, API_SERVER) {
+
+    /**
+     * Permite obtener todos los items perdidos
+     * @returns Promise
+     */
+    function getAllItems() {
+      return $http.get(`${API_SERVER}/items`);
+    }
+
+    /**
+     * Permite obtener los items que publico el usuario
+     * @param {number} idUser
+     * @returns Promise
+     */
+    function getItemsByUser(idUser) {
+      return $http.get(`${API_SERVER}/items/user/${idUser}`);
+    }
+
+    /**
+     * Permite buscar los items por el valor ingresado como parametro
+     * @param {string} search
+     * @returns Promise
+     */
+    function searchItems(search) {
+      return $http.get(`${API_SERVER}/items?search=${search}`);
+    }
+
+    /**
+     * Permite publicar un item para mostrarse en el listado,
+     * antes de enviar se manipula el request y se genera el base64 para la imagen...
+     * @param {Object} item
+     * @returns Promise
+     */
+    function publishItem(item) {
+      item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
+      return $http.post(`${API_SERVER}/items`, item);
+    }
+
+    /**
+     * Permite obtener el detalle de una publicacion
+     * @param {number} id
+     * @returns Promise
+     */
+    function getDetail(id) {
+      return $http.get(`${API_SERVER}/items/${id}`);
+    }
+
+    /**
+     * Permite editar una publicación, se envia el id del mismo y el item
+     * con los datos a modificar...
+     * @param {number} id 
+     * @param {Object} item 
+     * @returns Promise
+     */
+    function edit(id, item) {
+      return $http.put(`${API_SERVER}/items/${id}`, item);
+    }
+
+    /**
+     * Permite eliminar una publicación por el id de la misma
+     * @param {number} id 
+     * @returns Promise
+     */
+    function remove(id) {
+      return $http.delete(`${API_SERVER}/items/${id}`);
+    }
+
+    return {
+      getAllItems: getAllItems,
+      getItemsByUser: getItemsByUser,
+      searchItems: searchItems,
+      publishItem: publishItem,
+      getDetail: getDetail,
+      edit: edit,
+      remove: remove
+    };
+  }
+  
+]);
+
+angular
+.module('lostThings.services').factory('Profile', 
+    ["$http",
+    "API_SERVER",
+    "Authentication",
+    function($http, API_SERVER, Authentication){
+        
+        //Header default para el token
+        const defaultHeader = {
+            headers: {
+                'X-Token' : Authentication.getToken()
+            }
+        };
+
+         /**
+         * Permite obtener el id del usuario que inicio sesión
+         * @returns number
+         */
+        function getIdUserLogged() {
+            return Authentication.getUserData().idusuario;
+        }
+
+        /**
+         * Permite editar los datos del usuario, se envia en el HEADER 
+         * el api key del jwt...
+         * @param userData
+         * @returns Promise
+         */
+        function edit(userData) {
+            let idUser = getIdUserLogged();
+            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
+        }
+
+        /**
+         * Permite modificar la contraseña que posee el usuario
+         * @param {Object} requestPassword 
+         * @returns Promise
+         */
+        function changePassword(requestPassword) {
+            let idUser = getIdUserLogged();
+            return $http.put(`${API_SERVER}/profile/${idUser}`, requestPassword, defaultHeader);
+        }
+
+        /**
+         * Permite obtener la información del usuario adicional
+         * @returns Promise
+         */
+        function getAdditionalInfo() {
+            let idUser = getIdUserLogged();
+            return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
+        }
+
+      return {
+        edit: edit,
+        changePassword: changePassword,
+        getAdditionalInfo: getAdditionalInfo
+      };
+  }
+]);
+
+angular
+.module('lostThings.services')
+.factory('Users', 
+    ["$http", 
+    "API_SERVER",
+    "Authentication",
+    function($http, API_SERVER, Authentication){
+
+        /**
+         * Permite obtener el id del usuario que inicio sesión
+         * @returns number
+         */
+        function getIdUserLogged() {
+            return Authentication.getUserData().idusuario;
+        }
+      
+        /**
+         * Permite buscar personas por el nickname o el nombre
+         * @param {string} input 
+         * @returns Promise
+         */
+        function search(input) {
+            return $http.get(`${API_SERVER}/users/${input}`);
+        }
+
+        /**
+         * Permite obtener los amigos que posee el usuario logueado por el id del mismo
+         * @returns Promise
+         */
+        function getFriendsByUser() {
+            let idUser = getIdUserLogged();
+            return $http.get(`${API_SERVER}/friends/${idUser}`);
+        }
+
+        /**
+         * Permite agregar un amigo al listado de amigos que posee el usuario
+         * @param {number} userIdFriend
+         * @returns Promise
+         */
+        function addFriend(userIdFriend) {
+            let idUser = getIdUserLogged();
+            return Promise.resolve({
+                status: 1,
+                msg: 'Se envio la solicitud'
+            });
+        }
+
+        /**
+         * Permite eliminar un amigo de la lista de amigos del usuario
+         * @param {number} userIdFriend
+         * @returns Promise
+         */
+        function deleteFriend(userIdFriend) {
+            let idUser = getIdUserLogged();
+            return Promise.resolve({
+                status: 1,
+                msg: 'Se elimino el amigo...'
+            });
+        }
+
+        /**
+         * Permite obtener el perfil completo de un usuario por el id del mismo
+         * @param {number} idUser
+         * @returns Promise
+         */
+        function getProfileUser(idUser) {
+            return $http.get(`${API_SERVER}/profile/${idUser}`);
+        }
+
+        return {
+            search: search,
+            getFriendsByUser: getFriendsByUser,
+            addFriend: addFriend,
+            deleteFriend: deleteFriend,
+            getProfileUser: getProfileUser
+        };
+
+    }
+]);
+angular
+.module('lostThings.services')
+.factory('Utils', 
+    ['$ionicPopup', 
+    function($ionicPopup){
+        
+        /**
+		 * Permite crear una instancia del popup de ionic
+		 * @param {string} title titulo del popup
+		 * @param {string} text texto del popup, puede ser HTML
+		 * @returns Promise
+		 */
+		function showPopup(title, text) {
+			return $ionicPopup.alert({ title: title, template: text, cssClass:'lost-things-popup', okText: 'Aceptar' });
+		}
+
+		/**
+		 * Permite crear la fecha del alta del usuario para enviar al backend de php
+		 * en el formato que entiende mySQL
+		 * @returns string
+		 */
+		function getDate() {
+			let date = new Date();
+			return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+		}
+
+		/**
+		 * Permite crear un popup de confirmación
+		 * @param {string} title
+		 * @param {string} text
+		 * @returns Promise
+		 */
+		function showConfirm(title, text) {
+			return $ionicPopup.confirm({ title: title, template: text,  cssClass:'lost-things-popup', okText: 'Aceptar', cancelText: 'Cancelar' });
+		}
+
+        return {
+			showPopup: showPopup,
+			getDate: getDate,
+			showConfirm: showConfirm
+		};
+
+    }
+]);
 /*! angular-base64-upload - v0.1.23
 * https://github.com/adonespitogo/angular-base64-upload
 * Copyright (c) Adones Pitogo <pitogo.adones@gmail.com> [Sat Aug 05 2017]
