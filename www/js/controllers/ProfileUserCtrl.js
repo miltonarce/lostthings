@@ -9,7 +9,8 @@ angular
 	'Profile',
 	'Items',
 	'Utils',
-	function($scope, $state, $stateParams, Authentication, Friends, Profile, Items, Utils) {
+	'$ionicLoading',
+	function($scope, $state, $stateParams, Authentication, Friends, Profile, Items, Utils, $ionicLoading) {
 
 		$scope.profile = null;
 		$scope.items = [];
@@ -30,14 +31,19 @@ angular
 		 * @returns void
 		 */
 		$scope.getAllInfo = function(idUser) {
+			$ionicLoading.show();
 			Promise.all([
 				Profile.getAdditionalInfo(idUser),
 				Items.getItemsByUser(idUser),
 			]).then(results => {
+				$ionicLoading.hide();
 				$scope.profile = results[0].data.data;
 				$scope.items = results[1].data;
 				$scope.$apply();
-			}).catch(() => Utils.showPopup('Perfil', `Se produjo un error al obtener la información del perfil del usuario`));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Perfil', `Se produjo un error al obtener la información del perfil del usuario`);
+			});
 		}
 
 		 /**
@@ -57,9 +63,14 @@ angular
 		$scope.addFriend = function(user) {
 			Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
 				if (accept) {
-					Friends.addFriend(user.id)
-					.then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
-					.catch(() => Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`));
+					$ionicLoading.show();
+					Friends.addFriend(user.id).then(() => {
+						$ionicLoading.hide();
+						Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!');
+					}).catch(() => {
+						$ionicLoading.hide();
+						Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`);
+					});
 				}
 			});
 		}

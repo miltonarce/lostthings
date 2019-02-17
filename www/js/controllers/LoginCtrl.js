@@ -3,7 +3,8 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
   "$state",
   "Authentication",
   "Utils",
-  function($scope, $state, Authentication, Utils) {
+  "$ionicLoading",
+  function($scope, $state, Authentication, Utils, $ionicLoading) {
 
     //Request Login
     $scope.user = { email: "", password: "" };
@@ -18,13 +19,18 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
     $scope.login = function(formLogin, user) {
       $scope.errors = validateFields(formLogin);
       if ($scope.errors.email === null && $scope.errors.password === null) {
+        $ionicLoading.show();
         Authentication.login(user).then(success => {
+          $ionicLoading.hide();
           if (success) {
             Utils.showPopup("Autenticación", "Se ha autenticado correctamente!").then(() => $state.go("dashboard.home"));
           } else {
             Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
           }
-        }).catch(() => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
+        }).catch(() => {
+          $ionicLoading.hide();
+          Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse");
+        });
       }
     };
 

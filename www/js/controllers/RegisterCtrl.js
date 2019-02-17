@@ -3,7 +3,8 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
   "$state",
   "Authentication",
   "Utils",
-  function($scope, $state, Authentication, Utils) {
+  "$ionicLoading",
+  function($scope, $state, Authentication, Utils, $ionicLoading) {
 
     //Request Registro
     $scope.user = {
@@ -24,15 +25,18 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
     $scope.register = function(formRegister, user) {
       $scope.errors = validateFields(formRegister);
       if (isValidForm($scope.errors)) {
-        Authentication.register(user)
-          .then(success => {
-            if (success) {
-              Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
-            } else {
-              Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
-            }
-          })
-          .catch(() => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
+        $ionicLoading.show();
+        Authentication.register(user).then(success => {
+          $ionicLoading.hide();
+          if (success) {
+            Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
+          } else {
+            Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
+          }
+        }).catch(() => {
+          $ionicLoading.hide();
+          Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario");
+        });
       }
       return false;
     };

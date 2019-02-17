@@ -7,7 +7,8 @@ angular
     'Utils',
     'Friends',
     'Profile',
-	function($scope, $state, $stateParams, Utils, Friends, Profile) {
+    '$ionicLoading',
+	function($scope, $state, $stateParams, Utils, Friends, Profile, $ionicLoading) {
 
         //NgModel para el input del autocompletado
         $scope.search = '';
@@ -48,9 +49,14 @@ angular
          */
         $scope.searchFriends = function(search) {
             if (search.length >= 2) {
-                Profile.search(search)
-                    .then(res => $scope.users = $scope.mapperUsers($scope.friends, res.data))
-                    .catch(() => Utils.showPopup('Amigos', `Se produjo al buscar los amigos por el campo ${input}`));
+                $ionicLoading.show();
+                Profile.search(search).then(res => {
+                    $ionicLoading.hide();
+                    $scope.users = $scope.mapperUsers($scope.friends, res.data);
+                }).catch(() => {
+                    $ionicLoading.hide();
+                    Utils.showPopup('Amigos', `Se produjo al buscar los amigos por el campo ${input}`);
+                });
             }
         }
 
@@ -59,9 +65,14 @@ angular
          * @returns void
          */
         $scope.getFriendsByUser = function() {
-            Friends.all()
-                 .then(res => $scope.friends = res.data)
-                 .catch(() => Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`));
+            $ionicLoading.show();
+            Friends.all().then(res => {
+                $ionicLoading.hide();
+                $scope.friends = res.data;
+            }).catch(() => {
+                $ionicLoading.hide();
+                Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`);
+            });
         }
 
         /**
@@ -72,9 +83,14 @@ angular
         $scope.add = function(id) {
             Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
                 if (accept) {
-                    Friends.sendRequest(id)
-                         .then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
-                         .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al enviar la solicitud'));
+                    $ionicLoading.show();
+                    Friends.sendRequest(id).then(() => {
+                        $ionicLoading.hide();
+                        Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!');
+                    }).catch(() => {
+                        $ionicLoading.hide();
+                        Utils.showPopup('Amigos', 'Se produjo un error al enviar la solicitud');
+                    });
                 }
             });
         }
@@ -89,13 +105,25 @@ angular
         }
 
         /**
-         * Permite eliminar a un usuario de la lista de amigos de la persona logueada
+         * Permite eliminar a un usuario de la lista de amigos de la persona logueada, o eliminar una solicitud
+         * recibida...
          * @param {number} idUser
          * @returns void
          */
-        $scope.remove = function(id) {
+        $scope.remove = function(id, isRequest) {
             Utils.showConfirm('Amigos', '¿Estas seguro de eliminar?').then(accept => {
-                $scope.denyFriend(id);
+                $ionicLoading.show();
+                Friends.remove(id).then(() => {
+                    $ionicLoading.hide();
+                    if (isRequest) {
+                        $scope.invitations = $scope.invitations.filter(friend => friend.idamigo !== id); 
+                    } else {
+                        $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
+                    }
+                }).catch(() => {
+                    $ionicLoading.hide();
+                    Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
+                });
             });
         }
 
@@ -116,20 +144,7 @@ angular
         $scope.acceptFriend = function(id) {
             Friends.acceptRequest(id)
                 .then()
-                .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuari'));
-        }
-
-        /**
-         * Permite rechazar una solicitud de amistad, elimina el amigo que esta en estado inactivo...
-         * @param {number} id
-         * @returns void
-         */
-        $scope.denyFriend = function(id) {
-            Friends.remove(id)
-            .then(() => {
-                $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
-            })
-            .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario'));
+                .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al aceptar la solicitud de amistad'));
         }
 
         /**

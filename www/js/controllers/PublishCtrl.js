@@ -6,7 +6,8 @@ angular
 	'Utils',
 	'Items',
 	'Authentication',
-	function($scope, $state, Utils, Items, Authentication) {
+	"$ionicLoading",
+	function($scope, $state, Utils, Items, Authentication, $ionicLoading) {
 
 		$scope.$on('$ionicView.beforeEnter', function() {
 			//Información del usuario
@@ -25,9 +26,14 @@ angular
 		$scope.publish = function(formPublish, item) {
 			$scope.errors = validateFields(formPublish);
 			if (isValidForm($scope.errors)) {
+				$ionicLoading.show();
 				Items.publishItem($scope.item).then(response =>  {
+					$ionicLoading.hide();
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>').then(() => $state.go('dashboard.home'));
-				}).catch(() => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
+				}).catch(() => {
+					$ionicLoading.hide();
+					Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo');
+				});
 			}
 		}
 

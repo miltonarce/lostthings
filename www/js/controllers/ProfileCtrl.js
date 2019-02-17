@@ -6,7 +6,8 @@ angular
 	'Authentication',
 	'Profile',
 	'Utils',
-	function($scope, $state, Authentication, Profile, Utils) {
+	'$ionicLoading',
+	function($scope, $state, Authentication, Profile, Utils, $ionicLoading) {
 		
 		$scope.$on('$ionicView.beforeEnter', function() {
 
@@ -19,9 +20,14 @@ angular
 			//Flag para mostrar el formulario de edición
 			$scope.enableEdit = false;
 
+			$ionicLoading.show();
 			Profile.getAdditionalInfo().then(function(response) {
+				$ionicLoading.hide();
 				$scope.updateValues(response.data.data);
-			}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional");
+			});
 			
 		});
 
@@ -42,7 +48,9 @@ angular
 		$scope.editProfile = function(formEdit, user) {
 			$scope.errors = validateFields(formEdit);
 			if ($scope.errors.nombre === null && $scope.errors.apellido === null) {
+			 $ionicLoading.show();
 			 Profile.edit($scope.requestEdit).then(response => {
+				$ionicLoading.hide();
 				if (response.data.status === 1) {
 					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => {
 						$scope.updateValues(response.data.data);
@@ -51,7 +59,10 @@ angular
 				} else {
 					Utils.showPopup("Perfil", "No se pudo actualizar su perfil, intente más tarde");
 				}
-			 }).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos"));
+			 }).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos");
+			 });
 			} 
 		}
 
@@ -65,13 +76,18 @@ angular
 		$scope.changePassword = function(formChangePassword, requestPassword) {
 			$scope.errorsFormChangePassword = validateFieldsPassword(formChangePassword);
 			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
+				$ionicLoading.show();
 				Profile.changePassword($scope.requestPassword).then(response => {
+					$ionicLoading.hide();
 					if (response.data.status === 1) {
 						Utils.showPopup("Perfil", "Se actualizó correctamente su password!");
 					} else {
 						Utils.showPopup("Perfil", "No se pudo actualizar su password, intente más tarde");
 					}
-				}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password"));
+				}).catch(() => {
+					$ionicLoading.hide();
+					Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password");
+				});
 			}
 		}
 

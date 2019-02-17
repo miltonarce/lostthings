@@ -166,7 +166,8 @@ angular
 	'Items',
 	'Comments',
 	'Authentication',
-	function($scope, $state, $stateParams, Utils, Items, Comments, Authentication) {
+	'$ionicLoading',
+	function($scope, $state, $stateParams, Utils, Items, Comments, Authentication, $ionicLoading) {
 		
 		//Contenido de la publicacion
 		$scope.item = null;
@@ -193,13 +194,18 @@ angular
 			$scope.comment = getDefaultRequest();
 
 			//Obtengo el detalle de la publicación
-			Items.getDetail($stateParams.id).then(function(res) {
+			$ionicLoading.show();
+			Items.getDetail($stateParams.id).then(res => {
+				$ionicLoading.hide();
 				let item = res.data;
 				$scope.item = item;
 				$scope.requestEdit = createDefaultRequest(item);
 				$scope.isMyPublish = item.fkidusuario === idUser;
-			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
-			Comments.getComments($stateParams.id).then(function(res) {
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional');
+			});
+			Comments.getComments($stateParams.id).then(res => {
 				$scope.comentarios = res.data;
 			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
 	    });	
@@ -357,7 +363,8 @@ angular
     'Utils',
     'Friends',
     'Profile',
-	function($scope, $state, $stateParams, Utils, Friends, Profile) {
+    '$ionicLoading',
+	function($scope, $state, $stateParams, Utils, Friends, Profile, $ionicLoading) {
 
         //NgModel para el input del autocompletado
         $scope.search = '';
@@ -398,9 +405,14 @@ angular
          */
         $scope.searchFriends = function(search) {
             if (search.length >= 2) {
-                Profile.search(search)
-                    .then(res => $scope.users = $scope.mapperUsers($scope.friends, res.data))
-                    .catch(() => Utils.showPopup('Amigos', `Se produjo al buscar los amigos por el campo ${input}`));
+                $ionicLoading.show();
+                Profile.search(search).then(res => {
+                    $ionicLoading.hide();
+                    $scope.users = $scope.mapperUsers($scope.friends, res.data);
+                }).catch(() => {
+                    $ionicLoading.hide();
+                    Utils.showPopup('Amigos', `Se produjo al buscar los amigos por el campo ${input}`);
+                });
             }
         }
 
@@ -409,9 +421,14 @@ angular
          * @returns void
          */
         $scope.getFriendsByUser = function() {
-            Friends.all()
-                 .then(res => $scope.friends = res.data)
-                 .catch(() => Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`));
+            $ionicLoading.show();
+            Friends.all().then(res => {
+                $ionicLoading.hide();
+                $scope.friends = res.data;
+            }).catch(() => {
+                $ionicLoading.hide();
+                Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`);
+            });
         }
 
         /**
@@ -422,9 +439,14 @@ angular
         $scope.add = function(id) {
             Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
                 if (accept) {
-                    Friends.sendRequest(id)
-                         .then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
-                         .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al enviar la solicitud'));
+                    $ionicLoading.show();
+                    Friends.sendRequest(id).then(() => {
+                        $ionicLoading.hide();
+                        Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!');
+                    }).catch(() => {
+                        $ionicLoading.hide();
+                        Utils.showPopup('Amigos', 'Se produjo un error al enviar la solicitud');
+                    });
                 }
             });
         }
@@ -439,13 +461,25 @@ angular
         }
 
         /**
-         * Permite eliminar a un usuario de la lista de amigos de la persona logueada
+         * Permite eliminar a un usuario de la lista de amigos de la persona logueada, o eliminar una solicitud
+         * recibida...
          * @param {number} idUser
          * @returns void
          */
-        $scope.remove = function(id) {
+        $scope.remove = function(id, isRequest) {
             Utils.showConfirm('Amigos', '¿Estas seguro de eliminar?').then(accept => {
-                $scope.denyFriend(id);
+                $ionicLoading.show();
+                Friends.remove(id).then(() => {
+                    $ionicLoading.hide();
+                    if (isRequest) {
+                        $scope.invitations = $scope.invitations.filter(friend => friend.idamigo !== id); 
+                    } else {
+                        $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
+                    }
+                }).catch(() => {
+                    $ionicLoading.hide();
+                    Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
+                });
             });
         }
 
@@ -466,20 +500,7 @@ angular
         $scope.acceptFriend = function(id) {
             Friends.acceptRequest(id)
                 .then()
-                .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuari'));
-        }
-
-        /**
-         * Permite rechazar una solicitud de amistad, elimina el amigo que esta en estado inactivo...
-         * @param {number} id
-         * @returns void
-         */
-        $scope.denyFriend = function(id) {
-            Friends.remove(id)
-            .then(() => {
-                $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
-            })
-            .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario'));
+                .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al aceptar la solicitud de amistad'));
         }
 
         /**
@@ -530,7 +551,8 @@ angular.module('lostThings.controllers')
 	'$state',
 	'Items',
 	'Utils',
-	function($scope, $state, Items, Utils) {
+	'$ionicLoading',
+	function($scope, $state, Items, Utils, $ionicLoading) {
 		
 		//Flag para mostrar el campo de búsqueda
 		$scope.showSearch = false;
@@ -555,9 +577,14 @@ angular.module('lostThings.controllers')
 		 * @returns void
 		 */
 		$scope.searchItems = function(search = '') {
+			$ionicLoading.show();
 			Items.searchItems(search).then(res => {
+				$ionicLoading.hide();
 				$scope.items = res.data;
-			}).catch(() => Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`);
+			});
 		}
 
 		/**
@@ -581,9 +608,14 @@ angular.module('lostThings.controllers')
 		 * @returns void
 		 */
 		$scope.getAllItems = function() {
+			$ionicLoading.show();
 			Items.getAllItems().then(res => {
+				$ionicLoading.hide();
 				$scope.items = res.data;
-			}).catch(() => Utils.showPopup('Home', 'Se produjo un error al obtener los resultados'));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Home', 'Se produjo un error al obtener los resultados');
+			});
 		}
 
 		/**
@@ -602,7 +634,8 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
   "$state",
   "Authentication",
   "Utils",
-  function($scope, $state, Authentication, Utils) {
+  "$ionicLoading",
+  function($scope, $state, Authentication, Utils, $ionicLoading) {
 
     //Request Login
     $scope.user = { email: "", password: "" };
@@ -617,13 +650,18 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
     $scope.login = function(formLogin, user) {
       $scope.errors = validateFields(formLogin);
       if ($scope.errors.email === null && $scope.errors.password === null) {
+        $ionicLoading.show();
         Authentication.login(user).then(success => {
+          $ionicLoading.hide();
           if (success) {
             Utils.showPopup("Autenticación", "Se ha autenticado correctamente!").then(() => $state.go("dashboard.home"));
           } else {
             Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
           }
-        }).catch(() => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
+        }).catch(() => {
+          $ionicLoading.hide();
+          Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse");
+        });
       }
     };
 
@@ -662,7 +700,8 @@ angular
 	'Authentication',
 	'Profile',
 	'Utils',
-	function($scope, $state, Authentication, Profile, Utils) {
+	'$ionicLoading',
+	function($scope, $state, Authentication, Profile, Utils, $ionicLoading) {
 		
 		$scope.$on('$ionicView.beforeEnter', function() {
 
@@ -675,9 +714,14 @@ angular
 			//Flag para mostrar el formulario de edición
 			$scope.enableEdit = false;
 
+			$ionicLoading.show();
 			Profile.getAdditionalInfo().then(function(response) {
+				$ionicLoading.hide();
 				$scope.updateValues(response.data.data);
-			}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional");
+			});
 			
 		});
 
@@ -698,7 +742,9 @@ angular
 		$scope.editProfile = function(formEdit, user) {
 			$scope.errors = validateFields(formEdit);
 			if ($scope.errors.nombre === null && $scope.errors.apellido === null) {
+			 $ionicLoading.show();
 			 Profile.edit($scope.requestEdit).then(response => {
+				$ionicLoading.hide();
 				if (response.data.status === 1) {
 					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => {
 						$scope.updateValues(response.data.data);
@@ -707,7 +753,10 @@ angular
 				} else {
 					Utils.showPopup("Perfil", "No se pudo actualizar su perfil, intente más tarde");
 				}
-			 }).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos"));
+			 }).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos");
+			 });
 			} 
 		}
 
@@ -721,13 +770,18 @@ angular
 		$scope.changePassword = function(formChangePassword, requestPassword) {
 			$scope.errorsFormChangePassword = validateFieldsPassword(formChangePassword);
 			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
+				$ionicLoading.show();
 				Profile.changePassword($scope.requestPassword).then(response => {
+					$ionicLoading.hide();
 					if (response.data.status === 1) {
 						Utils.showPopup("Perfil", "Se actualizó correctamente su password!");
 					} else {
 						Utils.showPopup("Perfil", "No se pudo actualizar su password, intente más tarde");
 					}
-				}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password"));
+				}).catch(() => {
+					$ionicLoading.hide();
+					Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password");
+				});
 			}
 		}
 
@@ -805,7 +859,8 @@ angular
 	'Profile',
 	'Items',
 	'Utils',
-	function($scope, $state, $stateParams, Authentication, Friends, Profile, Items, Utils) {
+	'$ionicLoading',
+	function($scope, $state, $stateParams, Authentication, Friends, Profile, Items, Utils, $ionicLoading) {
 
 		$scope.profile = null;
 		$scope.items = [];
@@ -826,14 +881,19 @@ angular
 		 * @returns void
 		 */
 		$scope.getAllInfo = function(idUser) {
+			$ionicLoading.show();
 			Promise.all([
 				Profile.getAdditionalInfo(idUser),
 				Items.getItemsByUser(idUser),
 			]).then(results => {
+				$ionicLoading.hide();
 				$scope.profile = results[0].data.data;
 				$scope.items = results[1].data;
 				$scope.$apply();
-			}).catch(() => Utils.showPopup('Perfil', `Se produjo un error al obtener la información del perfil del usuario`));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Perfil', `Se produjo un error al obtener la información del perfil del usuario`);
+			});
 		}
 
 		 /**
@@ -853,9 +913,14 @@ angular
 		$scope.addFriend = function(user) {
 			Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
 				if (accept) {
-					Friends.addFriend(user.id)
-					.then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
-					.catch(() => Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`));
+					$ionicLoading.show();
+					Friends.addFriend(user.id).then(() => {
+						$ionicLoading.hide();
+						Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!');
+					}).catch(() => {
+						$ionicLoading.hide();
+						Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`);
+					});
 				}
 			});
 		}
@@ -879,7 +944,8 @@ angular
 	'Utils',
 	'Items',
 	'Authentication',
-	function($scope, $state, Utils, Items, Authentication) {
+	"$ionicLoading",
+	function($scope, $state, Utils, Items, Authentication, $ionicLoading) {
 
 		$scope.$on('$ionicView.beforeEnter', function() {
 			//Información del usuario
@@ -898,9 +964,14 @@ angular
 		$scope.publish = function(formPublish, item) {
 			$scope.errors = validateFields(formPublish);
 			if (isValidForm($scope.errors)) {
+				$ionicLoading.show();
 				Items.publishItem($scope.item).then(response =>  {
+					$ionicLoading.hide();
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>').then(() => $state.go('dashboard.home'));
-				}).catch(() => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
+				}).catch(() => {
+					$ionicLoading.hide();
+					Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo');
+				});
 			}
 		}
 
@@ -966,7 +1037,8 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
   "$state",
   "Authentication",
   "Utils",
-  function($scope, $state, Authentication, Utils) {
+  "$ionicLoading",
+  function($scope, $state, Authentication, Utils, $ionicLoading) {
 
     //Request Registro
     $scope.user = {
@@ -987,15 +1059,18 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
     $scope.register = function(formRegister, user) {
       $scope.errors = validateFields(formRegister);
       if (isValidForm($scope.errors)) {
-        Authentication.register(user)
-          .then(success => {
-            if (success) {
-              Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
-            } else {
-              Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
-            }
-          })
-          .catch(() => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
+        $ionicLoading.show();
+        Authentication.register(user).then(success => {
+          $ionicLoading.hide();
+          if (success) {
+            Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
+          } else {
+            Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
+          }
+        }).catch(() => {
+          $ionicLoading.hide();
+          Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario");
+        });
       }
       return false;
     };

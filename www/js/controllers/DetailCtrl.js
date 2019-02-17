@@ -8,7 +8,8 @@ angular
 	'Items',
 	'Comments',
 	'Authentication',
-	function($scope, $state, $stateParams, Utils, Items, Comments, Authentication) {
+	'$ionicLoading',
+	function($scope, $state, $stateParams, Utils, Items, Comments, Authentication, $ionicLoading) {
 		
 		//Contenido de la publicacion
 		$scope.item = null;
@@ -35,13 +36,18 @@ angular
 			$scope.comment = getDefaultRequest();
 
 			//Obtengo el detalle de la publicación
-			Items.getDetail($stateParams.id).then(function(res) {
+			$ionicLoading.show();
+			Items.getDetail($stateParams.id).then(res => {
+				$ionicLoading.hide();
 				let item = res.data;
 				$scope.item = item;
 				$scope.requestEdit = createDefaultRequest(item);
 				$scope.isMyPublish = item.fkidusuario === idUser;
-			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
-			Comments.getComments($stateParams.id).then(function(res) {
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional');
+			});
+			Comments.getComments($stateParams.id).then(res => {
 				$scope.comentarios = res.data;
 			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
 	    });	

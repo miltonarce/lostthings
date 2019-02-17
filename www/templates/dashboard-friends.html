@@ -22,7 +22,7 @@
                             <a class="subdued" ng-click="add(user.idusuario)" ng-if="!user.isFriend">
                                 <i class="icon ion-person-add icon-friend-actions"></i>
                             </a>
-                            <a class="subdued delete-friend-btn" ng-click="remove(user.idusuario)" ng-if="user.isFriend">
+                            <a class="subdued delete-friend-btn" ng-click="remove(user.idusuario, false)" ng-if="user.isFriend">
                                 Eliminar
                             </a>
                             <a class="subdued" ng-click="startChat(user)">
@@ -68,7 +68,7 @@
                     <p>{{invitation.email}}</p>
                     <div class="container-request-invite-buttons">
                         <button class="button button-outline button-small button-positive buttons-margin-right" ng-click="acceptFriend(invitation.idusuario)">Aceptar</button>
-                        <button class="button button-outline button-small button-assertive buttons-margin-left" ng-click="denyFriend(invitation.idusuario)">Eliminar</button>
+                        <button class="button button-outline button-small button-assertive buttons-margin-left" ng-click="remove(invitation.idusuario, true)">Eliminar</button>
                     </div>
                 </ion-item>
             </ion-list>

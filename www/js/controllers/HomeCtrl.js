@@ -4,7 +4,8 @@ angular.module('lostThings.controllers')
 	'$state',
 	'Items',
 	'Utils',
-	function($scope, $state, Items, Utils) {
+	'$ionicLoading',
+	function($scope, $state, Items, Utils, $ionicLoading) {
 		
 		//Flag para mostrar el campo de búsqueda
 		$scope.showSearch = false;
@@ -29,9 +30,14 @@ angular.module('lostThings.controllers')
 		 * @returns void
 		 */
 		$scope.searchItems = function(search = '') {
+			$ionicLoading.show();
 			Items.searchItems(search).then(res => {
+				$ionicLoading.hide();
 				$scope.items = res.data;
-			}).catch(() => Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`);
+			});
 		}
 
 		/**
@@ -55,9 +61,14 @@ angular.module('lostThings.controllers')
 		 * @returns void
 		 */
 		$scope.getAllItems = function() {
+			$ionicLoading.show();
 			Items.getAllItems().then(res => {
+				$ionicLoading.hide();
 				$scope.items = res.data;
-			}).catch(() => Utils.showPopup('Home', 'Se produjo un error al obtener los resultados'));
+			}).catch(() => {
+				$ionicLoading.hide();
+				Utils.showPopup('Home', 'Se produjo un error al obtener los resultados');
+			});
 		}
 
 		/**
