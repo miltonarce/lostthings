@@ -1,13 +1,11 @@
 <ion-view title="Home">
-    <!-- Se agrega al navbar el button de búsqueda -->
     <ion-nav-bar  class="bar-stable">
       <ion-nav-buttons side="right">
         <button class="button icon-left ion-search button-search" ng-click="toggleSearch()"></button>
       </ion-nav-buttons>
     </ion-nav-bar>
     <ion-content class="padding background-content">
-      <!-- Muestra si el usuario toca el toggle, el formulario para buscar un item especifico -->
-      <div ng-if="showSearch">
+      <section ng-if="showSearch">
         <p class="text-center">Utiliza el buscador para encontrar más facílmente los artículos perdidos</p>
         <form name="formSearch" novalidate class="form-search" ng-submit="searchItems(search)">
           <div class="list list-inset">
@@ -17,36 +15,33 @@
             </label>
           </div>
         </form>
-      </div>
+      </section>
       <h1 class="title-last-items">Últimos items publicados</h1>
-      <!-- Actualizar Registros, referencia => https://ionicframework.com/docs/v1/api/directive/ionRefresher/ -->
       <ion-refresher pulling-text="Actualizando resultados..." on-refresh="doRefresh()"></ion-refresher>
-      <!-- Resultados de items si hay -->
       <ion-list ng-if="items.length > 0">
         <ion-item class="list card" ng-repeat="item in items" ng-click="goDetail(item.idpublicacion)">
             <div class="item item-avatar">
-              <img ng-src="img/avatar.png" alt="avatar">
+              <img ng-src="img/avatar.png" alt="{{item.usuario}}">
               <p class="text-bold">{{item.usuario}}</p>
               <p>{{item.fecha_publicacion}}</p>
             </div>
-            <div class="item item-body">
+            <article class="item item-body">
               <p>{{item.titulo}}</p>
               <img ng-if="item.img" class="full-image" ng-src="{{item.img}}" alt="{{item.titulo}}">
               <p>{{item.descripcion}}</p>
               <span class="subdued locate-block">
                 <ion-icon name="pin"></ion-icon>{{item.ubicacion}}
               </span>
-            </div>
+            </article>
         </ion-item>
       </ion-list>
-      <!-- Si no existen resultados muestra un texto que no hay resultados, y permite realizar un search nuevo -->
-      <div ng-if="items.length === 0" class="padding container-not-results">
+      <section ng-if="items.length === 0" class="padding container-not-results">
         <div class="container-icon-not-results ">
           <ion-icon name="alert" class="icon-alert"></ion-icon>
         </div>
         <p class="not-results-text">No se encontraron resultados</p>
         <button class="button button-clear button-positive" ng-click="getAllItems()">Limpiar búsqueda</button>
-      </div>
+      </section>
     </ion-content>
   </ion-view>
   

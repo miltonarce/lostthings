@@ -1,33 +1,31 @@
 <ion-view title="Iniciar Sesión">
   <ion-content class="padding">
-    <!-- Logo y titulo APP -->
-    <div class="text-center">
-      <h1 class="title-app">Lost Things</h1>
-      <img src="/lostthings/www/img/logo.png" alt="logo lost_things" />
-    </div>
-    <!-- Form Login -->
-    <form name="formLogin" ng-submit="login(formLogin, user)" novalidate>
-      <div class="list">
-        <label class="item item-input item-stacked-label item-form">
-          <span class="input-label">Email</span>
-          <input name="email" type="email" placeholder="Ingresa tu email" ng-model="user.email" required />
-        </label>
-        <div class="invalid-form" ng-show="errors.email">
-          <span>{{ errors.email }}</span>
-        </div>
-        <label class="item item-input item-stacked-label item-form">
-          <span class="input-label">Password</span>
-          <input name="password" type="password" placeholder="Ingresa tu password" ng-model="user.password" required />
-        </label>
-        <div class="invalid-form" ng-show="errors.password">
-          <span>{{ errors.password }}</span>
-        </div>
+      <div class="text-center">
+        <h1 class="title-app">Lost Things</h1>
+        <img src="/lostthings/www/img/logo.png" alt="logo lost_things" />
       </div>
-      <button type="submit" class="button button-dark button-block">Acceder</button>
-    </form>
-    <div class="padding container-buttons-login">
-      <p>¿No tienes cuenta?</p>
-      <a class="button button-clear button-positive" href="#/register">Registrarse</a>
-    </div>
+      <form name="formLogin" ng-submit="login(formLogin, user)" novalidate>
+        <div class="list">
+          <label class="item item-input item-stacked-label item-form">
+            <span class="input-label">Email</span>
+            <input name="email" type="email" placeholder="Ingresa tu email" ng-model="user.email" required />
+          </label>
+          <div class="invalid-form" ng-show="errors.email">
+            <span>{{ errors.email }}</span>
+          </div>
+          <label class="item item-input item-stacked-label item-form">
+            <span class="input-label">Password</span>
+            <input name="password" type="password" placeholder="Ingresa tu password" ng-model="user.password" required />
+          </label>
+          <div class="invalid-form" ng-show="errors.password">
+            <span>{{ errors.password }}</span>
+          </div>
+        </div>
+        <button type="submit" class="button button-dark button-block">Acceder</button>
+      </form>
+      <section class="padding container-buttons-login">
+        <p>¿No tienes cuenta?</p>
+        <a class="button button-clear button-positive" href="#/register">Registrarse</a>
+      </section>
   </ion-content>
 </ion-view>

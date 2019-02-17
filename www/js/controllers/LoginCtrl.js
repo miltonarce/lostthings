@@ -24,7 +24,7 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
           } else {
             Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
           }
-        }).catch(_error => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
+        }).catch(() => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
       }
     };
 

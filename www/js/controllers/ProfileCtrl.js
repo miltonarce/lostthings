@@ -10,9 +10,6 @@ angular
 		
 		$scope.$on('$ionicView.beforeEnter', function() {
 
-			//Obtengo la información del usuario
-			$scope.userData = Authentication.getUserData();
-
 			//Request para cambiar la contraseña
 			$scope.requestPassword = { password: '', newpassword: '' } ;
 
@@ -23,11 +20,8 @@ angular
 			$scope.enableEdit = false;
 
 			Profile.getAdditionalInfo().then(function(response) {
-				$scope.userData.nombre = response.data.data.nombre;
-				$scope.userData.apellido = response.data.data.apellido;
-				$scope.requestEdit.nombre = response.data.data.nombre;
-				$scope.requestEdit.apellido = response.data.data.apellido;
-			}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+				$scope.updateValues(response.data.data);
+			}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
 			
 		});
 
@@ -49,12 +43,15 @@ angular
 			$scope.errors = validateFields(formEdit);
 			if ($scope.errors.nombre === null && $scope.errors.apellido === null) {
 			 Profile.edit($scope.requestEdit).then(response => {
-				if (response.status === 1) {
-					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => $state.go('dashboard'));
+				if (response.data.status === 1) {
+					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => {
+						$scope.updateValues(response.data.data);
+						$scope.toggleEnableEdit();
+					});
 				} else {
 					Utils.showPopup("Perfil", "No se pudo actualizar su perfil, intente más tarde");
 				}
-			 }).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos"));
+			 }).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos"));
 			} 
 		}
 
@@ -70,11 +67,11 @@ angular
 			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
 				Profile.changePassword($scope.requestPassword).then(response => {
 					if (response.data.status === 1) {
-						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard.home'));
+						Utils.showPopup("Perfil", "Se actualizó correctamente su password!");
 					} else {
 						Utils.showPopup("Perfil", "No se pudo actualizar su password, intente más tarde");
 					}
-				}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password"));
+				}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password"));
 			}
 		}
 
@@ -86,6 +83,11 @@ angular
 		$scope.logout = function() {
 			Authentication.logout();
 			$state.go('login');
+		}
+
+		$scope.updateValues = function(user) {
+			$scope.requestEdit.nombre = user.nombre;
+			$scope.requestEdit.apellido = user.apellido;
 		}
 
 		/**

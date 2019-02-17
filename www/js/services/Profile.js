@@ -3,7 +3,7 @@ angular
     ["$http",
     "API_SERVER",
     "Authentication",
-    function($http, API_SERVER, Authentication){
+    function($http, API_SERVER, Authentication) {
         
         //Header default para el token
         const defaultHeader = {
@@ -12,14 +12,6 @@ angular
             }
         };
 
-         /**
-         * Permite obtener el id del usuario que inicio sesión
-         * @returns number
-         */
-        function getIdUserLogged() {
-            return Authentication.getUserData().idusuario;
-        }
-
         /**
          * Permite editar los datos del usuario, se envia en el HEADER 
          * el api key del jwt...
@@ -27,8 +19,7 @@ angular
          * @returns Promise
          */
         function edit(userData) {
-            let idUser = getIdUserLogged();
-            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
         /**
@@ -37,23 +28,35 @@ angular
          * @returns Promise
          */
         function changePassword(requestPassword) {
-            let idUser = getIdUserLogged();
-            return $http.put(`${API_SERVER}/profile/${idUser}`, requestPassword, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, requestPassword, defaultHeader);
         }
 
         /**
          * Permite obtener la información del usuario adicional
          * @returns Promise
          */
-        function getAdditionalInfo() {
-            let idUser = getIdUserLogged();
-            return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
+        function getAdditionalInfo(idUser) {
+            if (idUser) {
+                return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
+            }
+            return $http.get(`${API_SERVER}/profile`, defaultHeader)
         }
+
+        /**
+         * Permite buscar personas por el nickname o el nombre
+         * @param {string} input 
+         * @returns Promise
+         */
+        function search(input) {
+            return $http.get(`${API_SERVER}/profile/search/${input}`, defaultHeader);
+        }
+
 
       return {
         edit: edit,
         changePassword: changePassword,
-        getAdditionalInfo: getAdditionalInfo
+        getAdditionalInfo: getAdditionalInfo,
+        search: search
       };
   }
 ]);

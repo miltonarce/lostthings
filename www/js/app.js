@@ -53,6 +53,9 @@ angular
             templateUrl: "templates/dashboard-home.html",
             controller: "HomeCtrl"
           }
+        },
+        data: {
+          requiresAuth: true
         }
       })
       .state("dashboard.friends", {
@@ -109,9 +112,12 @@ angular
         }
       })
       .state("profile", {
-        url: "/profile/:id",
+        url: "/profile/:id/:isFriend",
         templateUrl: "templates/profile.html",
         controller: "ProfileUserCtrl",
+        data: {
+          requiresAuth: true
+        }
       })
       .state("login", {
         url: "/login",

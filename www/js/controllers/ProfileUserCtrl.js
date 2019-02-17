@@ -5,16 +5,19 @@ angular
 	'$state',
 	'$stateParams',
 	'Authentication',
-	'Users',
+	'Friends',
+	'Profile',
 	'Items',
 	'Utils',
-	function($scope, $state, $stateParams, Authentication, Users, Items, Utils) {
+	function($scope, $state, $stateParams, Authentication, Friends, Profile, Items, Utils) {
 
 		$scope.profile = null;
 		$scope.items = [];
+		$scope.isFriend = false;
 		
 		//Al ingresar a la view, se trae toda la info del perfil del usuario, ya que puede variar...
 		$scope.$on('$ionicView.beforeEnter', function() {
+			$scope.isFriend = $stateParams.isFriend;
 			$scope.getAllInfo($stateParams.id);
 		});
 
@@ -28,7 +31,7 @@ angular
 		 */
 		$scope.getAllInfo = function(idUser) {
 			Promise.all([
-				Users.getProfileUser(idUser),
+				Profile.getAdditionalInfo(idUser),
 				Items.getItemsByUser(idUser),
 			]).then(results => {
 				$scope.profile = results[0].data.data;
@@ -47,16 +50,6 @@ angular
 		}
 
 		/**
-		 * Permite verificar si el usuario logueado es amigo de la persona que esta mirando el
-		 * perfil
-		 * @param {idUser}
-		 * @returns boolean
-		 */
-		$scope.isFriend = function(idUser) {
-			return false;
-		}
-
-		  /**
 		 * Permite agregar un usuario a la lista de amigos de la persona que esta logueada
 		 * @param {Object} user
 		 * @returns void
@@ -64,7 +57,7 @@ angular
 		$scope.addFriend = function(user) {
 			Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
 				if (accept) {
-					Users.addFriend(user.id)
+					Friends.addFriend(user.id)
 					.then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
 					.catch(() => Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`));
 				}

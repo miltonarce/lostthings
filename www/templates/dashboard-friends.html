@@ -8,7 +8,7 @@
                 </label>
             </form>
         </div>
-        <div ng-if="search.length > 2">
+        <section ng-if="search.length > 2">
            <div ng-if="users.length > 0">
                 <p class="text-info-result-friends">Se encontraron {{users.length}} resultados</p>
                 <ion-list>
@@ -19,10 +19,10 @@
                             <p>{{user.email}}</p>
                         </div>
                         <div>
-                            <a class="subdued" ng-click="addFriend(user)" ng-if="!user.isFriend">
+                            <a class="subdued" ng-click="add(user.idusuario)" ng-if="!user.isFriend">
                                 <i class="icon ion-person-add icon-friend-actions"></i>
                             </a>
-                            <a class="subdued delete-friend-btn" ng-click="deleteFriend(user.idusuario)" ng-if="user.isFriend">
+                            <a class="subdued delete-friend-btn" ng-click="remove(user.idusuario)" ng-if="user.isFriend">
                                 Eliminar
                             </a>
                             <a class="subdued" ng-click="startChat(user)">
@@ -35,30 +35,47 @@
             <div ng-if="users.length === 0">
                 <p class="text-center">No se encontraron resultados</p>
             </div>
-        </div>
-        <div ng-if="search.length === 0">
+        </section>
+        <section ng-if="search.length === 0">
             <h2 class="padding">Mis Amigos</h2>
             <ion-refresher pulling-text="Actualizando lista de amigos..." on-refresh="doRefresh()"></ion-refresher>
             <ion-list ng-if="friends.length > 0">
                 <div class="friend-list-container">
-                    <div ng-repeat="friend in friends" class="friend-card-container">
+                    <article ng-repeat="friend in friends" class="friend-card-container">
                         <div class="friend-card-content">
                             <a ng-click="showProfile(friend.idamigo)">
-                                <img class="img-friend" ng-src="{{friend.img ? friend.img : 'img/avatar.png' }}" alt="avatar from {{friend.usuario}}">
+                                <img class="img-friend" ng-src="{{friend.img ? friend.img : 'img/avatar.png' }}" alt="{{friend.nombre}}">
                             </a>
                             <div class="friend-card-description">
-                                <p class="friend-card-title">{{friend.usuario}}</p>
+                                <p class="friend-card-title">{{friend.nombre}}</p>
                                 <p class="friend-card-time">Amigos desde {{friend.fecha_amigos_desde}}</p>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
             </ion-list>
             <div class="container-no-friends" ng-if="friends.length === 0">
                 <i class="icon ion-happy-outline icon-smile"></i>	
                 <p class="no-friends-text">No posees ningún amigo, porque no agregas alguno?</p>
             </div>
-        </div>
+        </section>
+        <section ng-if="search.length === 0">
+            <h2 class="padding">Mis Invitaciones</h2>
+            <ion-list ng-if="invitations.length > 0">
+                <ion-item ng-repeat="invitation in invitations" class="item-avatar">
+                    <img ng-src="{{ invitation.img ? invitation.img : 'img/avatar.png' }}" alt="{{invitation.usuario}}">
+                    <p>{{invitation.usuario}}</p>
+                    <p>{{invitation.email}}</p>
+                    <div class="container-request-invite-buttons">
+                        <button class="button button-outline button-small button-positive buttons-margin-right" ng-click="acceptFriend(invitation.idusuario)">Aceptar</button>
+                        <button class="button button-outline button-small button-assertive buttons-margin-left" ng-click="denyFriend(invitation.idusuario)">Eliminar</button>
+                    </div>
+                </ion-item>
+            </ion-list>
+            <div ng-if="invitations.length === 0">
+                <p class="padding">Sin solicitudes de amistad</p>
+            </div>
+        </section>
     </ion-content>
   </ion-view>
   

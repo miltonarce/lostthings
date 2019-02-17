@@ -306,3 +306,13 @@ a.button.icon-left.ion-chevron-left.button-clear {
     display: flex;
     justify-content: space-around;
 }
+.container-request-invite-buttons {
+    display: flex; 
+    justify-content: flex-end;
+}
+.buttons-margin-left {
+    margin-left: 1em;
+}
+.buttons-margin-right {
+    margin-right: 1em;
+}

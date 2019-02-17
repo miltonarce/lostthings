@@ -26,11 +26,8 @@ angular
 			$scope.errors = validateFields(formPublish);
 			if (isValidForm($scope.errors)) {
 				Items.publishItem($scope.item).then(response =>  {
-					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>')
-						 .then(() => {
-							$state.go('dashboard.home');
-						});
-				}).catch(_error => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
+					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>').then(() => $state.go('dashboard.home'));
+				}).catch(() => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
 			}
 		}
 
@@ -86,8 +83,6 @@ angular
 				descripcion: '', 
 				ubicacion: '', 
 				img: null, 
-				fecha_publicacion: Utils.getDate(),
-				fkidusuario: $scope.userData.idusuario
 			};
 		}
 

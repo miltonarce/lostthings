@@ -12,7 +12,6 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
       usuario: "",
       nombre: "",
       apellido: "",
-      fecha_alta: Utils.getDate()
     };
 
     /**
@@ -33,7 +32,7 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
               Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
             }
           })
-          .catch(_error => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
+          .catch(() => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
       }
       return false;
     };

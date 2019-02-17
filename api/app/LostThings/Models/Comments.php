@@ -17,7 +17,8 @@ class Comments implements JsonSerializable
   protected $fkidpublicacion;
   protected $comentario;
   protected $fecha_publicacion;
-  protected $props = ['idcomentario','fkidusuario','fkidpublicacion','comentario','fecha_publicacion'];
+  protected $usuario;
+  protected $props = ['idcomentario','fkidusuario','fkidpublicacion','comentario','fecha_publicacion', 'usuario'];
 
   /**
    * Implementación de la interfaz JsonSerializable para enviar JSON de respuesta...
@@ -30,7 +31,8 @@ class Comments implements JsonSerializable
       'fkidusuario' => $this->fkidusuario,
       'fkidpublicacion' => $this->fkidpublicacion,
       'comentario' => $this->comentario,
-      'fecha_publicacion' => $this->fecha_publicacion
+      'fecha_publicacion' => $this->fecha_publicacion,
+      'usuario' => $this->usuario
     ];
   }
 

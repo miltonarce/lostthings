@@ -25,6 +25,19 @@ class UsuariosController extends BaseController
   }
 
   /**
+   * Permite obtener la información adicional del perfil de un usuario
+   * por el id del mismo, valida que el usuario que solicita la información
+   * este logueado...
+   */
+  public function detailById() 
+  {
+    $this->checkUserIsLogged();
+    $params = Route::getUrlParameters();
+    $id = $params['id'];
+    $this->getDetail($id);
+  }
+
+  /**
    * Permite obtener la información adicional del usuario que esta logueado
    * valida primero que el usuario este logueado...
    * @return User
@@ -32,19 +45,7 @@ class UsuariosController extends BaseController
   public function detail()
   {
     $idUser = $this->checkUserIsLogged();
-    $user = new User;
-    $user->getById($idUser);
-    View::renderJson([
-      'status' => 1,
-			'data' => [
-        'idusuario'	=> $user->id,
-        'nombre' => $user->nombre,
-        'apellido' => $user->apellido,
-        'fecha_alta' => $user->fecha_alta,
-				'usuario' => $user->user,
-				'email' => $user->email
-      ]
-    ]);
+    $this->getDetail($idUser);
   }
 
   /**
@@ -100,14 +101,37 @@ class UsuariosController extends BaseController
     } else if(!empty($data['password']) && !empty($data['newpassword'])) {
       try {  
       $user = new User;
-      $user->updatePassword($idUser, password_hash($data['password'], PASSWORD_DEFAULT), password_hash($data['newpassword'], PASSWORD_DEFAULT));
-      View::renderJson(['status' => 1, 'message' => 'Password modificada exitosamente.', 'data' => $data]);
+      $password = password_hash($data['password'], PASSWORD_DEFAULT);
+      $newPasword = password_hash($data['newpassword'], PASSWORD_DEFAULT);
+      $user->updatePassword($idUser, $password , $newPasword);
+      View::renderJson(['status' => 1, 'message' => 'Password modificada exitosamente.']);
     } catch (Exception $e) {
       View::renderJson(['status' => 0, 'message' => $e]);
     }
     } else {
       View::renderJson(['status' => 0, 'message' => 'No paso los parametros deseados.']);
     }
+  }
+
+  /**
+   * Permite obtener el detalle de un usuario por el id 
+   * @param number $idUser
+   */
+  private function getDetail($idUser) 
+  {
+    $user = new User;
+    $user->getById($idUser);
+    View::renderJson([
+      'status' => 1,
+			'data' => [
+        'idusuario'	=> $user->id,
+        'nombre' => $user->nombre,
+        'apellido' => $user->apellido,
+        'fecha_alta' => $user->fecha_alta,
+				'usuario' => $user->user,
+				'email' => $user->email
+      ]
+    ]);
   }
  
 }

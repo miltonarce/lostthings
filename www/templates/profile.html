@@ -12,10 +12,10 @@
                 <h2>{{profile.nombre ? profile.nombre : profile.usuario}}</h2>
             </div>
             <div class="list profile-container-list-actions">
-                <ion-item class="item item-icon-left profile-item-detail" ng-if="isFriend(profile.idusuario)">
+                <ion-item class="item item-icon-left profile-item-detail" ng-if="isFriend">
                     <i class="icon ion-checkmark-round"></i>Amigos
                 </ion-item>
-                <ion-item class="item item-icon-left profile-item-detail" ng-if="!isFriend(profile.idusuario)" ng-click="addFriend(profile)">
+                <ion-item class="item item-icon-left profile-item-detail" ng-if="!isFriend" ng-click="addFriend(profile)">
                     <i class="icon ion-paper-airplane"></i>Enviar solicitud de amistad
                 </ion-item>
                 <ion-item class="item item-icon-left profile-item-detail">

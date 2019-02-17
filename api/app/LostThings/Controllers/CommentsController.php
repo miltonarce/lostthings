@@ -20,6 +20,7 @@ Class CommentsController extends BaseController
    */
   public function all()
   {
+    $this->checkUserIsLogged();
     $params = Route::getUrlParameters();
     $id = $params['idPublish'];
     try {
@@ -42,10 +43,7 @@ Class CommentsController extends BaseController
     $idUser = $this->checkUserIsLogged();
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
-    $validator = new Validator($data, [
-      'comentario' => ['required'],
-      'fecha_publicacion' => ['required']
-    ]);
+    $validator = new Validator($data, ['comentario' => ['required']]);
     if ($validator->passes()) {
       try {
           $comments = new Comments;

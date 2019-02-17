@@ -53,6 +53,9 @@ angular
             templateUrl: "templates/dashboard-home.html",
             controller: "HomeCtrl"
           }
+        },
+        data: {
+          requiresAuth: true
         }
       })
       .state("dashboard.friends", {
@@ -109,9 +112,12 @@ angular
         }
       })
       .state("profile", {
-        url: "/profile/:id",
+        url: "/profile/:id/:isFriend",
         templateUrl: "templates/profile.html",
         controller: "ProfileUserCtrl",
+        data: {
+          requiresAuth: true
+        }
       })
       .state("login", {
         url: "/login",
@@ -168,6 +174,9 @@ angular
 		//Comentarios de la publicación
 		$scope.comentarios = [];
 
+		//Permite saber si la publicación es del usuario logueado para poder editar o eliminarla...
+		$scope.isMyPublish = false;
+
 		//Información del usuario logueado
 		const idUser = Authentication.getUserData().idusuario;
 
@@ -187,7 +196,8 @@ angular
 			Items.getDetail($stateParams.id).then(function(res) {
 				let item = res.data;
 				$scope.item = item;
-				$scope.requestEdit = createDefaultRequest(item, idUser);
+				$scope.requestEdit = createDefaultRequest(item);
+				$scope.isMyPublish = item.fkidusuario === idUser;
 			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
 			Comments.getComments($stateParams.id).then(function(res) {
 				$scope.comentarios = res.data;
@@ -239,7 +249,7 @@ angular
 			$scope.errors = validateFields(formEdit);
 			if (isValidForm($scope.errors)) {
 				Items.edit($scope.item.idpublicacion, $scope.requestEdit).then(response =>  {
-					if (response.status === 1) {
+					if (response.data.status === 1) {
 						Utils.showPopup('Editar', 'Se actualizó el item').then(() => $state.go('dashboard.home'));
 					} else {
 						Utils.showPopup('Editar', response.data.message);
@@ -311,18 +321,15 @@ angular
 		 * Permite crear el objeto default del request, se filtran los datos
 		 * que ya trae el backend, porque no se necesitan por ejemplo los comentarios
 		 * @param {Object} item 
-		 * @param {Object} idUser 
 		 * @returns Object
 		 */
-		function createDefaultRequest(item, idUser) {
-			let { titulo, descripcion, ubicacion, img, fkidusuario } = item;
+		function createDefaultRequest(item) {
+			let { titulo, descripcion, ubicacion, img } = item;
 			return {
 				titulo,
 				descripcion,
 				ubicacion,
-				img,
-				fecha_publicacion: Utils.getDate(),
-				fkidusuario: idUser
+				img
 			}
 		}
 
@@ -334,7 +341,6 @@ angular
 			return { 
 				comentario: '', 
 				idusuario: idUser, 
-				fecha_publicacion: Utils.getDate() 
 			};
 		}
 
@@ -349,8 +355,9 @@ angular
 	'$state',
 	'$stateParams',
     'Utils',
-    'Users',
-	function($scope, $state, $stateParams, Utils, Users) {
+    'Friends',
+    'Profile',
+	function($scope, $state, $stateParams, Utils, Friends, Profile) {
 
         //NgModel para el input del autocompletado
         $scope.search = '';
@@ -358,10 +365,13 @@ angular
         $scope.users = [];
         //Lista de amigos por default vacía
         $scope.friends = [];
+        //Lista de solicitudes de amistad 
+        $scope.invitations = [];
 
         //Al ingresar a la view, actualiza la lista de amigos
 		$scope.$on('$ionicView.beforeEnter', function() {
-			$scope.getFriendsByUser();
+            $scope.getFriendsByUser();
+            $scope.getAllRequest();
         });	
 
         /**
@@ -370,7 +380,7 @@ angular
 		 * @returns void
 		 */
 		$scope.doRefresh = function() {
-            Users.getFriendsByUser().then(res => {
+            Friends.all().then(res => {
                 $scope.friends = res.data;
 				$scope.$broadcast('scroll.refreshComplete');
             }).catch(() => {
@@ -388,7 +398,7 @@ angular
          */
         $scope.searchFriends = function(search) {
             if (search.length >= 2) {
-               Users.search(search)
+                Profile.search(search)
                     .then(res => $scope.users = $scope.mapperUsers($scope.friends, res.data))
                     .catch(() => Utils.showPopup('Amigos', `Se produjo al buscar los amigos por el campo ${input}`));
             }
@@ -399,24 +409,33 @@ angular
          * @returns void
          */
         $scope.getFriendsByUser = function() {
-            Users.getFriendsByUser()
+            Friends.all()
                  .then(res => $scope.friends = res.data)
                  .catch(() => Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`));
         }
 
         /**
          * Permite agregar un usuario a la lista de amigos de la persona que esta logueada
-         * @param {Object} user
+         * @param {number} id
          * @returns void
          */
-        $scope.addFriend = function(user) {
+        $scope.add = function(id) {
             Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
                 if (accept) {
-                    Users.addFriend(user.id)
+                    Friends.sendRequest(id)
                          .then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
-                         .catch(() => Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`));
+                         .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al enviar la solicitud'));
                 }
             });
+        }
+
+        /**
+         * Permite obtener todas las invitaciones que recibio el usuario..
+         */
+        $scope.getAllRequest = function() {
+            Friends.allRequest()
+                   .then(res => $scope.invitations = res.data)
+                   .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al obtener las solicitudes recibidas'));
         }
 
         /**
@@ -424,10 +443,10 @@ angular
          * @param {number} idUser
          * @returns void
          */
-        $scope.deleteFriend = function(idUser) {
-            /*Users.deleteFriend(user.usuarioid)
-                .then()
-                .catch(() => Utils.showPopup('Amigos', `Se produjo un error al eliminar al usuario ${user.usuario}`));*/
+        $scope.remove = function(id) {
+            Utils.showConfirm('Amigos', '¿Estas seguro de eliminar?').then(accept => {
+                $scope.denyFriend(id);
+            });
         }
 
         /**
@@ -437,6 +456,30 @@ angular
          */
         $scope.startChat = function(user) {
             $state.go('chat', { user: user });
+        }
+
+        /**
+         * Permite aceptar la invitación de un usuario
+         * @param {number} id
+         * @returns void
+         */
+        $scope.acceptFriend = function(id) {
+            Friends.acceptRequest(id)
+                .then()
+                .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuari'));
+        }
+
+        /**
+         * Permite rechazar una solicitud de amistad, elimina el amigo que esta en estado inactivo...
+         * @param {number} id
+         * @returns void
+         */
+        $scope.denyFriend = function(id) {
+            Friends.remove(id)
+            .then(() => {
+                $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
+            })
+            .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario'));
         }
 
         /**
@@ -473,7 +516,8 @@ angular
          * @returns void
          */
         $scope.showProfile = function(idUser) {
-            $state.go('profile', {'id': idUser });
+            const friendShip = $scope.isFriend($scope.friends, idUser);
+            $state.go('profile', {'id': idUser, 'isFriend': friendShip});
         }
 
 	}
@@ -514,7 +558,7 @@ angular.module('lostThings.controllers')
 			Items.searchItems(search).then(res => {
 				$scope.items = res.data;
 				$scope.$apply();
-			}).catch(_err => Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`));
+			}).catch(() => Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`));
 		}
 
 		/**
@@ -526,7 +570,7 @@ angular.module('lostThings.controllers')
 			Items.getAllItems().then(res => {
 				$scope.items = res.data;
 				$scope.$broadcast('scroll.refreshComplete');
-			}).catch(_err => { 
+			}).catch(() => { 
 				$scope.$broadcast('scroll.refreshComplete');
 				Utils.showPopup('Home', 'Se produjo un error al actualizar los resultados');
 			});
@@ -540,7 +584,7 @@ angular.module('lostThings.controllers')
 		$scope.getAllItems = function() {
 			Items.getAllItems().then(res => {
 				$scope.items = res.data;
-			}).catch(_err => Utils.showPopup('Home', 'Se produjo un error al obtener los resultados'));
+			}).catch(() => Utils.showPopup('Home', 'Se produjo un error al obtener los resultados'));
 		}
 
 		/**
@@ -580,7 +624,7 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
           } else {
             Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
           }
-        }).catch(_error => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
+        }).catch(() => Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse"));
       }
     };
 
@@ -623,9 +667,6 @@ angular
 		
 		$scope.$on('$ionicView.beforeEnter', function() {
 
-			//Obtengo la información del usuario
-			$scope.userData = Authentication.getUserData();
-
 			//Request para cambiar la contraseña
 			$scope.requestPassword = { password: '', newpassword: '' } ;
 
@@ -636,11 +677,8 @@ angular
 			$scope.enableEdit = false;
 
 			Profile.getAdditionalInfo().then(function(response) {
-				$scope.userData.nombre = response.data.data.nombre;
-				$scope.userData.apellido = response.data.data.apellido;
-				$scope.requestEdit.nombre = response.data.data.nombre;
-				$scope.requestEdit.apellido = response.data.data.apellido;
-			}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
+				$scope.updateValues(response.data.data);
+			}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al obtener la información adicional"));
 			
 		});
 
@@ -662,12 +700,15 @@ angular
 			$scope.errors = validateFields(formEdit);
 			if ($scope.errors.nombre === null && $scope.errors.apellido === null) {
 			 Profile.edit($scope.requestEdit).then(response => {
-				if (response.status === 1) {
-					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => $state.go('dashboard'));
+				if (response.data.status === 1) {
+					Utils.showPopup("Perfil", "Se actualizó correctamente su perfil!").then(() => {
+						$scope.updateValues(response.data.data);
+						$scope.toggleEnableEdit();
+					});
 				} else {
 					Utils.showPopup("Perfil", "No se pudo actualizar su perfil, intente más tarde");
 				}
-			 }).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos"));
+			 }).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar los datos"));
 			} 
 		}
 
@@ -683,11 +724,11 @@ angular
 			if ($scope.errorsFormChangePassword.password === null && $scope.errorsFormChangePassword.newpassword === null) {
 				Profile.changePassword($scope.requestPassword).then(response => {
 					if (response.data.status === 1) {
-						Utils.showPopup("Perfil", "Se actualizó correctamente su password!").then(() => $state.go('dashboard.home'));
+						Utils.showPopup("Perfil", "Se actualizó correctamente su password!");
 					} else {
 						Utils.showPopup("Perfil", "No se pudo actualizar su password, intente más tarde");
 					}
-				}).catch(_err => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password"));
+				}).catch(() => Utils.showPopup("Perfil", "¡Ups se produjo un error al modificar su password"));
 			}
 		}
 
@@ -699,6 +740,11 @@ angular
 		$scope.logout = function() {
 			Authentication.logout();
 			$state.go('login');
+		}
+
+		$scope.updateValues = function(user) {
+			$scope.requestEdit.nombre = user.nombre;
+			$scope.requestEdit.apellido = user.apellido;
 		}
 
 		/**
@@ -756,16 +802,19 @@ angular
 	'$state',
 	'$stateParams',
 	'Authentication',
-	'Users',
+	'Friends',
+	'Profile',
 	'Items',
 	'Utils',
-	function($scope, $state, $stateParams, Authentication, Users, Items, Utils) {
+	function($scope, $state, $stateParams, Authentication, Friends, Profile, Items, Utils) {
 
 		$scope.profile = null;
 		$scope.items = [];
+		$scope.isFriend = false;
 		
 		//Al ingresar a la view, se trae toda la info del perfil del usuario, ya que puede variar...
 		$scope.$on('$ionicView.beforeEnter', function() {
+			$scope.isFriend = $stateParams.isFriend;
 			$scope.getAllInfo($stateParams.id);
 		});
 
@@ -779,7 +828,7 @@ angular
 		 */
 		$scope.getAllInfo = function(idUser) {
 			Promise.all([
-				Users.getProfileUser(idUser),
+				Profile.getAdditionalInfo(idUser),
 				Items.getItemsByUser(idUser),
 			]).then(results => {
 				$scope.profile = results[0].data.data;
@@ -798,16 +847,6 @@ angular
 		}
 
 		/**
-		 * Permite verificar si el usuario logueado es amigo de la persona que esta mirando el
-		 * perfil
-		 * @param {idUser}
-		 * @returns boolean
-		 */
-		$scope.isFriend = function(idUser) {
-			return false;
-		}
-
-		  /**
 		 * Permite agregar un usuario a la lista de amigos de la persona que esta logueada
 		 * @param {Object} user
 		 * @returns void
@@ -815,7 +854,7 @@ angular
 		$scope.addFriend = function(user) {
 			Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
 				if (accept) {
-					Users.addFriend(user.id)
+					Friends.addFriend(user.id)
 					.then(() => Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!'))
 					.catch(() => Utils.showPopup('Amigos', `Se produjo un error al enviar la solicitud a ${user.usuario}`));
 				}
@@ -861,11 +900,8 @@ angular
 			$scope.errors = validateFields(formPublish);
 			if (isValidForm($scope.errors)) {
 				Items.publishItem($scope.item).then(response =>  {
-					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>')
-						 .then(() => {
-							$state.go('dashboard.home');
-						});
-				}).catch(_error => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
+					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>').then(() => $state.go('dashboard.home'));
+				}).catch(() => Utils.showPopup('Publicar', '¡Ups se produjo un error al querer publicar su artículo'));
 			}
 		}
 
@@ -921,8 +957,6 @@ angular
 				descripcion: '', 
 				ubicacion: '', 
 				img: null, 
-				fecha_publicacion: Utils.getDate(),
-				fkidusuario: $scope.userData.idusuario
 			};
 		}
 
@@ -942,7 +976,6 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
       usuario: "",
       nombre: "",
       apellido: "",
-      fecha_alta: Utils.getDate()
     };
 
     /**
@@ -963,7 +996,7 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
               Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
             }
           })
-          .catch(_error => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
+          .catch(() => Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario"));
       }
       return false;
     };
@@ -1103,11 +1136,16 @@ angular.module("lostThings.services").factory("Authentication", [
       return userData;
     }
 
+    function setUserData(data) {
+      userData = data;
+    }
+
     return {
       login: login,
       register: register,
       isLogged: isLogged,
       getUserData: getUserData,
+      setUserData: setUserData,
       getToken: getToken,
       logout: logout
     };
@@ -1137,7 +1175,15 @@ angular
 .factory('Comments', 
     ["$http", 
     "API_SERVER",
-    function($http, API_SERVER){
+    "Authentication",
+    function($http, API_SERVER, Authentication) {
+
+         //Header default para el token
+        const defaultHeader = {
+            headers: {
+                'X-Token' : Authentication.getToken()
+            }
+        };
         
         /**
          * Permite obtener los comentarios que posee una publicacion por el id de la publicacion
@@ -1145,7 +1191,7 @@ angular
          * @returns Promise
          */
         function getComments(id) {
-            return $http.get(`${API_SERVER}/comments/${id}`);
+            return $http.get(`${API_SERVER}/comments/${id}`, defaultHeader);
         }
 
         /**
@@ -1155,7 +1201,7 @@ angular
          * @returns Promise
          */
         function publish(id, comment) {
-            return $http.post(`${API_SERVER}/comments/${id}`, comment);
+            return $http.post(`${API_SERVER}/comments/${id}`, comment, defaultHeader);
         }
 
         return {
@@ -1165,10 +1211,87 @@ angular
 
     }
 ]);
+angular
+.module('lostThings.services')
+.factory('Friends', 
+    ["$http", 
+    "API_SERVER",
+    "Authentication",
+    function($http, API_SERVER, Authentication){
+
+         //Header default para el token
+         const defaultHeader = {
+            headers: {
+                'X-Token' : Authentication.getToken()
+            }
+        };
+
+     
+        /**
+         * Permite obtener los amigos que posee el usuario logueado por el id del mismo
+         * @returns Promise
+         */
+        function all() {
+            return $http.get(`${API_SERVER}/friends`, defaultHeader);
+        }
+
+        /**
+         * Permite obtener todas las invitaciones recibidas
+         * @returns Promise
+         */
+        function allRequest() {
+            return $http.get(`${API_SERVER}/friends/request`, defaultHeader);
+        }
+
+        /**
+         * Permite enviar una solicitud de amistad
+         * @param {number} id
+         * @returns Promise
+         */
+        function sendRequest(id) {
+            return $http.post(`${API_SERVER}/friends/request/${id}`, null, defaultHeader);
+        }
+
+        /**
+         * Permite aceptar una solicitud de amistad
+         * @param {number} id
+         * @returns Promise
+         */
+        function acceptRequest(id) {
+            return $http.put(`${API_SERVER}/friends/request/${id}`, defaultHeader);
+        }
+
+        /**
+         * Permite eliminar un amigo de la lista de amigos del usuario
+         * @param {number} id
+         * @returns Promise
+         */
+        function remove(id) {
+            return $http.delete(`${API_SERVER}/friends/${id}`, defaultHeader);
+        }
+
+        return {
+            all: all,
+            allRequest: allRequest,
+            sendRequest: sendRequest,
+            acceptRequest: acceptRequest,
+            remove: remove
+        };
+
+    }
+]);
 angular.module("lostThings.services").factory("Items", [
   "$http",
   "API_SERVER",
-  function($http, API_SERVER) {
+  "Authentication",
+  function($http, API_SERVER, Authentication) {
+
+    //Header default para el token
+    const defaultHeader = {
+      headers: {
+          'X-Token' : Authentication.getToken()
+      }
+    };
 
     /**
      * Permite obtener todos los items perdidos
@@ -1184,7 +1307,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getItemsByUser(idUser) {
-      return $http.get(`${API_SERVER}/items/user/${idUser}`);
+      return $http.get(`${API_SERVER}/items/user/${idUser}`, defaultHeader);
     }
 
     /**
@@ -1204,7 +1327,7 @@ angular.module("lostThings.services").factory("Items", [
      */
     function publishItem(item) {
       item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
-      return $http.post(`${API_SERVER}/items`, item);
+      return $http.post(`${API_SERVER}/items`, item, defaultHeader);
     }
 
     /**
@@ -1213,7 +1336,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      return $http.get(`${API_SERVER}/items/${id}`);
+      return $http.get(`${API_SERVER}/items/${id}`, defaultHeader);
     }
 
     /**
@@ -1224,7 +1347,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function edit(id, item) {
-      return $http.put(`${API_SERVER}/items/${id}`, item);
+      return $http.put(`${API_SERVER}/items/${id}`, item, defaultHeader);
     }
 
     /**
@@ -1233,7 +1356,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function remove(id) {
-      return $http.delete(`${API_SERVER}/items/${id}`);
+      return $http.delete(`${API_SERVER}/items/${id}`, defaultHeader);
     }
 
     return {
@@ -1254,7 +1377,7 @@ angular
     ["$http",
     "API_SERVER",
     "Authentication",
-    function($http, API_SERVER, Authentication){
+    function($http, API_SERVER, Authentication) {
         
         //Header default para el token
         const defaultHeader = {
@@ -1263,14 +1386,6 @@ angular
             }
         };
 
-         /**
-         * Permite obtener el id del usuario que inicio sesión
-         * @returns number
-         */
-        function getIdUserLogged() {
-            return Authentication.getUserData().idusuario;
-        }
-
         /**
          * Permite editar los datos del usuario, se envia en el HEADER 
          * el api key del jwt...
@@ -1278,8 +1393,7 @@ angular
          * @returns Promise
          */
         function edit(userData) {
-            let idUser = getIdUserLogged();
-            return $http.put(`${API_SERVER}/profile/${idUser}`, userData, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
         }
 
         /**
@@ -1288,106 +1402,39 @@ angular
          * @returns Promise
          */
         function changePassword(requestPassword) {
-            let idUser = getIdUserLogged();
-            return $http.put(`${API_SERVER}/profile/${idUser}`, requestPassword, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, requestPassword, defaultHeader);
         }
 
         /**
          * Permite obtener la información del usuario adicional
          * @returns Promise
          */
-        function getAdditionalInfo() {
-            let idUser = getIdUserLogged();
-            return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
+        function getAdditionalInfo(idUser) {
+            if (idUser) {
+                return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
+            }
+            return $http.get(`${API_SERVER}/profile`, defaultHeader)
         }
 
-      return {
-        edit: edit,
-        changePassword: changePassword,
-        getAdditionalInfo: getAdditionalInfo
-      };
-  }
-]);
-
-angular
-.module('lostThings.services')
-.factory('Users', 
-    ["$http", 
-    "API_SERVER",
-    "Authentication",
-    function($http, API_SERVER, Authentication){
-
-        /**
-         * Permite obtener el id del usuario que inicio sesión
-         * @returns number
-         */
-        function getIdUserLogged() {
-            return Authentication.getUserData().idusuario;
-        }
-      
         /**
          * Permite buscar personas por el nickname o el nombre
          * @param {string} input 
          * @returns Promise
          */
         function search(input) {
-            return $http.get(`${API_SERVER}/users/${input}`);
+            return $http.get(`${API_SERVER}/profile/search/${input}`, defaultHeader);
         }
 
-        /**
-         * Permite obtener los amigos que posee el usuario logueado por el id del mismo
-         * @returns Promise
-         */
-        function getFriendsByUser() {
-            let idUser = getIdUserLogged();
-            return $http.get(`${API_SERVER}/friends/${idUser}`);
-        }
 
-        /**
-         * Permite agregar un amigo al listado de amigos que posee el usuario
-         * @param {number} userIdFriend
-         * @returns Promise
-         */
-        function addFriend(userIdFriend) {
-            let idUser = getIdUserLogged();
-            return Promise.resolve({
-                status: 1,
-                msg: 'Se envio la solicitud'
-            });
-        }
-
-        /**
-         * Permite eliminar un amigo de la lista de amigos del usuario
-         * @param {number} userIdFriend
-         * @returns Promise
-         */
-        function deleteFriend(userIdFriend) {
-            let idUser = getIdUserLogged();
-            return Promise.resolve({
-                status: 1,
-                msg: 'Se elimino el amigo...'
-            });
-        }
-
-        /**
-         * Permite obtener el perfil completo de un usuario por el id del mismo
-         * @param {number} idUser
-         * @returns Promise
-         */
-        function getProfileUser(idUser) {
-            return $http.get(`${API_SERVER}/profile/${idUser}`);
-        }
-
-        return {
-            search: search,
-            getFriendsByUser: getFriendsByUser,
-            addFriend: addFriend,
-            deleteFriend: deleteFriend,
-            getProfileUser: getProfileUser
-        };
-
-    }
+      return {
+        edit: edit,
+        changePassword: changePassword,
+        getAdditionalInfo: getAdditionalInfo,
+        search: search
+      };
+  }
 ]);
+
 angular
 .module('lostThings.services')
 .factory('Utils', 

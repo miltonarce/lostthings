@@ -71,11 +71,16 @@ angular.module("lostThings.services").factory("Authentication", [
       return userData;
     }
 
+    function setUserData(data) {
+      userData = data;
+    }
+
     return {
       login: login,
       register: register,
       isLogged: isLogged,
       getUserData: getUserData,
+      setUserData: setUserData,
       getToken: getToken,
       logout: logout
     };

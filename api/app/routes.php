@@ -6,10 +6,11 @@ use LostThings\Core\Route;
 Route::add('POST', '/login', 'AuthController@login');
 
 //Profile
-Route::add('GET', '/profile/{input}', 'UsuariosController@search');
 Route::add('GET', '/profile', 'UsuariosController@detail');
+Route::add('GET', '/profile/{id}', 'UsuariosController@detailById');
+Route::add('GET', '/profile/search/{input}', 'UsuariosController@search');
 Route::add('POST', '/profile', 'UsuariosController@save');
-Route::add('PUT', '/profile', 'UsuariosController@update'); //FIXME, VERIFICAR PORQUE NO ACTUALIZAAAA
+Route::add('PUT', '/profile', 'UsuariosController@update');
 
 //Items
 Route::add('GET', '/items', 'ItemsController@all');

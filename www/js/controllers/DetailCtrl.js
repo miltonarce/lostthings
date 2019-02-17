@@ -16,6 +16,9 @@ angular
 		//Comentarios de la publicación
 		$scope.comentarios = [];
 
+		//Permite saber si la publicación es del usuario logueado para poder editar o eliminarla...
+		$scope.isMyPublish = false;
+
 		//Información del usuario logueado
 		const idUser = Authentication.getUserData().idusuario;
 
@@ -35,7 +38,8 @@ angular
 			Items.getDetail($stateParams.id).then(function(res) {
 				let item = res.data;
 				$scope.item = item;
-				$scope.requestEdit = createDefaultRequest(item, idUser);
+				$scope.requestEdit = createDefaultRequest(item);
+				$scope.isMyPublish = item.fkidusuario === idUser;
 			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional'));
 			Comments.getComments($stateParams.id).then(function(res) {
 				$scope.comentarios = res.data;
@@ -87,7 +91,7 @@ angular
 			$scope.errors = validateFields(formEdit);
 			if (isValidForm($scope.errors)) {
 				Items.edit($scope.item.idpublicacion, $scope.requestEdit).then(response =>  {
-					if (response.status === 1) {
+					if (response.data.status === 1) {
 						Utils.showPopup('Editar', 'Se actualizó el item').then(() => $state.go('dashboard.home'));
 					} else {
 						Utils.showPopup('Editar', response.data.message);
@@ -159,18 +163,15 @@ angular
 		 * Permite crear el objeto default del request, se filtran los datos
 		 * que ya trae el backend, porque no se necesitan por ejemplo los comentarios
 		 * @param {Object} item 
-		 * @param {Object} idUser 
 		 * @returns Object
 		 */
-		function createDefaultRequest(item, idUser) {
-			let { titulo, descripcion, ubicacion, img, fkidusuario } = item;
+		function createDefaultRequest(item) {
+			let { titulo, descripcion, ubicacion, img } = item;
 			return {
 				titulo,
 				descripcion,
 				ubicacion,
-				img,
-				fecha_publicacion: Utils.getDate(),
-				fkidusuario: idUser
+				img
 			}
 		}
 
@@ -182,7 +183,6 @@ angular
 			return { 
 				comentario: '', 
 				idusuario: idUser, 
-				fecha_publicacion: Utils.getDate() 
 			};
 		}
 
