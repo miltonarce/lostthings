@@ -29,12 +29,17 @@ angular.module("lostThings.services").factory("Items", [
     }
 
     /**
-     * Permite buscar los items por el valor ingresado como parametro
-     * @param {string} search
+     * Permite buscar los items por el valor ingresado como parametro, si el usuario
+     * ingresa vacio, se trae todo...
+     * @param {string} input
      * @returns Promise
      */
-    function searchItems(search) {
-      return $http.get(`${API_SERVER}/items?search=${search}`);
+    function searchItems(input) {
+      if (input.length > 0) {
+        return $http.get(`${API_SERVER}/items/search/${input}`);
+      } else {
+        return getAllItems();
+      }
     }
 
     /**

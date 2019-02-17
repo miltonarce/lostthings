@@ -13,26 +13,29 @@ use LostThings\Models\User;
  */
 class Auth
 {
+  //Constantes
   const TOKEN_ISSUER = 'http://lostthings.com';
   const SIGNER_KEY = 'FFdasdsazxczgzqswhjdjhsASDdwqt';
   
   /**
-   * Permite autenticar al usuario verifica los datos, si es valido
+   * Permite autenticar al usuario verifica los datos, si es válido
    * carga los datos en el token
+   * @param string $email
+   * @param string $pass
    * @return boolean
    */
   public function login($email, $pass)
   {
-    $userLogged = new User;
-    if ($userLogged->getByEmail($email)) {
-      if (password_verify($pass, $userLogged->pass)) {
-        $token = $this->genToken($userLogged);
+    $user = new User;
+    if ($user->getByEmail($email)) {
+      if (password_verify($pass, $user->getPassword())) {
+        $token = $this->genToken($user);
         return [
           'token' => (string) $token,
           'user' => [
-            'idusuario' => $userLogged->id,
-            'usuario' => $userLogged->user,
-            'email' => $userLogged->email
+            'idusuario' => $user->getIdUsuario(),
+            'usuario' => $user->getUsuario(),
+            'email' => $user->getEmail()
           ]
         ];
       } else {
@@ -41,22 +44,6 @@ class Auth
     } else {
       return false;
     }
-  }
-
-  /**
-   * Permite generar el token
-   * @param User $userClass - Class Usuario
-   * @return \Lcobucci\JWT\Token
-   */
-  public function genToken($userClass)
-  {
-    $builder = new Builder();
-    $builder->setIssuer(self::TOKEN_ISSUER);
-    $builder->set('idusuario', $userClass->id);
-    $signer = new Sha256();
-    $builder->sign($signer, self::SIGNER_KEY);
-    $token = $builder->getToken();
-    return $token;
   }
 
   /**
@@ -81,6 +68,22 @@ class Auth
       return false;
     }
     return ['idusuario' => $token->getClaim('idusuario')];
+  }
+  
+  /**
+   * Permite generar el token
+   * @param User $user
+   * @return Token
+   */
+  private function genToken(User $user)
+  {
+    $builder = new Builder();
+    $builder->setIssuer(self::TOKEN_ISSUER);
+    $builder->set('idusuario', $user->getIdUsuario());
+    $signer = new Sha256();
+    $builder->sign($signer, self::SIGNER_KEY);
+    $token = $builder->getToken();
+    return $token;
   }
 
 }

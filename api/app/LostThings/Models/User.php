@@ -2,17 +2,41 @@
 namespace LostThings\Models;
 
 use LostThings\DB\DBConnection;
+use JsonSerializable;
 use Exception;
 
-class User
+/**
+ * Model de la tabla usuarios
+ */
+class User implements JsonSerializable
 {
-  public $id;
-  public $nombre;
-  public $apellido;
-  public $fecha_alta;
-  public $user;
-  public $email;
-  public $pass;
+
+  protected $idusuario;
+  protected $nombre;
+  protected $apellido;
+  protected $fecha_alta;
+  protected $usuario;
+  protected $email;
+  protected $img;
+  protected $password;
+  protected $props = ['idusuario', 'nombre', 'apellido', 'fecha_alta', 'usuario', 'email', 'password', 'img'];
+
+  /**
+   * Implementación de la interfaz JsonSerializable para enviar JSON de respuesta...
+   * @return Array
+   */
+  public function jsonSerialize()
+  {
+    return [
+      'idusuario' => $this->idusuario,
+      'nombre' => $this->nombre,
+      'apellido' => $this->apellido,
+      'fecha_alta' => $this->fecha_alta,
+      'usuario' => $this->usuario,
+      'email' => $this->email,
+      'img' => $this->img
+    ];
+  }
 
   /**
    * Permite buscar usuarios por los campos nombre, usuario, apellido realiza un like
@@ -23,18 +47,14 @@ class User
   public function search($value) 
   {
     $db = DBConnection::getConnection();
-		$query = "SELECT idusuario, usuario, nombre, email, img FROM usuarios WHERE nombre LIKE :input OR apellido LIKE :input OR usuario LIKE :input ORDER BY nombre ASC";
+		$query = "SELECT idusuario, usuario, nombre, email, img, apellido, fecha_alta FROM usuarios WHERE nombre LIKE :input OR apellido LIKE :input OR usuario LIKE :input ORDER BY nombre ASC";
 		$stmt = $db->prepare($query);
 		$stmt->execute(['input' => "%$value%"]);
     $users = [];
     while($row = $stmt->fetch()){
-      $users[] = [
-        'idusuario' => $row['idusuario'],
-        'usuario' => $row['usuario'],
-        'nombre' => $row['nombre'],
-        'email' => $row['email'],
-        'img' => $row['img']
-      ];
+      $user = new User;
+      $user->loadDataArray($row);
+      $users[] = $user;
     }
     return $users;
   }
@@ -47,8 +67,7 @@ class User
   public function save($row)
   {
     $db = DBConnection::getConnection();
-    $query = "INSERT INTO usuarios (usuario, nombre, apellido, fecha_alta, password, email)
-    VALUES (:usuario, :nombre, :apellido, :fecha_alta, :password, :email)";
+    $query = "INSERT INTO usuarios (usuario, nombre, apellido, fecha_alta, password, email) VALUES (:usuario, :nombre, :apellido, :fecha_alta, :password, :email)";
     $stmt = $db->prepare($query);
     $success = $stmt->execute([
         'usuario' => $row['usuario'],
@@ -74,11 +93,7 @@ class User
   public function update($idUser, $nombre, $apellido)
   {
     $db = DBConnection::getConnection();
-    $query = "UPDATE usuarios 
-                  SET 
-                    nombre = :nombre,
-                    apellido = :apellido
-                  WHERE  idusuario = :idusuario";
+    $query = "UPDATE usuarios SET nombre = :nombre, apellido = :apellido WHERE  idusuario = :idusuario";
     $stmt = $db->prepare($query);
     $success = $stmt->execute([
       'nombre' => $nombre,
@@ -108,8 +123,8 @@ class User
     if (!$success) {
       throw new Exception('No se pudo editar el usuario en la base de datos');
     } else {
-      if ($stmt->rowCount() !== 0) {
-        throw new Exception('No existe ningun usuario con el id');
+      if ($stmt->rowCount() === 0) {
+        throw new Exception('Se produjo un error al actualizar la contraseña del usuario');
       }
     }
   }
@@ -122,8 +137,7 @@ class User
   public function getByEmail($email)
   {
     $db = DBConnection::getConnection();
-    $query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios
-    WHERE email = ?";
+    $query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios WHERE email = ?";
     $stmt = $db->prepare($query);
     $stmt->execute([$email]);
     if ($row = $stmt->fetch()) {
@@ -142,12 +156,11 @@ class User
   public function getById($userID)
 	{
 		$db = DBConnection::getConnection();
-		$query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios
-				WHERE idusuario = ?";
+		$query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios WHERE idusuario = ?";
 		$stmt = $db->prepare($query);
 		$stmt->execute([$userID]);
 		if ($row = $stmt->fetch()) {
-			$this->loadDataArray($row);
+      $this->loadDataArray($row);
 			return true;
 		} else {
 			return false;
@@ -173,19 +186,38 @@ class User
     }
   }
 
- /**
+  /**
    * Permite setear todas las properties del object...
    * @return void
    */
-  public function loadDataArray($row)
+  private function loadDataArray($row)
   {
-    $this->id = $row['idusuario'];
-    $this->nombre = $row['nombre'];
-    $this->apellido = $row['apellido'];
-    $this->fecha_alta = $row['fecha_alta'];
-    $this->user = $row['usuario'];
-    $this->email = $row['email'];
-    $this->pass = $row['password'];
+    foreach ($this->props as $prop) {
+      if (isset($row[$prop])) {
+        $this->{$prop} = $row[$prop];
+      }
+    }
+  }
+
+  //Getters 
+  public function getIdUsuario() 
+  {
+    return $this->idusuario;
+  }
+
+  public function getUsuario() 
+  {
+    return $this->usuario;
+  }
+  
+  public function getEmail() 
+  {
+    return $this->email;
+  }
+
+  public function getPassword() 
+  {
+    return $this->password;
   }
   
 }

@@ -67,6 +67,28 @@ class Item implements JsonSerializable
   }
 
   /**
+   * Permite realizar una búsqueda por un like contra la descripción de los items
+   * @param string $input
+   * @return Item[]
+   */
+  public function search($input) 
+  {
+    $db = DBConnection::getConnection();
+    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, p.fkidusuario, us.usuario 
+              FROM publicaciones p 
+              JOIN usuarios AS us ON us.idusuario = p.fkidusuario WHERE p.descripcion LIKE :input ORDER BY p.fecha_publicacion";
+    $stmt = $db->prepare($query);
+    $stmt->execute(['input' => "%$input%"]);
+    $items = [];
+    while ($row = $stmt->fetch()) {
+      $item = new Item;
+      $item->loadDataArray($row);
+      $items[] = $item;
+    }
+    return $items;
+  }
+
+  /**
    * Permite obtener todas las publicaciones de un usuario en particular
    * @param number $idUser
    * @return Item[]

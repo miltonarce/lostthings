@@ -23,7 +23,7 @@ Class ItemsController extends BaseController
     $items = $item->all();
     View::renderJson($items);
   }
-  
+ 
   /**
    * Permite obtener las publicaciones de un usuario particular por el id del mismo,
    * el usuario que quiere ver las publicaciones tiene que estar logueado...
@@ -43,7 +43,8 @@ Class ItemsController extends BaseController
    * Permite obtener la informacion de una publicacion por el id de la misma
    * @return Item
    */
-  public function getItem() {
+  public function getItem() 
+  {
     $this->checkUserIsLogged();
     $params = Route::getUrlParameters();
     $id = $params['id'];
@@ -138,6 +139,19 @@ Class ItemsController extends BaseController
 		} catch (Exception $e) {
 			View::renderJson(['status' => 0, 'message' => $e]);
 		}
+  }
+
+  /**
+   * Permite realizar una búsqueda con los datos que ingreso el user..
+   * @return Item[]
+   */
+  public function search() 
+  {
+    $params = Route::getUrlParameters();
+    $input = $params['input'];
+    $item = new Item;
+    $items = $item->search($input);
+    View::renderJson($items);
   }
 
 }

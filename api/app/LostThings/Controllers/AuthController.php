@@ -1,4 +1,5 @@
 <?php
+
 namespace LostThings\Controllers;
 
 use LostThings\Core\App;

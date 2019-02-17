@@ -31,7 +31,6 @@ angular.module('lostThings.controllers')
 		$scope.searchItems = function(search = '') {
 			Items.searchItems(search).then(res => {
 				$scope.items = res.data;
-				$scope.$apply();
 			}).catch(() => Utils.showPopup('Home', `Se produjo un error al buscar ${search} en los resultados`));
 		}
 
