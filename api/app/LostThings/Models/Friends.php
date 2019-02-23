@@ -97,10 +97,8 @@ class Friends implements JsonSerializable
   public function allRequest($idusuario) 
   {
     $db = DBConnection::getConnection();
-    $query = "SELECT u.nombre, u.usuario, u.apellido, u.idusuario idamigo, u.email, u.img FROM amigos a 
-            INNER JOIN usuarios u ON u.idusuario = a.idamigo
-            WHERE a.idusuario = ? AND a.estado = 0
-            ";
+    $query = "SELECT a.idusuario idamigo , u.nombre, u.usuario, u.apellido, u.email, u.img FROM usuarios u 
+              INNER JOIN amigos a ON u.idusuario = a.idusuario WHERE idamigo = ? AND estado = 0;";
     $stmt = $db->prepare($query);
     $success = $stmt->execute([$idusuario]);
     $friends = [];
@@ -147,8 +145,8 @@ class Friends implements JsonSerializable
     $query = "UPDATE amigos 
                   SET 
                     estado = 1
-                  WHERE  idusuario = :idusuario
-                  AND idamigo = :idamigo";
+                  WHERE  idusuario = :idamigo
+                  AND idamigo = :idusuario";
     $stmt = $db->prepare($query);
     $success = $stmt->execute(['idusuario' => $idusuario, 'idamigo' => $idamigo]);
     if (!$success) {

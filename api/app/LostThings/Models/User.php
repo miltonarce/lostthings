@@ -168,25 +168,6 @@ class User implements JsonSerializable
   }
 
   /**
-   * Permite verificar si existen 2 usuarios por el id..
-   * @param number $id1
-   * @param number $id2
-   * @return boolean
-   */
-  public function verifyUsers($id1, $id2) 
-  {
-    $db = DBConnection::getConnection();
-		$query = "SELECT * FROM usuarios WHERE idusuario IN (?, ?)";
-		$stmt = $db->prepare($query);
-		$stmt->execute([$id1, $id2]);
-		if ($row = $stmt->fetch()) {
-      return $stmt->rowCount() === 2;
-		} else {
-			return false;
-    }
-  }
-
-  /**
    * Permite setear todas las properties del object...
    * @return void
    */

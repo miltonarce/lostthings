@@ -74,13 +74,13 @@ Class FriendsController extends BaseController
     $idFriend = $params['id'];
     try {
       $user = new User;
-      $exitsUsers = $user->verifyUsers($idUser, $idFriend);
-      if ($exitsUsers) {
+      $existUser = $user->getById($idFriend);
+      if ($existUser) {
         $friend = new Friends;
         $friend->save($idUser, $idFriend);
         View::renderJson(['status' => 1, 'message' => 'Se envio la solicitud de amistad']);
       } else {
-        View::renderJson(['status' => 0, 'message' => "No existe ningún usuario con el id " . $idUser]);
+        View::renderJson(['status' => 0, 'message' => "No existe ningún usuario con el id para enviar la solicitud de amistad" . $idFriend]);
       }
     } catch (Exception $e) {
       View::renderJson(['status' => 0, 'message' => $e]);

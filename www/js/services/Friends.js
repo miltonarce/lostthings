@@ -45,7 +45,7 @@ angular
          * @returns Promise
          */
         function acceptRequest(id) {
-            return $http.put(`${API_SERVER}/friends/request/${id}`, defaultHeader);
+            return $http.put(`${API_SERVER}/friends/request/${id}`, null, defaultHeader);
         }
 
         /**

@@ -394,6 +394,7 @@ angular
                 $scope.$broadcast('scroll.refreshComplete');
                 Utils.showPopup('Amigos', `Se produjo un error al obtener los amigos`);
             });
+            $scope.getAllRequest();
         }
         
         /**
@@ -494,13 +495,14 @@ angular
 
         /**
          * Permite aceptar la invitación de un usuario
-         * @param {number} id
+         * @param {Object} friend
          * @returns void
          */
-        $scope.acceptFriend = function(id) {
-            Friends.acceptRequest(id)
-                .then()
-                .catch(() => Utils.showPopup('Amigos', 'Se produjo un error al aceptar la solicitud de amistad'));
+        $scope.acceptFriend = function(friend) {
+            Friends.acceptRequest(friend.idamigo).then(() => {
+                $scope.invitations = $scope.invitations.filter(friend => friend.idamigo !== friend.idamigo);
+                $scope.friends = [...$scope.friends, friend];
+            }).catch(() => Utils.showPopup('Amigos', 'Se produjo un error al aceptar la solicitud de amistad'));
         }
 
         /**
@@ -1344,7 +1346,7 @@ angular
          * @returns Promise
          */
         function acceptRequest(id) {
-            return $http.put(`${API_SERVER}/friends/request/${id}`, defaultHeader);
+            return $http.put(`${API_SERVER}/friends/request/${id}`, null, defaultHeader);
         }
 
         /**
