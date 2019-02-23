@@ -66,6 +66,17 @@ angular.module("lostThings.services").factory("Authentication", [
     }
 
     /**
+     * Permite obtener el header por defecto para los endpoints con autenticación
+     */
+    function getHeaderForAPI() {
+      return {
+        headers: {
+            'X-Token' : getToken()
+        }
+      };
+    }
+
+    /**
      * Permite registrar al usuario utilizando la API de PHP
      * @param {Object} user
      * @returns Promise
@@ -94,7 +105,8 @@ angular.module("lostThings.services").factory("Authentication", [
       register: register,
       isLogged: isLogged,
       getUserData: getUserData,
-      getToken: getToken
+      getToken: getToken,
+      getHeaderForAPI: getHeaderForAPI
     };
     
   }

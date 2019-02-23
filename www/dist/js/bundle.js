@@ -870,7 +870,7 @@ angular
 		
 		//Al ingresar a la view, se trae toda la info del perfil del usuario, ya que puede variar...
 		$scope.$on('$ionicView.beforeEnter', function() {
-			$scope.isFriend = $stateParams.isFriend;
+			$scope.isFriend = $stateParams.isFriend === 'true';
 			$scope.getAllInfo($stateParams.id);
 		});
 
@@ -916,7 +916,7 @@ angular
 			Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
 				if (accept) {
 					$ionicLoading.show();
-					Friends.addFriend(user.id).then(() => {
+					Friends.sendRequest(user.idusuario).then(() => {
 						$ionicLoading.hide();
 						Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!');
 					}).catch(() => {
@@ -1207,6 +1207,17 @@ angular.module("lostThings.services").factory("Authentication", [
     }
 
     /**
+     * Permite obtener el header por defecto para los endpoints con autenticación
+     */
+    function getHeaderForAPI() {
+      return {
+        headers: {
+            'X-Token' : getToken()
+        }
+      };
+    }
+
+    /**
      * Permite registrar al usuario utilizando la API de PHP
      * @param {Object} user
      * @returns Promise
@@ -1235,7 +1246,8 @@ angular.module("lostThings.services").factory("Authentication", [
       register: register,
       isLogged: isLogged,
       getUserData: getUserData,
-      getToken: getToken
+      getToken: getToken,
+      getHeaderForAPI: getHeaderForAPI
     };
     
   }
@@ -1266,20 +1278,13 @@ angular
     "Authentication",
     function($http, API_SERVER, Authentication) {
 
-         //Header default para el token
-        const defaultHeader = {
-            headers: {
-                'X-Token' : Authentication.getToken()
-            }
-        };
-        
         /**
          * Permite obtener los comentarios que posee una publicacion por el id de la publicacion
          * @param {number} id 
          * @returns Promise
          */
         function getComments(id) {
-            return $http.get(`${API_SERVER}/comments/${id}`, defaultHeader);
+            return $http.get(`${API_SERVER}/comments/${id}`, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -1289,7 +1294,7 @@ angular
          * @returns Promise
          */
         function publish(id, comment) {
-            return $http.post(`${API_SERVER}/comments/${id}`, comment, defaultHeader);
+            return $http.post(`${API_SERVER}/comments/${id}`, comment, Authentication.getHeaderForAPI());
         }
 
         return {
@@ -1307,20 +1312,12 @@ angular
     "Authentication",
     function($http, API_SERVER, Authentication){
 
-         //Header default para el token
-         const defaultHeader = {
-            headers: {
-                'X-Token' : Authentication.getToken()
-            }
-        };
-
-     
         /**
          * Permite obtener los amigos que posee el usuario logueado por el id del mismo
          * @returns Promise
          */
         function all() {
-            return $http.get(`${API_SERVER}/friends`, defaultHeader);
+            return $http.get(`${API_SERVER}/friends`, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -1328,7 +1325,7 @@ angular
          * @returns Promise
          */
         function allRequest() {
-            return $http.get(`${API_SERVER}/friends/request`, defaultHeader);
+            return $http.get(`${API_SERVER}/friends/request`, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -1337,7 +1334,7 @@ angular
          * @returns Promise
          */
         function sendRequest(id) {
-            return $http.post(`${API_SERVER}/friends/request/${id}`, null, defaultHeader);
+            return $http.post(`${API_SERVER}/friends/request/${id}`, null, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -1346,7 +1343,7 @@ angular
          * @returns Promise
          */
         function acceptRequest(id) {
-            return $http.put(`${API_SERVER}/friends/request/${id}`, null, defaultHeader);
+            return $http.put(`${API_SERVER}/friends/request/${id}`, null, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -1355,7 +1352,7 @@ angular
          * @returns Promise
          */
         function remove(id) {
-            return $http.delete(`${API_SERVER}/friends/${id}`, defaultHeader);
+            return $http.delete(`${API_SERVER}/friends/${id}`, Authentication.getHeaderForAPI());
         }
 
         return {
@@ -1374,13 +1371,6 @@ angular.module("lostThings.services").factory("Items", [
   "Authentication",
   function($http, API_SERVER, Authentication) {
 
-    //Header default para el token
-    const defaultHeader = {
-      headers: {
-          'X-Token' : Authentication.getToken()
-      }
-    };
-
     /**
      * Permite obtener todos los items perdidos
      * @returns Promise
@@ -1395,7 +1385,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getItemsByUser(idUser) {
-      return $http.get(`${API_SERVER}/items/user/${idUser}`, defaultHeader);
+      return $http.get(`${API_SERVER}/items/user/${idUser}`, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -1420,7 +1410,7 @@ angular.module("lostThings.services").factory("Items", [
      */
     function publishItem(item) {
       item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
-      return $http.post(`${API_SERVER}/items`, item, defaultHeader);
+      return $http.post(`${API_SERVER}/items`, item, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -1429,7 +1419,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      return $http.get(`${API_SERVER}/items/${id}`, defaultHeader);
+      return $http.get(`${API_SERVER}/items/${id}`, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -1440,7 +1430,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function edit(id, item) {
-      return $http.put(`${API_SERVER}/items/${id}`, item, defaultHeader);
+      return $http.put(`${API_SERVER}/items/${id}`, item, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -1449,7 +1439,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function remove(id) {
-      return $http.delete(`${API_SERVER}/items/${id}`, defaultHeader);
+      return $http.delete(`${API_SERVER}/items/${id}`, Authentication.getHeaderForAPI());
     }
 
     return {
@@ -1471,13 +1461,6 @@ angular
     "API_SERVER",
     "Authentication",
     function($http, API_SERVER, Authentication) {
-        
-        //Header default para el token
-        const defaultHeader = {
-            headers: {
-                'X-Token' : Authentication.getToken()
-            }
-        };
 
         /**
          * Permite editar los datos del usuario, se envia en el HEADER 
@@ -1486,7 +1469,7 @@ angular
          * @returns Promise
          */
         function edit(userData) {
-            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, userData, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -1495,7 +1478,7 @@ angular
          * @returns Promise
          */
         function changePassword(requestPassword) {
-            return $http.put(`${API_SERVER}/profile`, requestPassword, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, requestPassword, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -1504,9 +1487,9 @@ angular
          */
         function getAdditionalInfo(idUser) {
             if (idUser) {
-                return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
+                return $http.get(`${API_SERVER}/profile/${idUser}`, Authentication.getHeaderForAPI())
             }
-            return $http.get(`${API_SERVER}/profile`, defaultHeader)
+            return $http.get(`${API_SERVER}/profile`, Authentication.getHeaderForAPI())
         }
 
         /**
@@ -1515,9 +1498,8 @@ angular
          * @returns Promise
          */
         function search(input) {
-            return $http.get(`${API_SERVER}/profile/search/${input}`, defaultHeader);
+            return $http.get(`${API_SERVER}/profile/search/${input}`, Authentication.getHeaderForAPI());
         }
-
 
       return {
         edit: edit,

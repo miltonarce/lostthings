@@ -4,13 +4,6 @@ angular.module("lostThings.services").factory("Items", [
   "Authentication",
   function($http, API_SERVER, Authentication) {
 
-    //Header default para el token
-    const defaultHeader = {
-      headers: {
-          'X-Token' : Authentication.getToken()
-      }
-    };
-
     /**
      * Permite obtener todos los items perdidos
      * @returns Promise
@@ -25,7 +18,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getItemsByUser(idUser) {
-      return $http.get(`${API_SERVER}/items/user/${idUser}`, defaultHeader);
+      return $http.get(`${API_SERVER}/items/user/${idUser}`, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -50,7 +43,7 @@ angular.module("lostThings.services").factory("Items", [
      */
     function publishItem(item) {
       item.img = item.img ? `data:${item.img.filetype};base64, ${item.img.base64}` : null;
-      return $http.post(`${API_SERVER}/items`, item, defaultHeader);
+      return $http.post(`${API_SERVER}/items`, item, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -59,7 +52,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function getDetail(id) {
-      return $http.get(`${API_SERVER}/items/${id}`, defaultHeader);
+      return $http.get(`${API_SERVER}/items/${id}`, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -70,7 +63,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function edit(id, item) {
-      return $http.put(`${API_SERVER}/items/${id}`, item, defaultHeader);
+      return $http.put(`${API_SERVER}/items/${id}`, item, Authentication.getHeaderForAPI());
     }
 
     /**
@@ -79,7 +72,7 @@ angular.module("lostThings.services").factory("Items", [
      * @returns Promise
      */
     function remove(id) {
-      return $http.delete(`${API_SERVER}/items/${id}`, defaultHeader);
+      return $http.delete(`${API_SERVER}/items/${id}`, Authentication.getHeaderForAPI());
     }
 
     return {

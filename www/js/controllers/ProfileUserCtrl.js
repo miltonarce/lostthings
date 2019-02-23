@@ -18,7 +18,7 @@ angular
 		
 		//Al ingresar a la view, se trae toda la info del perfil del usuario, ya que puede variar...
 		$scope.$on('$ionicView.beforeEnter', function() {
-			$scope.isFriend = $stateParams.isFriend;
+			$scope.isFriend = $stateParams.isFriend === 'true';
 			$scope.getAllInfo($stateParams.id);
 		});
 
@@ -64,7 +64,7 @@ angular
 			Utils.showConfirm('Amigos', '¿Deseas enviar una solicitud de amistad?').then(accept => {
 				if (accept) {
 					$ionicLoading.show();
-					Friends.addFriend(user.id).then(() => {
+					Friends.sendRequest(user.idusuario).then(() => {
 						$ionicLoading.hide();
 						Utils.showPopup('Amigos', 'Se envió la solicitud de amistad!');
 					}).catch(() => {

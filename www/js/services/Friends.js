@@ -6,20 +6,12 @@ angular
     "Authentication",
     function($http, API_SERVER, Authentication){
 
-         //Header default para el token
-         const defaultHeader = {
-            headers: {
-                'X-Token' : Authentication.getToken()
-            }
-        };
-
-     
         /**
          * Permite obtener los amigos que posee el usuario logueado por el id del mismo
          * @returns Promise
          */
         function all() {
-            return $http.get(`${API_SERVER}/friends`, defaultHeader);
+            return $http.get(`${API_SERVER}/friends`, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -27,7 +19,7 @@ angular
          * @returns Promise
          */
         function allRequest() {
-            return $http.get(`${API_SERVER}/friends/request`, defaultHeader);
+            return $http.get(`${API_SERVER}/friends/request`, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -36,7 +28,7 @@ angular
          * @returns Promise
          */
         function sendRequest(id) {
-            return $http.post(`${API_SERVER}/friends/request/${id}`, null, defaultHeader);
+            return $http.post(`${API_SERVER}/friends/request/${id}`, null, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -45,7 +37,7 @@ angular
          * @returns Promise
          */
         function acceptRequest(id) {
-            return $http.put(`${API_SERVER}/friends/request/${id}`, null, defaultHeader);
+            return $http.put(`${API_SERVER}/friends/request/${id}`, null, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -54,7 +46,7 @@ angular
          * @returns Promise
          */
         function remove(id) {
-            return $http.delete(`${API_SERVER}/friends/${id}`, defaultHeader);
+            return $http.delete(`${API_SERVER}/friends/${id}`, Authentication.getHeaderForAPI());
         }
 
         return {

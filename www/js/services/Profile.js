@@ -4,13 +4,6 @@ angular
     "API_SERVER",
     "Authentication",
     function($http, API_SERVER, Authentication) {
-        
-        //Header default para el token
-        const defaultHeader = {
-            headers: {
-                'X-Token' : Authentication.getToken()
-            }
-        };
 
         /**
          * Permite editar los datos del usuario, se envia en el HEADER 
@@ -19,7 +12,7 @@ angular
          * @returns Promise
          */
         function edit(userData) {
-            return $http.put(`${API_SERVER}/profile`, userData, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, userData, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -28,7 +21,7 @@ angular
          * @returns Promise
          */
         function changePassword(requestPassword) {
-            return $http.put(`${API_SERVER}/profile`, requestPassword, defaultHeader);
+            return $http.put(`${API_SERVER}/profile`, requestPassword, Authentication.getHeaderForAPI());
         }
 
         /**
@@ -37,9 +30,9 @@ angular
          */
         function getAdditionalInfo(idUser) {
             if (idUser) {
-                return $http.get(`${API_SERVER}/profile/${idUser}`, defaultHeader)
+                return $http.get(`${API_SERVER}/profile/${idUser}`, Authentication.getHeaderForAPI())
             }
-            return $http.get(`${API_SERVER}/profile`, defaultHeader)
+            return $http.get(`${API_SERVER}/profile`, Authentication.getHeaderForAPI())
         }
 
         /**
@@ -48,9 +41,8 @@ angular
          * @returns Promise
          */
         function search(input) {
-            return $http.get(`${API_SERVER}/profile/search/${input}`, defaultHeader);
+            return $http.get(`${API_SERVER}/profile/search/${input}`, Authentication.getHeaderForAPI());
         }
-
 
       return {
         edit: edit,
