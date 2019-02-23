@@ -109,17 +109,16 @@ class User implements JsonSerializable
    * Permite actualizar la contraseña que posee el usuario
    * @throws Exception si no se pudo realizar la query
    * @param number $idUser
-   * @param string $password
    * @param string $newPassword
    * @return void
    * 
    */
-  public function updatePassword($idUser, $password, $newPassword)
+  public function updatePassword($idUser, $newPassword)
   {
     $db = DBConnection::getConnection();
-    $query = "UPDATE usuarios  SET  password = :newpassword WHERE idusuario = :idusuario AND password = :password";
+    $query = "UPDATE usuarios SET password = :newpassword WHERE idusuario = :idusuario";
     $stmt = $db->prepare($query);
-    $success = $stmt->execute(['idusuario' => $idUser, 'password' => $password, 'newpassword' => $newPassword]);
+    $success = $stmt->execute(['idusuario' => $idUser, 'newpassword' => $newPassword]);
     if (!$success) {
       throw new Exception('No se pudo editar el usuario en la base de datos');
     } else {

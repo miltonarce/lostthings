@@ -105,10 +105,14 @@ class ProfileController extends BaseController
     } else if(!empty($request['password']) && !empty($request['newpassword'])) {
       try {  
         $user = new User;
-        $password = password_hash($request['password'], PASSWORD_DEFAULT);
-        $newPasword = password_hash($request['newpassword'], PASSWORD_DEFAULT);
-        $user->updatePassword($idUser, $password , $newPasword);
-        View::renderJson(['status' => 1, 'message' => 'Password modificada exitosamente.']);
+        $user->getById($idUser);
+        if (password_verify($request['password'], $user->getPassword())) {
+          $newPasword = password_hash($request['newpassword'], PASSWORD_DEFAULT);
+          $user->updatePassword($idUser, $newPasword);
+          View::renderJson(['status' => 1, 'message' => 'Se actualizó la contraseña']);
+        } else {
+          View::renderJson(['status' => 1, 'message' => 'La contraseña es incorrecta']);
+        }
       } catch (Exception $e) {
         View::renderJson(['status' => 0, 'message' => $e]);
       }
