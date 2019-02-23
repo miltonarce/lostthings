@@ -119,6 +119,11 @@ angular
           requiresAuth: true
         }
       })
+      .state("intro", {
+        url: "/intro",
+        templateUrl: "templates/intro.html",
+        controller: "IntroCtrl",
+      })
       .state("login", {
         url: "/login",
         templateUrl: "templates/login.html",

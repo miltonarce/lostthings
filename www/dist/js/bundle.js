@@ -119,6 +119,11 @@ angular
           requiresAuth: true
         }
       })
+      .state("intro", {
+        url: "/intro",
+        templateUrl: "templates/intro.html",
+        controller: "IntroCtrl",
+      })
       .state("login", {
         url: "/login",
         templateUrl: "templates/login.html",
@@ -631,6 +636,19 @@ angular.module('lostThings.controllers')
 
 	}
 ]);
+angular
+.module('lostThings.controllers')
+.controller('IntroCtrl', [
+	'$scope',
+	'$ionicSlideBoxDelegate',
+	function($scope, $ionicSlideBoxDelegate ) {
+	
+
+		
+	}
+]);
+
+
 angular.module("lostThings.controllers").controller("LoginCtrl", [
   "$scope",
   "$state",

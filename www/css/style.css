@@ -316,3 +316,30 @@ a.button.icon-left.ion-chevron-left.button-clear {
 .buttons-margin-right {
     margin-right: 1em;
 }
+.slider {
+    height: 100%;
+  }
+.slide-container {
+    height: 100vh;
+}
+.box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+.box div {
+    display: flex;
+    justify-content: center; 
+    flex-direction: column; 
+    align-items: center;
+}
+.box div img {
+    width: 50%;
+}
+.box div p {
+    color:#212121;
+    font-weight: 500;
+    max-width: 80%;
+    text-align: center;
+}
