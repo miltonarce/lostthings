@@ -4,9 +4,7 @@
       <a class="button icon-left ion-chevron-left button-clear" href="#/dashboard/home">Atrás</a>
     </ion-nav-buttons>
     <ion-nav-buttons side="right" >
-      <button class="button button-clear" ng-if="isMyPublish" ng-click="toggleEdit()">
-        {{ !showEditable ? "Editar" : "Cancelar" }}
-      </button>
+      <button class="button button-clear" ng-if="isMyPublish" ng-click="toggleEdit()">{{ !showEditable ? "Editar" : "Cancelar" }}</button>
     </ion-nav-buttons>
   </ion-nav-bar>
   <ion-content class="background-content">
@@ -24,8 +22,8 @@
         <div>
           <ion-list class="list">
             <ion-item ng-repeat="c in comentarios" class="item item-text-wrap item-avatar item-comments">
-              <img ng-src="img/avatar.png" alt="avatar usuario {{c.usuario}}" />
-              <p style="font-weight: bold">{{ c.usuario }}</p>
+              <img ng-src="img/avatar.png" alt="{{c.usuario}}" />
+              <p class="text-bold">{{ c.usuario }}</p>
               <p>{{ c.comentario }}</p>
             </ion-item>
           </ion-list>
@@ -33,13 +31,7 @@
         <div class="padding">
           <form name="formComments" ng-submit="addComment(formComments, comment)" novalidate>
             <div class="container-form-input-comment">
-              <textarea
-                name="comentario"
-                ng-model="comment.comentario"
-                rows="4"
-                placeholder="Escribi tu comentario..."
-                required
-              ></textarea>
+              <textarea name="comentario" ng-model="comment.comentario" rows="4" placeholder="Escribi tu comentario..." required></textarea>
             </div>
             <div class="invalid-form" ng-show="errors.comentario">
               <span>{{ errors.comentario }}</span>
@@ -61,8 +53,7 @@
               </div>
               <label class="item item-input item-stacked-label item-form">
                   <span class="input-label">Descripción del mismo</span>
-                  <textarea name="descripcion" ng-model="requestEdit.descripcion" rows="4"
-                  placeholder="Ejemplo: Lo perdí en la facultad de medicina el jueves pasado..." required></textarea>
+                  <textarea name="descripcion" ng-model="requestEdit.descripcion" rows="4" placeholder="Ejemplo: Lo perdí en la facultad de ..." required></textarea>
               </label>
               <div class="invalid-form" ng-show="errors.descripcion">
                   <span>{{errors.descripcion}}</span>

@@ -27,7 +27,7 @@ angular
 			$scope.errors = validateFields(formPublish);
 			if (isValidForm($scope.errors)) {
 				$ionicLoading.show();
-				Items.publishItem($scope.item).then(response =>  {
+				Items.publishItem($scope.item).then(response => {
 					$ionicLoading.hide();
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>').then(() => $state.go('dashboard.home'));
 				}).catch(() => {

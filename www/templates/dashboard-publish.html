@@ -11,15 +11,14 @@
                 </div>
                 <label class="item item-input item-stacked-label item-form">
                     <span class="input-label">Descripción del mismo</span>
-                    <textarea name="descripcion" ng-model="item.descripcion" rows="4"
-                    placeholder="Ejemplo: Lo perdí en la facultad de medicina el jueves pasado..." required></textarea>
+                    <textarea name="descripcion" ng-model="item.descripcion" rows="4" placeholder="Ejemplo: Encontre anteojos, perdí anteojos..." required></textarea>
                 </label>
                 <div class="invalid-form" ng-show="errors.descripcion">
                     <span>{{errors.descripcion}}</span>
                 </div>
                 <label class="item item-input item-stacked-label item-form">
                     <span class="input-label">Ubicación</span>
-                    <input name="ubicacion" type="text" placeholder="¿Dónde lo perdiste?" ng-model="item.ubicacion" required>
+                    <input name="ubicacion" type="text" placeholder="¿Dónde lo perdiste / encontraste?" ng-model="item.ubicacion" required>
                 </label>
                 <div class="invalid-form" ng-show="errors.ubicacion">
                     <span>{{errors.ubicacion}}</span>

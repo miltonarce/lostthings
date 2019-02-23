@@ -113,18 +113,20 @@ angular
          */
         $scope.remove = function(id, isRequest) {
             Utils.showConfirm('Amigos', '¿Estas seguro de eliminar?').then(accept => {
-                $ionicLoading.show();
-                Friends.remove(id).then(() => {
-                    $ionicLoading.hide();
-                    if (isRequest) {
-                        $scope.invitations = $scope.invitations.filter(friend => friend.idamigo !== id); 
-                    } else {
-                        $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
-                    }
-                }).catch(() => {
-                    $ionicLoading.hide();
-                    Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
-                });
+               if (accept) {
+                    $ionicLoading.show();
+                    Friends.remove(id).then(() => {
+                        $ionicLoading.hide();
+                        if (isRequest) {
+                            $scope.invitations = $scope.invitations.filter(friend => friend.idamigo !== id); 
+                        } else {
+                            $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
+                        }
+                    }).catch(() => {
+                        $ionicLoading.hide();
+                        Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
+                    });
+               }
             });
         }
 
@@ -178,7 +180,8 @@ angular
         }
 
         /**
-         * Permite ir al perfil del usuario seleccionado por el id
+         * Permite ir al perfil del usuario seleccionado por el id, verifica
+         * si ya son amigos para mostrar en el perfil del usuario a ver...
          * @param {number} idUser
          * @returns void
          */

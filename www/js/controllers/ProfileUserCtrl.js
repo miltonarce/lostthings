@@ -75,6 +75,27 @@ angular
 			});
 		}
 
+		 /**
+         * Permite eliminar a un usuario de la lista de amigos de la persona logueada
+         * recibida...
+         * @param {Object} profile
+         * @returns void
+         */
+		$scope.removeFriend = function(profile) {
+			Utils.showConfirm('Amigos', `¿Estas seguro de eliminar a ${profile.nombre} de tus amigos?`).then(accept => {
+               if (accept) {
+					$ionicLoading.show();
+					Friends.remove(profile.idusuario).then(() => {
+						$ionicLoading.hide();
+						$scope.isFriend = false;
+					}).catch(() => {
+						$ionicLoading.hide();
+						Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
+					});
+			   }
+            });
+		}
+
 		/**
 		 * Permite ir al detalle de una publicación
 		 * @param {number} id

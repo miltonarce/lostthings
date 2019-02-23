@@ -121,8 +121,7 @@ angular
       })
       .state("intro", {
         url: "/intro",
-        templateUrl: "templates/intro.html",
-        controller: "IntroCtrl",
+        templateUrl: "templates/intro.html"
       })
       .state("login", {
         url: "/login",
@@ -210,9 +209,9 @@ angular
 				$ionicLoading.hide();
 				Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional');
 			});
-			Comments.getComments($stateParams.id).then(res => {
-				$scope.comentarios = res.data;
-			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
+			Comments.getComments($stateParams.id)
+					.then(res => $scope.comentarios = res.data)
+					.catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
 	    });	
 
 		/**
@@ -279,7 +278,7 @@ angular
 					if (accept) {
 						Items.remove($scope.item.idpublicacion).then(res => {
 							Utils.showPopup('Eliminar', res.data.message).then(() => $state.go('dashboard.home'));
-						}).catch(_err => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
+						}).catch(() => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
 					}
 				});
 			} else {
@@ -474,18 +473,20 @@ angular
          */
         $scope.remove = function(id, isRequest) {
             Utils.showConfirm('Amigos', '¿Estas seguro de eliminar?').then(accept => {
-                $ionicLoading.show();
-                Friends.remove(id).then(() => {
-                    $ionicLoading.hide();
-                    if (isRequest) {
-                        $scope.invitations = $scope.invitations.filter(friend => friend.idamigo !== id); 
-                    } else {
-                        $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
-                    }
-                }).catch(() => {
-                    $ionicLoading.hide();
-                    Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
-                });
+               if (accept) {
+                    $ionicLoading.show();
+                    Friends.remove(id).then(() => {
+                        $ionicLoading.hide();
+                        if (isRequest) {
+                            $scope.invitations = $scope.invitations.filter(friend => friend.idamigo !== id); 
+                        } else {
+                            $scope.friends = $scope.friends.filter(friend => friend.idamigo !== id); 
+                        }
+                    }).catch(() => {
+                        $ionicLoading.hide();
+                        Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
+                    });
+               }
             });
         }
 
@@ -539,7 +540,8 @@ angular
         }
 
         /**
-         * Permite ir al perfil del usuario seleccionado por el id
+         * Permite ir al perfil del usuario seleccionado por el id, verifica
+         * si ya son amigos para mostrar en el perfil del usuario a ver...
          * @param {number} idUser
          * @returns void
          */
@@ -636,35 +638,22 @@ angular.module('lostThings.controllers')
 
 	}
 ]);
-angular
-.module('lostThings.controllers')
-.controller('IntroCtrl', [
-	'$scope',
-	'$ionicSlideBoxDelegate',
-	function($scope, $ionicSlideBoxDelegate ) {
-	
-
-		
-	}
-]);
-
-
-angular.module("lostThings.controllers").controller("LoginCtrl", [
-  "$scope",
-  "$state",
-  "Authentication",
-  "Utils",
-  "$ionicLoading",
+angular.module('lostThings.controllers').controller('LoginCtrl', [
+  '$scope',
+  '$state',
+  'Authentication',
+  'Utils',
+  '$ionicLoading',
   function($scope, $state, Authentication, Utils, $ionicLoading) {
 
     //Request Login
-    $scope.user = { email: "", password: "" };
+    $scope.user = { email: '', password: '' };
 
     /**
      * Permite autenticar al usuario
      * Valida los datos recibidos, si sale todo OK si sale bien , redirige...
-     * @param formLogin
-     * @param user
+     * @param {Object} formLogin
+     * @param {Object} user
      * @returns void
      */
     $scope.login = function(formLogin, user) {
@@ -674,13 +663,13 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
         Authentication.login(user).then(success => {
           $ionicLoading.hide();
           if (success) {
-            Utils.showPopup("Autenticación", "Se ha autenticado correctamente!").then(() => $state.go("dashboard.home"));
+            Utils.showPopup('Iniciar Sesión', 'Se ha autenticado correctamente!').then(() => $state.go('dashboard.home'));
           } else {
-            Utils.showPopup("Autenticación", "Los datos ingresados no son correctos");
+            Utils.showPopup('Iniciar Sesión', 'Los datos ingresados no son correctos');
           }
         }).catch(() => {
           $ionicLoading.hide();
-          Utils.showPopup("Autenticación", "¡Ups se produjo un error al autenticarse");
+          Utils.showPopup('Iniciar Sesión', '¡Ups se produjo un error al autenticarse');
         });
       }
     };
@@ -694,15 +683,15 @@ angular.module("lostThings.controllers").controller("LoginCtrl", [
       let errors = { email: null, password: null };
       if (formLogin.email.$invalid) {
         if (formLogin.email.$error.required) {
-          errors.email = "El campo email no puede ser vacío";
+          errors.email = 'El campo email no puede ser vacío';
         }
         if (formLogin.email.$error.email) {
-          errors.email = "No es un email válido";
+          errors.email = 'No es un email válido';
         }
       }
       if (formLogin.password.$invalid) {
         if (formLogin.password.$error.required) {
-          errors.password = "El campo password no puede ser vacío";
+          errors.password = 'El campo password no puede ser vacío';
         }
       }
       return errors;
@@ -945,6 +934,27 @@ angular
 			});
 		}
 
+		 /**
+         * Permite eliminar a un usuario de la lista de amigos de la persona logueada
+         * recibida...
+         * @param {Object} profile
+         * @returns void
+         */
+		$scope.removeFriend = function(profile) {
+			Utils.showConfirm('Amigos', `¿Estas seguro de eliminar a ${profile.nombre} de tus amigos?`).then(accept => {
+               if (accept) {
+					$ionicLoading.show();
+					Friends.remove(profile.idusuario).then(() => {
+						$ionicLoading.hide();
+						$scope.isFriend = false;
+					}).catch(() => {
+						$ionicLoading.hide();
+						Utils.showPopup('Amigos', 'Se produjo un error al eliminar al usuario');
+					});
+			   }
+            });
+		}
+
 		/**
 		 * Permite ir al detalle de una publicación
 		 * @param {number} id
@@ -985,7 +995,7 @@ angular
 			$scope.errors = validateFields(formPublish);
 			if (isValidForm($scope.errors)) {
 				$ionicLoading.show();
-				Items.publishItem($scope.item).then(response =>  {
+				Items.publishItem($scope.item).then(response => {
 					$ionicLoading.hide();
 					Utils.showPopup('Publicar', '<p>Se ha subido su publicación <br /> ¡Buena suerte!</p>').then(() => $state.go('dashboard.home'));
 				}).catch(() => {
@@ -1052,21 +1062,21 @@ angular
 
 	}
 ]);
-angular.module("lostThings.controllers").controller("RegisterCtrl", [
-  "$scope",
-  "$state",
-  "Authentication",
-  "Utils",
-  "$ionicLoading",
+angular.module('lostThings.controllers').controller('RegisterCtrl', [
+  '$scope',
+  '$state',
+  'Authentication',
+  'Utils',
+  '$ionicLoading',
   function($scope, $state, Authentication, Utils, $ionicLoading) {
 
     //Request Registro
     $scope.user = {
-      email: "",
-      password: "",
-      usuario: "",
-      nombre: "",
-      apellido: "",
+      email: '',
+      password: '',
+      usuario: '',
+      nombre: '',
+      apellido: '',
     };
 
     /**
@@ -1083,13 +1093,13 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         Authentication.register(user).then(success => {
           $ionicLoading.hide();
           if (success) {
-            Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
+            Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
           } else {
-            Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
+            Utils.showPopup('Registrarse', 'Se produjo un error al registrar al usuario');
           }
         }).catch(() => {
           $ionicLoading.hide();
-          Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario");
+          Utils.showPopup('Registrarse', '¡Ups se produjo un error al registrar al usuario');
         });
       }
       return false;
@@ -1107,34 +1117,34 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         nombre: null,
         apellido: null,
         usuario: null,
-        pic: ""
+        pic: ''
       };
       if (formRegister.email.$invalid) {
         if (formRegister.email.$error.required) {
-          errors.email = "El campo email no puede ser vacío";
+          errors.email = 'El campo email no puede ser vacío';
         }
         if (formRegister.email.$error.email) {
-          errors.email = "No es un email válido";
+          errors.email = 'No es un email válido';
         }
       }
       if (formRegister.password.$invalid) {
         if (formRegister.password.$error.required) {
-          errors.password = "El campo password no puede ser vacío";
+          errors.password = 'El campo password no puede ser vacío';
         }
       }
       if (formRegister.usuario.$invalid) {
         if (formRegister.usuario.$error.required) {
-          errors.usuario = "El campo usuario no puede ser vacío";
+          errors.usuario = 'El campo usuario no puede ser vacío';
         }
       }
       if (formRegister.nombre.$invalid) {
         if (formRegister.nombre.$error.required) {
-          errors.nombre = "El campo nombre no puede ser vacío";
+          errors.nombre = 'El campo nombre no puede ser vacío';
         }
       }
       if (formRegister.apellido.$invalid) {
         if (formRegister.apellido.$error.required) {
-          errors.apellido = "El campo apellido no puede ser vacío";
+          errors.apellido = 'El campo apellido no puede ser vacío';
         }
       }
       return errors;
@@ -1511,12 +1521,19 @@ angular
         }
 
         /**
-         * Permite buscar personas por el nickname o el nombre
+         * Permite buscar personas por el nickname o el nombre, se elimina de la lista
+         * el usuario que esta buscando...
          * @param {string} input 
          * @returns Promise
          */
         function search(input) {
-            return $http.get(`${API_SERVER}/profile/search/${input}`, Authentication.getHeaderForAPI());
+            const idUser = Authentication.getUserData().idusuario;
+            return $http.get(`${API_SERVER}/profile/search/${input}`, Authentication.getHeaderForAPI()).then(response => {
+                return {
+                    ...response,
+                    data: response.data.filter(user => user.idusuario !== idUser)
+                };
+            })
         }
 
       return {

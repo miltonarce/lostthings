@@ -1,18 +1,18 @@
-angular.module("lostThings.controllers").controller("RegisterCtrl", [
-  "$scope",
-  "$state",
-  "Authentication",
-  "Utils",
-  "$ionicLoading",
+angular.module('lostThings.controllers').controller('RegisterCtrl', [
+  '$scope',
+  '$state',
+  'Authentication',
+  'Utils',
+  '$ionicLoading',
   function($scope, $state, Authentication, Utils, $ionicLoading) {
 
     //Request Registro
     $scope.user = {
-      email: "",
-      password: "",
-      usuario: "",
-      nombre: "",
-      apellido: "",
+      email: '',
+      password: '',
+      usuario: '',
+      nombre: '',
+      apellido: '',
     };
 
     /**
@@ -29,13 +29,13 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         Authentication.register(user).then(success => {
           $ionicLoading.hide();
           if (success) {
-            Utils.showPopup("Registrarse", "Se ha creado su cuenta!").then(() => $state.go("login"));
+            Utils.showPopup('Registrarse', 'Se ha creado su cuenta!').then(() => $state.go('login'));
           } else {
-            Utils.showPopup("Registrarse", "Se produjo un error al registrar al usuario");
+            Utils.showPopup('Registrarse', 'Se produjo un error al registrar al usuario');
           }
         }).catch(() => {
           $ionicLoading.hide();
-          Utils.showPopup("Registrarse", "¡Ups se produjo un error al registrar al usuario");
+          Utils.showPopup('Registrarse', '¡Ups se produjo un error al registrar al usuario');
         });
       }
       return false;
@@ -53,34 +53,34 @@ angular.module("lostThings.controllers").controller("RegisterCtrl", [
         nombre: null,
         apellido: null,
         usuario: null,
-        pic: ""
+        pic: ''
       };
       if (formRegister.email.$invalid) {
         if (formRegister.email.$error.required) {
-          errors.email = "El campo email no puede ser vacío";
+          errors.email = 'El campo email no puede ser vacío';
         }
         if (formRegister.email.$error.email) {
-          errors.email = "No es un email válido";
+          errors.email = 'No es un email válido';
         }
       }
       if (formRegister.password.$invalid) {
         if (formRegister.password.$error.required) {
-          errors.password = "El campo password no puede ser vacío";
+          errors.password = 'El campo password no puede ser vacío';
         }
       }
       if (formRegister.usuario.$invalid) {
         if (formRegister.usuario.$error.required) {
-          errors.usuario = "El campo usuario no puede ser vacío";
+          errors.usuario = 'El campo usuario no puede ser vacío';
         }
       }
       if (formRegister.nombre.$invalid) {
         if (formRegister.nombre.$error.required) {
-          errors.nombre = "El campo nombre no puede ser vacío";
+          errors.nombre = 'El campo nombre no puede ser vacío';
         }
       }
       if (formRegister.apellido.$invalid) {
         if (formRegister.apellido.$error.required) {
-          errors.apellido = "El campo apellido no puede ser vacío";
+          errors.apellido = 'El campo apellido no puede ser vacío';
         }
       }
       return errors;

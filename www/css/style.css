@@ -343,3 +343,8 @@ a.button.icon-left.ion-chevron-left.button-clear {
     max-width: 80%;
     text-align: center;
 }
+.container-profile-delete-friend {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+}

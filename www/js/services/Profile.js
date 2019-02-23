@@ -36,12 +36,19 @@ angular
         }
 
         /**
-         * Permite buscar personas por el nickname o el nombre
+         * Permite buscar personas por el nickname o el nombre, se elimina de la lista
+         * el usuario que esta buscando...
          * @param {string} input 
          * @returns Promise
          */
         function search(input) {
-            return $http.get(`${API_SERVER}/profile/search/${input}`, Authentication.getHeaderForAPI());
+            const idUser = Authentication.getUserData().idusuario;
+            return $http.get(`${API_SERVER}/profile/search/${input}`, Authentication.getHeaderForAPI()).then(response => {
+                return {
+                    ...response,
+                    data: response.data.filter(user => user.idusuario !== idUser)
+                };
+            })
         }
 
       return {

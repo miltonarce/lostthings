@@ -121,8 +121,7 @@ angular
       })
       .state("intro", {
         url: "/intro",
-        templateUrl: "templates/intro.html",
-        controller: "IntroCtrl",
+        templateUrl: "templates/intro.html"
       })
       .state("login", {
         url: "/login",

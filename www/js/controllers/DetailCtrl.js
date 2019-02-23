@@ -47,9 +47,9 @@ angular
 				$ionicLoading.hide();
 				Utils.showPopup('Detalle', 'Se produjo un error al obtener la información adicional');
 			});
-			Comments.getComments($stateParams.id).then(res => {
-				$scope.comentarios = res.data;
-			}).catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
+			Comments.getComments($stateParams.id)
+					.then(res => $scope.comentarios = res.data)
+					.catch(() => Utils.showPopup('Detalle', 'Se produjo un error al obtener los comentarios de la publicación'));
 	    });	
 
 		/**
@@ -116,7 +116,7 @@ angular
 					if (accept) {
 						Items.remove($scope.item.idpublicacion).then(res => {
 							Utils.showPopup('Eliminar', res.data.message).then(() => $state.go('dashboard.home'));
-						}).catch(_err => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
+						}).catch(() => Utils.showPopup('Eliminar', 'Se produjo un error al eliminar su publicación'));
 					}
 				});
 			} else {
