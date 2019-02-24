@@ -1,15 +1,24 @@
 # lost-things
-App Ionic 1 (Lost Things) (TP GALLINO)
+Aplicación Ionic V1 / API PHP
 
-Install dependencies
+## Backend PHP
 
+Endpoints
+
+/login
+/profile
+/items
+/comments
+/friends
+
+## Frontend IONIC
+
+cd mobile
 npm install
+gulp
 
-Tasks
+Acceder al sitio http://localhost/lostthings/mobile/www
 
-    gulp js 
-    gulp minify-css
-    gulp 
-    gulp release
+## Build App
 
-Repo: https://github.com/mtorre4580/lost-things
+ionic cordova build android
