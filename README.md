@@ -22,3 +22,7 @@ Acceder al sitio http://localhost/lostthings/mobile/www
 ## Build App
 
 ionic cordova build android
+
+## Run App in Emulator or Device
+
+ionic cordova run android
