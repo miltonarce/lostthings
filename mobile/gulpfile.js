@@ -10,11 +10,14 @@ const gulp = require('gulp');
 const concat = require('gulp-concat');
 //Librería para minificar el CSS
 const cleanCSS = require('gulp-clean-css');
+//Librerìa para realizar el transpiler de ES6 a ES5
+const babel = require('gulp-babel');
 
 //Tareas default
 const sass = require('gulp-sass');
 const minifyCss = require('gulp-minify-css');
 const rename = require('gulp-rename');
+
 
 //Path para la ubicación de los archivos
 const PATH_FILES = {
@@ -34,9 +37,12 @@ gulp.task('default', ['js:watch', 'css:watch']);
 //Task para producción, generar una release el bundle 
 gulp.task('release', ['js', 'minify-css']);
 
-//Task para generar el bundle final de los archivos JS
+//Task para generar el bundle final de los archivos JS, se hace un transpiler de los archivos a ES2015
 gulp.task('js', () => {
   gulp.src(PATH_FILES.js.src)
+  .pipe(babel({
+    presets: ['@babel/env']
+  }))
   .pipe(concat('bundle.js'))
   .pipe(gulp.dest(PATH_FILES.js.output))
 });
