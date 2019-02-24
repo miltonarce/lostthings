@@ -25,6 +25,9 @@ Route::add('GET', '/items/user/{idUser}', 'ItemsController@allItemsByUser');
 Route::add('GET', '/comments/{idPublish}', 'CommentsController@all');
 Route::add('POST', '/comments/{idPublish}', 'CommentsController@save');
 
+//chats
+Route::add('GET', '/chats/{tokenchat}', 'ChatsController@all');
+
 //Friends
 Route::add('GET', '/friends', 'FriendsController@all');
 Route::add('GET', '/friends/request', 'FriendsController@allRequest');

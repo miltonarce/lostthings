@@ -165,6 +165,11 @@ ion-tabs.tabs-color-active-positive .tab-item.activated {
     border-radius: 50%;
     height: 122px;
 }
+.img-friend-chat{
+    width: 62px;
+    border-radius: 50%;
+    height: 61px;
+}
 .container-no-friends {
     display:flex; 
     justify-content: center;
@@ -193,6 +198,13 @@ ion-tabs.tabs-color-active-positive .tab-item.activated {
     justify-content: center; 
     align-items: center;
     flex-direction: column;
+}
+.profile-container-view-chat {
+    background-color:#EEEEEE; 
+    display:flex; 
+    justify-content: flex-start; 
+    align-items: center;
+    flex-direction: row;
 }
 .profile-container-view img {
     margin-bottom: 1em;
@@ -264,6 +276,30 @@ button.button.icon-left.ion-search.button-search {
 .item-comments {
     border: none;
 }
+.item-comments-chat {
+    border: none;
+    border-bottom: 2px solid #dedede !important;
+    margin: 10px 0px 10px 0px;
+    width: 65%;
+    border-radius: 6px;
+}
+.msgrec {
+    background: white;
+}
+.msgem{
+    background: #ff8c26;
+    align-self: flex-end;
+}
+.msgem  p,h3{
+    color: white;
+}
+.msgrec h3{
+    color: #444;
+}
+.list-chat div{
+    display: flex;
+    flex-direction: column;
+}
 .delete-friend-btn {
     color: #E53935 !important;
 }
@@ -294,6 +330,18 @@ ion-item.item.item-avatar.item-comments {
     flex: 1;
     padding: 0.2em;
     border-radius: 0.2em;
+}
+.container-form-input-chat {
+    display: flex;
+    width: 80%;
+}
+.container-form-input-chat textarea {
+    flex: 1;
+    padding: 0.2em;
+    border-radius: 0.2em;
+    height: 50px;
+    border-radius: 20px;
+    padding: 20px 10px;
 }
 a.button.icon-left.ion-chevron-left.button-clear {
     color: #fff;
@@ -347,4 +395,30 @@ a.button.icon-left.ion-chevron-left.button-clear {
     display: flex; 
     justify-content: space-between;
     align-items: center;
+}
+.form-chat{
+    display: flex;
+    justify-content: center; 
+    flex-direction: row; 
+    align-items: center;
+}
+.send-chat{
+    padding: 8px;
+    width: 50px !important;
+    height: 50px;
+    border-radius: 100px;
+    margin-left: 10px;
+    font-size: 28px;
+}
+.send-chat ion-icon{
+    margin-left: 5px;
+}
+.content-msg-chat{
+    padding: 10px;
+}
+.chat-content .scroll{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }

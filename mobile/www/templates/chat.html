@@ -4,7 +4,36 @@
             <a class="button icon-left ion-chevron-left button-clear" href="#/dashboard/friends">Atrás</a>
         </ion-nav-buttons>
     </ion-nav-bar>
-    <ion-content class="background-content">
-        <p>view de chat........</p>
+    <ion-content class="chat-content background-content">
+        <div class="profile-box-shadow ">
+            <div class="profile-container-view-chat">
+                <img class="img-friend-chat" ng-src="{{profile.img ? profile.img : 'img/avatar.png' }}"
+                    alt="avatar from {{profile.usuario}}">
+                <h2>hardcore{{profile.nombre ? profile.nombre : profile.usuario}}</h2>
+            </div>
+        </div>
+        <div class="content-chat">
+            <div class="content-msg-chat">
+                <ion-list class="list list-chat">
+                    <ion-item ng-repeat="m in mensajeschat" class="item item-text-wrap item-avatar item-comments-chat"
+                        ng-class="m.idemisor == idUser ? 'msgem' : 'msgrec'">
+                        <img ng-src="img/avatar.png" alt="{{m.idemisor}}" />
+                        <h3 class="text-bold">{{ m.usuario }}</h3>
+                        <p>{{ m.mensaje }}</p>
+                    </ion-item>
+                </ion-list>
+            </div>
+            <div class="padding">
+                <form class="form-chat" name="formComments" ng-submit="addComment(formComments, comment)" novalidate>
+                    <div class="container-form-input-chat">
+                        <textarea name="comentario" ng-model="comment.comentario" rows="4"
+                            placeholder="Escribi tu mensaje..." required></textarea>
+                    </div>
+                    <button type="submit" class="send-chat button button-dark button-block">
+                        <ion-icon name="send"></ion-icon>
+                    </button>
+                </form>
+            </div>
+        </div>
     </ion-content>
 </ion-view>

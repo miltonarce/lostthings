@@ -146,18 +146,26 @@ angular.module("lostThings.services", []);
 angular.module("lostThings.controllers", []);
 
 angular
-.module('lostThings.controllers')
-.controller('ChatCtrl', [
-	'$scope',
-	'$state',
-	'$stateParams',
-	'Utils',
-	'Authentication',
-	'Chat',
-	function($scope, $state, $stateParams, Utils, Authentication, Chat) {
-		
-	}
-]);
+	.module('lostThings.controllers')
+	.controller('ChatCtrl', [
+		'$scope',
+		'$state',
+		'$stateParams',
+		'Utils',
+		'Authentication',
+		'Chat',
+		function ($scope, $state, $stateParams, Utils, Authentication, Chat) {
+			$scope.idUser = Authentication.getUserData().idusuario;
+			//Mensajes del chat
+			$scope.chatsmsgs = [];
+			//Al ingresar a la view, obtiene ellos mensajes del chat
+			$scope.$on('$ionicView.beforeEnter', function () {
+				Chat.getChatsmsgs('1e3')
+					.then(res => $scope.mensajeschat = res.data)
+					.catch(() => Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat'));
+			});
+		}
+	]);
 
 
 angular
@@ -1282,22 +1290,37 @@ angular.module("lostThings.services").factory("Authentication", [
 ]);
 
 angular
-.module('lostThings.services')
-.factory('Chat', 
-    ["$http", 
-    "API_SERVER",
-    "Authentication",
-    function($http, API_SERVER, Authentication){
+    .module('lostThings.services')
+    .factory('Chat',
+        ["$http",
+            "API_SERVER",
+            "Authentication",
+            function ($http, API_SERVER, Authentication) {
+                /**
+                       * Permite obtener los mensajes que posee una chat por el tokenchat de la room
+                       * @param {number} tokenchat 
+                       * @returns Promise
+                       */
+                function getChatsmsgs(tokenchat) {
+                    return $http.get(`${API_SERVER}/chats/${tokenchat}`, Authentication.getHeaderForAPI());
+                }
 
-        function test() {
-            
-        }
+                // /**
+                //  * Permite publicar un comentario a la publicacion
+                //  * @param {number} id 
+                //  * @param {Object} comment 
+                //  * @returns Promise
+                //  */
+                // function publish(id, comment) {
+                //     return $http.post(`${API_SERVER}/comments/${id}`, comment, Authentication.getHeaderForAPI());
+                // }
 
-        return {
-            test: test
-        };
-    }
-]);
+                return {
+                    getChatsmsgs: getChatsmsgs
+                };
+
+            }
+        ]);
 angular
 .module('lostThings.services')
 .factory('Comments', 

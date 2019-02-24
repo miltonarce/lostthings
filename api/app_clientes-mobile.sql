@@ -82,6 +82,19 @@ INSERT INTO `comentarios` (`idcomentario`, `fkidusuario`, `fkidpublicacion`, `co
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `chats`
+--
+DROP TABLE IF EXISTS `chats`;
+CREATE TABLE `chats` (
+  `idchat` int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idemisor` int UNSIGNED NOT NULL,
+  `mensaje` text NOT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `tokenchat` text
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `publicaciones`
 --
 DROP TABLE IF EXISTS `publicaciones`;
