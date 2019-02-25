@@ -104,7 +104,7 @@ angular
         }
       })
       .state("chat", {
-        url: "/chat",
+        url: "/chat/:tokenchat",
         templateUrl: "templates/chat.html",
         controller: "ChatCtrl",
         data: {
