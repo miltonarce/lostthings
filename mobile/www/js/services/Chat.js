@@ -24,19 +24,21 @@ angular
                     return $http.get(`${API_SERVER}/chats/${tokenchat}`, Authentication.getHeaderForAPI());
                 }
 
-                // /**
-                //  * Permite publicar un comentario a la publicacion
-                //  * @param {number} id 
-                //  * @param {Object} comment 
-                //  * @returns Promise
-                //  */
-                // function publish(id, comment) {
-                //     return $http.post(`${API_SERVER}/comments/${id}`, comment, Authentication.getHeaderForAPI());
-                // }
+                /**
+                 * Permite enviar mensaje al chat
+                 * @param {number} id 
+                 * @param {Object} comment 
+                 * @returns Promise
+                 */
+                function sendmsg(data) {
+                    return $http.post(`${API_SERVER}/chatsmsgs`, data, Authentication.getHeaderForAPI());
+                }
+
 
                 return {
                     createChat: createChat,
-                    getChatsmsgs: getChatsmsgs
+                    getChatsmsgs: getChatsmsgs,
+                    sendmsg: sendmsg
                 };
 
             }

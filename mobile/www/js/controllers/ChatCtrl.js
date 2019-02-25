@@ -16,6 +16,30 @@ angular
 					.then(res => $scope.mensajeschat = res.data)
 					.catch(() => Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat'));
 			});
+
+			/**
+		 * Permite enviar un mensaje
+		 * @param {Object} formComments
+		 * @param {Object} comment
+		 * @returns void
+		 */
+			$scope.addmsg = function (formmsgs, msg) {
+				$scope.errors = { mensaje: null };
+				if (formmsgs.mensaje.$invalid) {
+					if (formmsgs.mensaje.$error.required) {
+						$scope.errors.mensaje = 'El campo no puede ser vacío';
+					}
+				} else {
+					Chat.sendmsg({ tokenchat: '5c732defa873d', idUser: $scope.idUser, msg: msg.mensaje }).then(res => {
+						if (res.data.status === 1) {
+							$scope.mensajeschat.push(res.data.data);
+						} else {
+							Utils.showPopup('Mensaje', res.data.message);
+						}
+					}).catch(() => Utils.showPopup('Mensaje ', 'Se produjo un error al enviar el mensaje'));
+				}
+			}
+
 		}
 	]);
 

@@ -32,28 +32,26 @@ Class ChatsmsgsController extends BaseController
   }
 
   /**
-   * Permite crear un comentario en la publicación y guardarlo..
+   * Permite enviar un mensaje al chat
    * @return Array
    */
-  // public function save()
-  // {
-  //   $params = Route::getUrlParameters();
-  //   $idpublicacion = $params['idPublish'];
-  //   $idUser = $this->checkUserIsLogged();
-  //   $d_Post = file_get_contents('php://input');
-  //   $data = json_decode($d_Post, true);
-  //   $validator = new Validator($data, ['comentario' => ['required']]);
-  //   if ($validator->passes()) {
-  //     try {
-  //         $comments = new Comments;
-  //         $comments->save($idUser, ['fkidpublicacion' => $idpublicacion, 'comentario' => $data['comentario']]);
-  //         View::renderJson(['status' => 1, 'message' => 'Comentario creado exitosamente.', 'data' => $comments]);
-  //     } catch (Exeption $e) {
-  //       View::renderJson(['status' => 0, 'message' => $e]);
-  //     }
-  //   } else {
-  //     View::renderJson(['status' => 0, 'error' => $validator->getErrores()]);
-  //   }
-  // }
+  public function sendmsg()
+  {
+    $this->checkUserIsLogged();
+    $d_Post = file_get_contents('php://input');
+    $data = json_decode($d_Post, true);
+    $validator = new Validator($data, ['msg' => ['required']]);
+    if ($validator->passes()) {
+      try {
+          $chatsmsgs = new Chatsmsgs;
+          $chatsmsgs->sendmsg(['tokenchat' => $data['tokenchat'],  'idUser' => $data['idUser'], 'msg' => $data['msg']]);
+          View::renderJson(['status' => 1, 'message' => 'Comentario creado exitosamente.', 'data' => $chatsmsgs]);
+      } catch (Exeption $e) {
+        View::renderJson(['status' => 0, 'message' => $e]);
+      }
+    } else {
+      View::renderJson(['status' => 0, 'error' => $validator->getErrores()]);
+    }
+  }
 
 }

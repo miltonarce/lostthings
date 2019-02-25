@@ -25,10 +25,13 @@
                 </ion-list>
             </div>
             <div class="padding">
-                <form class="form-chat" name="formComments" ng-submit="addComment(formComments, comment)" novalidate>
+                <form class="form-chat" name="formmsgs" ng-submit="addmsg(formmsgs, msg)" novalidate>
                     <div class="container-form-input-chat">
-                        <textarea name="comentario" ng-model="comment.comentario" rows="4"
-                            placeholder="Escribi tu mensaje..." required></textarea>
+                        <textarea name="mensaje" ng-model="msg.mensaje" rows="4" placeholder="Escribi tu mensaje..."
+                            required></textarea>
+                    </div>
+                    <div class="invalid-form" ng-show="errors.mensaje">
+                        <span>{{ errors.mensaje }}</span>
                     </div>
                     <button type="submit" class="send-chat button button-dark button-block">
                         <ion-icon name="send"></ion-icon>

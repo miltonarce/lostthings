@@ -18,7 +18,6 @@ Class ChatsController extends BaseController
    */
   public function create()
   {
-    $params = Route::getUrlParameters();
     $idUser = $this->checkUserIsLogged();
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
