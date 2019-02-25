@@ -5,6 +5,16 @@ angular
             "API_SERVER",
             "Authentication",
             function ($http, API_SERVER, Authentication) {
+
+                /**
+                 * Permite generar un chat con su token unico
+                 * @param {number} id
+                 * @returns Promise
+                 */
+                function createChat(user) {
+                    return $http.post(`${API_SERVER}/chats`, user, Authentication.getHeaderForAPI());
+                }
+
                 /**
                        * Permite obtener los mensajes que posee una chat por el tokenchat de la room
                        * @param {number} tokenchat 
@@ -25,6 +35,7 @@ angular
                 // }
 
                 return {
+                    createChat: createChat,
                     getChatsmsgs: getChatsmsgs
                 };
 

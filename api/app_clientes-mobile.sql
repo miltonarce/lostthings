@@ -88,11 +88,24 @@ DROP TABLE IF EXISTS `chats`;
 CREATE TABLE `chats` (
   `idchat` int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `idemisor` int UNSIGNED NOT NULL,
-  `mensaje` text NOT NULL,
-  `fecha` datetime DEFAULT NULL,
-  `tokenchat` text
+  `idreceptor` int UNSIGNED NOT NULL,
+  `tokenchat` varchar(60) NOT NULL UNIQUE,
+  `fechachat` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `mensajes`
+--
+DROP TABLE IF EXISTS `mensajes`;
+CREATE TABLE `mensajes` (
+  `idmensaje` int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idusuario` int UNSIGNED NOT NULL,
+  `mensaje` text NOT NULL,
+  `fechamensaje` datetime DEFAULT NULL,
+  `fktokenchat` varchar(60) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- --------------------------------------------------------
+
 
 --
 -- Estructura de tabla para la tabla `publicaciones`
