@@ -78,14 +78,14 @@ class Chatsmsgs implements JsonSerializable
     $success = $stmt->execute(['tokenchat' => $token]);
     $chatsmsgs = [];
     while ($row = $stmt->fetch()) {
-      $msg = new Chatsmsgs;
-      $msg->loadDataArray($row);
-      $Chatsmsgs[] = $msg;
+      $chatsmsg = new Chatsmsgs;
+      $chatsmsg->loadDataArray($row);
+      $chatsmsgs[] = $chatsmsg;
     }
     if (!$success) {
       throw new Exception("Se produjo un error al obtener todos los mensajes del chat, token $token no valido");
     } 
-    return $Chatsmsgs;
+    return $chatsmsgs;
   }
 
   /**

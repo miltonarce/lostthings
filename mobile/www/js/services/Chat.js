@@ -21,7 +21,7 @@ angular
                        * @returns Promise
                        */
                 function getChatsmsgs(tokenchat) {
-                    return $http.get(`${API_SERVER}/chats/${tokenchat}`, Authentication.getHeaderForAPI());
+                    return $http.get(`${API_SERVER}/chatsmsgs/${tokenchat}`, Authentication.getHeaderForAPI());
                 }
 
                 /**

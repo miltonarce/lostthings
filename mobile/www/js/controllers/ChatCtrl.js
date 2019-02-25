@@ -30,7 +30,7 @@ angular
 						$scope.errors.mensaje = 'El campo no puede ser vacío';
 					}
 				} else {
-					Chat.sendmsg({ tokenchat: '5c732defa873d', idUser: $scope.idUser, msg: msg.mensaje }).then(res => {
+					Chat.sendmsg({ tokenchat: $stateParams.tokenchat, idUser: $scope.idUser, msg: msg.mensaje }).then(res => {
 						if (res.data.status === 1) {
 							$scope.mensajeschat.push(res.data.data);
 						} else {

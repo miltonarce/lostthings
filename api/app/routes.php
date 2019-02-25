@@ -26,7 +26,7 @@ Route::add('GET', '/comments/{idPublish}', 'CommentsController@all');
 Route::add('POST', '/comments/{idPublish}', 'CommentsController@save');
 
 //chats y chats mensajes
-Route::add('GET', '/chats/{tokenchat}', 'ChatsmsgsController@all');
+Route::add('GET', '/chatsmsgs/{tokenchat}', 'ChatsmsgsController@all');
 Route::add('POST', '/chatsmsgs', 'ChatsmsgsController@sendmsg');
 Route::add('POST', '/chats', 'ChatsController@create');
 
