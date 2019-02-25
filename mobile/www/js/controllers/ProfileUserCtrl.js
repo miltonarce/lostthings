@@ -53,13 +53,15 @@ angular
 			* @returns void
 			*/
 			$scope.startChat = function (user) {
-				$state.go('chat', { user: user });
-				Chat.createChat(user).then(res => console.log(res.data))
-					.catch(() => {
-						$ionicLoading.hide();
-						Utils.showPopup('Chats', '¡Ups se produjo un error al querer chatear.');
-					});
-
+				$ionicLoading.show();
+				Chat.createChat(user).then(res => {
+					$ionicLoading.hide();
+					let tokenchat = res.data.data[0].tokenchat; //VER PORQUE ES UN ARRAY Y NO UN OBJECT
+					$state.go('chat', { user: user , 'tokenchat': tokenchat });
+				}).catch(() => {
+					$ionicLoading.hide();
+					Utils.showPopup('Chats', '¡Ups se produjo un error al querer chatear.');
+				});
 			}
 
 			/**

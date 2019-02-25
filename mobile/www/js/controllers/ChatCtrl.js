@@ -12,7 +12,7 @@ angular
 
 			//Al ingresar a la view, obtiene los mensajes de los chats
 			$scope.$on('$ionicView.beforeEnter', function () {
-				Chat.getChatsmsgs('5c732defa873d')
+				Chat.getChatsmsgs($stateParams.tokenchat)
 					.then(res => $scope.mensajeschat = res.data)
 					.catch(() => Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat'));
 			});
