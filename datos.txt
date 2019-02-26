@@ -1,6 +1,5 @@
 Alumno:
     Torre Matias Daniel
-    Milton Arce
 
 Docente:
     Santiago Gallino
@@ -10,15 +9,17 @@ Carrera:
 
 Materia:
     Clientes Web Mobile
-    Programación III
 
 Año:
-    2019
+    2018
 
 Cuatrimestre:   
-    1er Cuatrimestre
+    2do Cuatrimestre
 
-Turno:
-    
+Turno: 
+    Noche
+
+Comisión:
+    W1041
 
 Entrega Final

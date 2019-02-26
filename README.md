@@ -9,6 +9,7 @@ Endpoints
 /profile
 /items
 /comments
+/chats
 /friends
 
 ## Frontend IONIC
