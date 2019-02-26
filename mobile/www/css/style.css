@@ -282,9 +282,18 @@ button.button.icon-left.ion-search.button-search {
     margin: 10px 0px 10px 0px;
     width: 65%;
     border-radius: 6px;
+    padding-left: 15px;
+    padding-top: 8px;
+    padding-bottom: 4px;
 }
 .msgrec {
     background: white;
+}
+.fecha-mensaje{
+    margin-top: -5px;
+    color: grey !important;
+    font-size: 9px !important;
+    display: block;
 }
 .msgem{
     background: #ff8c26;
