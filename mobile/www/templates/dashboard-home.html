@@ -21,7 +21,7 @@
       <ion-list ng-if="items.length > 0">
         <ion-item class="list card" ng-repeat="item in items" ng-click="goDetail(item.idpublicacion)">
             <div class="item item-avatar">
-              <img ng-src="img/avatar.png" alt="{{item.usuario}}">
+              <img ng-src="{{ item.imguser ? item.imguser : 'img/avatar.png' }}" alt="{{item.usuario}}">
               <p class="text-bold">{{item.usuario}}</p>
               <p>{{item.fecha_publicacion}}</p>
             </div>

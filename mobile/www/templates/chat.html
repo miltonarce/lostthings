@@ -15,7 +15,6 @@
             <div class="content-msg-chat">
                 <ion-list class="list list-chat">
                     <ion-item ng-repeat="m in mensajeschat" class="item item-text-wrap item-avatar item-comments-chat" ng-class="m.idusuario == idUser ? 'msgem' : 'msgrec'">
-                        <img ng-src="img/avatar.png" alt="{{m.idusuario}}" />
                         <h3 class="text-bold">{{ m.usuario }}</h3>
                         <p>{{ m.mensaje }}</p>
                         <span>{{ m.fechamensaje | date:'hh:ss'}}</span>
@@ -23,12 +22,12 @@
                 </ion-list>
             </div>
             <div class="padding">
+                <div class="invalid-form" ng-show="errors.mensaje">
+                    <span>{{ errors.mensaje }}</span>
+                </div>
                 <form class="form-chat" name="formmsgs" ng-submit="addmsg(formmsgs, msg)" novalidate>
                     <div class="container-form-input-chat">
                         <textarea name="mensaje" ng-model="msg.content" rows="4" placeholder="Escribi tu mensaje..." required></textarea>
-                    </div>
-                    <div class="invalid-form" ng-show="errors.mensaje">
-                        <span>{{ errors.mensaje }}</span>
                     </div>
                     <button type="submit" class="send-chat button button-dark button-block">
                         <ion-icon name="send"></ion-icon>

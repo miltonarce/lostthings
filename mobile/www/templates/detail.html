@@ -23,7 +23,7 @@
         <div>
           <ion-list class="list">
             <ion-item ng-repeat="c in comentarios" class="item item-text-wrap item-avatar item-comments">
-              <img ng-src="img/avatar.png" alt="{{c.usuario}}" />
+              <img ng-src="{{ c.imguser ? c.imguser : 'img/avatar.png' }}" alt="{{c.usuario}}" />
               <p class="text-bold">{{ c.usuario }}</p>
               <p>{{ c.comentario }}</p>
             </ion-item>

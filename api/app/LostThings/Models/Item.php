@@ -20,7 +20,8 @@ class Item implements JsonSerializable
   protected $ubicacion;
   protected $fkidusuario;
   protected $usuario;
-  protected $props = ['idpublicacion','titulo','descripcion','img','fecha_publicacion','ubicacion','fkidusuario', 'usuario'];
+  protected $imguser;
+  protected $props = ['idpublicacion','titulo','descripcion','img','fecha_publicacion','ubicacion','fkidusuario', 'usuario', 'imguser'];
 
   /**
    * Implementación de la interfaz JsonSerializable para enviar JSON de respuesta...
@@ -42,6 +43,9 @@ class Item implements JsonSerializable
     if ($this->usuario !== null) {
       $defaultProperties['usuario']= $this->usuario;
     }
+    if ($this->imguser !== null) {
+      $defaultProperties['imguser']= $this->imguser;
+    }
     return $defaultProperties;
   }
 
@@ -52,7 +56,7 @@ class Item implements JsonSerializable
   public function all()
   {
     $db = DBConnection::getConnection();
-    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, p.fkidusuario, us.usuario 
+    $query = "SELECT p.idpublicacion, p.titulo, p.descripcion, p.img, p.fecha_publicacion, p.ubicacion, p.fkidusuario, us.usuario, us.img as imguser
               FROM publicaciones p 
               JOIN usuarios AS us ON us.idusuario = p.fkidusuario ORDER BY p.fecha_publicacion";
     $stmt = $db->prepare($query);

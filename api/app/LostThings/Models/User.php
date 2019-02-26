@@ -155,7 +155,7 @@ class User implements JsonSerializable
   public function getById($userID)
 	{
 		$db = DBConnection::getConnection();
-		$query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email FROM usuarios WHERE idusuario = ?";
+		$query = "SELECT idusuario, nombre, apellido, fecha_alta, usuario, password, email, img FROM usuarios WHERE idusuario = ?";
 		$stmt = $db->prepare($query);
 		$stmt->execute([$userID]);
 		if ($row = $stmt->fetch()) {

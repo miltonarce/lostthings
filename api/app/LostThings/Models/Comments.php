@@ -18,7 +18,8 @@ class Comments implements JsonSerializable
   protected $comentario;
   protected $fecha_publicacion;
   protected $usuario;
-  protected $props = ['idcomentario','fkidusuario','fkidpublicacion','comentario','fecha_publicacion', 'usuario'];
+  protected $imguser;
+  protected $props = ['idcomentario','fkidusuario','fkidpublicacion','comentario','fecha_publicacion', 'usuario', 'imguser'];
 
   /**
    * Implementación de la interfaz JsonSerializable para enviar JSON de respuesta...
@@ -32,7 +33,8 @@ class Comments implements JsonSerializable
       'fkidpublicacion' => $this->fkidpublicacion,
       'comentario' => $this->comentario,
       'fecha_publicacion' => $this->fecha_publicacion,
-      'usuario' => $this->usuario
+      'usuario' => $this->usuario,
+      'imguser' => $this->imguser
     ];
   }
 
@@ -72,7 +74,7 @@ class Comments implements JsonSerializable
   public function all($id) 
   {
     $db = DBConnection::getConnection();
-    $query = "SELECT  c.idcomentario, c.comentario, c.fecha_publicacion, c.fkidpublicacion, c.fkidusuario, u.usuario 
+    $query = "SELECT  c.idcomentario, c.comentario, c.fecha_publicacion, c.fkidpublicacion, c.fkidusuario, u.usuario, u.img as imguser
     FROM comentarios AS c JOIN usuarios AS u WHERE c.fkidpublicacion = :id AND c.fkidusuario = u.idusuario";
     $stmt = $db->prepare($query);
     $success = $stmt->execute(['id' => $id]);
