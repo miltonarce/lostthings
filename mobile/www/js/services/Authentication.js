@@ -1,6 +1,6 @@
-angular.module("lostThings.services").factory("Authentication", [
-  "$http",
-  "API_SERVER",
+angular.module('lostThings.services').factory('Authentication', [
+  '$http',
+  'API_SERVER',
   function($http, API_SERVER) {
 
     //Constantes 
@@ -10,7 +10,7 @@ angular.module("lostThings.services").factory("Authentication", [
     /**
      * Permite autenticar al usuario contra la API de PHP
      * @param {Object} user
-     * @returns Promise
+     * @returns Promise<boolean>
      */
     function login(user) {
       return $http.post(`${API_SERVER}/login`, user).then(function(response) {
@@ -42,7 +42,7 @@ angular.module("lostThings.services").factory("Authentication", [
 
     /**
      * Permite guardar la info del usuario en el localStorage
-     * @param {Object} user
+     * @param {Object} value
      * @returns void
      */
     function setUserData(value) {
@@ -79,7 +79,7 @@ angular.module("lostThings.services").factory("Authentication", [
     /**
      * Permite registrar al usuario utilizando la API de PHP
      * @param {Object} user
-     * @returns Promise
+     * @returns Promise<boolean>
      */
     function register(user) {
       return $http.post(`${API_SERVER}/profile`, user).then(function(res) {

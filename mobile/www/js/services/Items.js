@@ -1,7 +1,7 @@
-angular.module("lostThings.services").factory("Items", [
-  "$http",
-  "API_SERVER",
-  "Authentication",
+angular.module('lostThings.services').factory('Items', [
+  '$http',
+  'API_SERVER',
+  'Authentication',
   function($http, API_SERVER, Authentication) {
 
     /**

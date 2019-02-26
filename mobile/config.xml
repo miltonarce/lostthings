@@ -2,7 +2,7 @@
 <widget id="com.davinci.lostthings" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Lost Things</name>
     <description>Lost Things, encuentra items perdidos</description>
-    <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
+    <author email="mtorre4580@outlook.com" href="http://ionicframework.com/">Matias Daniel Torre</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />

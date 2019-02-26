@@ -85,11 +85,11 @@ angular
 			}
 
 			/**
-					* Permite eliminar a un usuario de la lista de amigos de la persona logueada
-					* recibida...
-					* @param {Object} profile
-					* @returns void
-					*/
+			* Permite eliminar a un usuario de la lista de amigos de la persona logueada
+			* recibida...
+			* @param {Object} profile
+			* @returns void
+			*/
 			$scope.removeFriend = function (profile) {
 				Utils.showConfirm('Amigos', `¿Estas seguro de eliminar a ${profile.nombre} de tus amigos?`).then(accept => {
 					if (accept) {

@@ -7,16 +7,14 @@
     <ion-content class="chat-content background-content">
         <div class="profile-box-shadow ">
             <div class="profile-container-view-chat">
-                <img class="img-friend-chat" ng-src="{{profile.img ? profile.img : 'img/avatar.png' }}"
-                    alt="{{profile.usuario}}">
+                <img class="img-friend-chat" ng-src="{{profile.img ? profile.img : 'img/avatar.png' }}" alt="{{profile.usuario}}">
                 <h2>{{profile.nombre ? profile.nombre : profile.usuario}}</h2>
             </div>
         </div>
         <div class="content-chat">
             <div class="content-msg-chat">
                 <ion-list class="list list-chat">
-                    <ion-item ng-repeat="m in mensajeschat" class="item item-text-wrap item-avatar item-comments-chat"
-                        ng-class="m.idusuario == idUser ? 'msgem' : 'msgrec'">
+                    <ion-item ng-repeat="m in mensajeschat" class="item item-text-wrap item-avatar item-comments-chat" ng-class="m.idusuario == idUser ? 'msgem' : 'msgrec'">
                         <img ng-src="img/avatar.png" alt="{{m.idusuario}}" />
                         <h3 class="text-bold">{{ m.usuario }}</h3>
                         <p>{{ m.mensaje }}</p>
@@ -27,8 +25,7 @@
             <div class="padding">
                 <form class="form-chat" name="formmsgs" ng-submit="addmsg(formmsgs, msg)" novalidate>
                     <div class="container-form-input-chat">
-                        <textarea name="mensaje" ng-model="msg.content" rows="4" placeholder="Escribi tu mensaje..."
-                            required></textarea>
+                        <textarea name="mensaje" ng-model="msg.content" rows="4" placeholder="Escribi tu mensaje..." required></textarea>
                     </div>
                     <div class="invalid-form" ng-show="errors.mensaje">
                         <span>{{ errors.mensaje }}</span>

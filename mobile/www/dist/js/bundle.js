@@ -9,7 +9,7 @@
  * Instalación npm install angular-base64-upload --save
  * https://github.com/adonespitogo/angular-base64-upload
  */
-angular.module("lostThings", ["ionic", "lostThings.controllers", "lostThings.services", "naif.base64"]).run(function ($ionicPlatform, $rootScope, $state, Utils, Authentication) {
+angular.module('lostThings', ['ionic', 'lostThings.controllers', 'lostThings.services', 'naif.base64']).run(function ($ionicPlatform, $rootScope, $state, Utils, Authentication) {
   $ionicPlatform.ready(function () {
     if (window.cordova && window.Keyboard) {
       window.Keyboard.hideKeyboardAccessoryBar(true);
@@ -20,12 +20,12 @@ angular.module("lostThings", ["ionic", "lostThings.controllers", "lostThings.ser
     }
   }); //Permite validar cuando cambia el state si tiene permisos el usuario para acceder a una view especifica
 
-  $rootScope.$on("$stateChangeStart", function (event, toState) {
+  $rootScope.$on('$stateChangeStart', function (event, toState) {
     if (toState.data != undefined && toState.data.requiresAuth) {
       if (!Authentication.isLogged()) {
         event.preventDefault();
-        Utils.showPopup("Usuario no autorizado", "No se puede acceder a esta sección sin estar autenticado.").then(function () {
-          return $state.go("login");
+        Utils.showPopup('Usuario no autorizado', 'No se puede acceder a esta sección sin estar autenticado.').then(function () {
+          return $state.go('login');
         });
       }
     }
@@ -37,115 +37,118 @@ angular.module("lostThings", ["ionic", "lostThings.controllers", "lostThings.ser
     estas son Login ,Register, Detail, Profile, Chat una vez que ingresan a la aplicación
     el dashboard es el main view (tabs)
   */
-  $stateProvider.state("dashboard", {
-    url: "/dashboard",
+  $stateProvider.state('dashboard', {
+    url: '/dashboard',
     abstract: true,
-    templateUrl: "templates/dashboard.html"
-  }).state("dashboard.home", {
-    url: "/home",
+    templateUrl: 'templates/dashboard.html'
+  }).state('dashboard.home', {
+    url: '/home',
     views: {
-      "tab-home": {
-        templateUrl: "templates/dashboard-home.html",
-        controller: "HomeCtrl"
+      'tab-home': {
+        templateUrl: 'templates/dashboard-home.html',
+        controller: 'HomeCtrl'
       }
     },
     data: {
       requiresAuth: true
     }
-  }).state("dashboard.friends", {
-    url: "/friends",
+  }).state('dashboard.friends', {
+    url: '/friends',
     views: {
-      "tab-friends": {
-        templateUrl: "templates/dashboard-friends.html",
-        controller: "FriendsCtrl"
+      'tab-friends': {
+        templateUrl: 'templates/dashboard-friends.html',
+        controller: 'FriendsCtrl'
       }
     },
     data: {
       requiresAuth: true
     }
-  }).state("dashboard.publish", {
-    url: "/publish",
+  }).state('dashboard.publish', {
+    url: '/publish',
     views: {
-      "tab-publish": {
-        templateUrl: "templates/dashboard-publish.html",
-        controller: "PublishCtrl"
+      'tab-publish': {
+        templateUrl: 'templates/dashboard-publish.html',
+        controller: 'PublishCtrl'
       }
     },
     data: {
       requiresAuth: true
     }
-  }).state("dashboard.profile", {
-    url: "/profile",
+  }).state('dashboard.profile', {
+    url: '/profile',
     views: {
-      "tab-profile": {
-        templateUrl: "templates/dashboard-profile.html",
-        controller: "ProfileCtrl"
+      'tab-profile': {
+        templateUrl: 'templates/dashboard-profile.html',
+        controller: 'ProfileCtrl'
       }
     },
     data: {
       requiresAuth: true
     }
   }) //Estas views no dependen del dashboard, ya que no se quiere mostrar los tabs...
-  .state("detail", {
-    url: "/detail/:id",
-    templateUrl: "templates/detail.html",
-    controller: "DetailCtrl",
+  .state('detail', {
+    url: '/detail/:id',
+    templateUrl: 'templates/detail.html',
+    controller: 'DetailCtrl',
     data: {
       requiresAuth: true
     }
-  }).state("chat", {
-    url: "/chat/:iduser/:tokenchat",
-    templateUrl: "templates/chat.html",
-    controller: "ChatCtrl",
+  }).state('chat', {
+    url: '/chat/:iduser/:tokenchat',
+    templateUrl: 'templates/chat.html',
+    controller: 'ChatCtrl',
     data: {
       requiresAuth: true
     }
-  }).state("profile", {
-    url: "/profile/:id/:isFriend",
-    templateUrl: "templates/profile.html",
-    controller: "ProfileUserCtrl",
+  }).state('profile', {
+    url: '/profile/:id/:isFriend',
+    templateUrl: 'templates/profile.html',
+    controller: 'ProfileUserCtrl',
     data: {
       requiresAuth: true
     }
-  }).state("intro", {
-    url: "/intro",
-    templateUrl: "templates/intro.html"
-  }).state("login", {
-    url: "/login",
-    templateUrl: "templates/login.html",
-    controller: "LoginCtrl"
-  }).state("register", {
-    url: "/register",
-    templateUrl: "templates/register.html",
-    controller: "RegisterCtrl"
+  }).state('intro', {
+    url: '/intro',
+    templateUrl: 'templates/intro.html'
+  }).state('login', {
+    url: '/login',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
+  }).state('register', {
+    url: '/register',
+    templateUrl: 'templates/register.html',
+    controller: 'RegisterCtrl'
   }); //Por default se muestra la view de login...
 
-  $urlRouterProvider.otherwise("/login"); //Se configura el texto del button back a mostrar...
+  $urlRouterProvider.otherwise('/login'); //Se configura el texto del button back a mostrar...
 
-  $ionicConfigProvider.backButton.text("Atrás");
-}).constant("API_SERVER", "http://localhost/lostthings/api/public"); //Módulo para los services
+  $ionicConfigProvider.backButton.text('Atrás');
+}).constant('API_SERVER', 'http://localhost/lostthings/api/public'); //Módulo para los services
 
-angular.module("lostThings.services", []); //Módulo para los controllers
+angular.module('lostThings.services', []); //Módulo para los controllers
 
-angular.module("lostThings.controllers", []);
+angular.module('lostThings.controllers', []);
 "use strict";
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$state', '$stateParams', 'Utils', 'Authentication', 'Chat', 'Profile', function ($scope, $state, $stateParams, Utils, Authentication, Chat, Profile) {
+angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$state', '$stateParams', 'Utils', 'Authentication', 'Chat', 'Profile', '$ionicLoading', function ($scope, $state, $stateParams, Utils, Authentication, Chat, Profile, $ionicLoading) {
   //Al ingresar a la view, obtiene los mensajes de los chats
   $scope.$on('$ionicView.beforeEnter', function () {
+    //Datos del user logueado...
     $scope.idUser = Authentication.getUserData().idusuario;
-    $scope.usuario = Authentication.getUserData().usuario;
-    console.log('token chat', $stateParams);
-    $scope.msg = getDefaultMsg();
+    $scope.usuario = Authentication.getUserData().usuario; //Default request para el mensaje, se setea vacío
+
+    $scope.msg = getDefaultMsg(); //Se obtiene la info adicional del usuario al enviar el mensaje (usuario, imagen, etc...)
+
     Profile.getAdditionalInfo($stateParams.iduser).then(function (res) {
       $scope.profile = res.data.data;
     }).catch(function (res) {
       return Utils.showPopup('Chat', 'Se produjo un error al obtener los datos del perfil');
-    });
+    }); //Se obtiene todos los mensajes de este chat por el token...
+
     Chat.getChatsmsgs($stateParams.tokenchat).then(function (res) {
       return $scope.mensajeschat = res.data;
     }).catch(function () {
@@ -153,8 +156,9 @@ angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$sta
     });
   });
   /**
-   * Permite enviar un mensaje
+   * Permite enviar un mensaje a un usuario, valida los datos al enviar...
    * @param {Object} formComments
+   * @param {Object} msg
    * @returns void
    */
 
@@ -168,11 +172,14 @@ angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$sta
         $scope.errors.mensaje = 'El campo no puede ser vacío';
       }
     } else {
+      $ionicLoading.show();
       Chat.sendmsg({
         tokenchat: $stateParams.tokenchat,
         idUser: $scope.idUser,
         msg: msg.content
       }).then(function (res) {
+        $ionicLoading.hide();
+
         if (res.data.status === 1) {
           var chatCreated = _objectSpread({}, res.data.data, {
             usuario: $scope.usuario
@@ -184,7 +191,8 @@ angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$sta
           Utils.showPopup('Mensaje', res.data.message);
         }
       }).catch(function () {
-        return Utils.showPopup('Mensaje ', 'Se produjo un error al enviar el mensaje');
+        $ionicLoading.hide();
+        Utils.showPopup('Mensaje ', 'Se produjo un error al enviar el mensaje');
       });
     }
   };
@@ -1029,11 +1037,11 @@ angular.module('lostThings.controllers').controller('ProfileUserCtrl', ['$scope'
     });
   };
   /**
-  		* Permite eliminar a un usuario de la lista de amigos de la persona logueada
-  		* recibida...
-  		* @param {Object} profile
-  		* @returns void
-  		*/
+  * Permite eliminar a un usuario de la lista de amigos de la persona logueada
+  * recibida...
+  * @param {Object} profile
+  * @returns void
+  */
 
 
   $scope.removeFriend = function (profile) {
@@ -1267,14 +1275,14 @@ angular.module('lostThings.controllers').controller('RegisterCtrl', ['$scope', '
 }]);
 "use strict";
 
-angular.module("lostThings.services").factory("Authentication", ["$http", "API_SERVER", function ($http, API_SERVER) {
+angular.module('lostThings.services').factory('Authentication', ['$http', 'API_SERVER', function ($http, API_SERVER) {
   //Constantes 
   var KEY_LOST_THINGS_TOKEN = 'lost_things_token';
   var KEY_LOST_THINGS_USER = 'lost_things_user';
   /**
    * Permite autenticar al usuario contra la API de PHP
    * @param {Object} user
-   * @returns Promise
+   * @returns Promise<boolean>
    */
 
   function login(user) {
@@ -1309,7 +1317,7 @@ angular.module("lostThings.services").factory("Authentication", ["$http", "API_S
   }
   /**
    * Permite guardar la info del usuario en el localStorage
-   * @param {Object} user
+   * @param {Object} value
    * @returns void
    */
 
@@ -1350,7 +1358,7 @@ angular.module("lostThings.services").factory("Authentication", ["$http", "API_S
   /**
    * Permite registrar al usuario utilizando la API de PHP
    * @param {Object} user
-   * @returns Promise
+   * @returns Promise<boolean>
    */
 
 
@@ -1387,20 +1395,20 @@ angular.module("lostThings.services").factory("Authentication", ["$http", "API_S
 }]);
 "use strict";
 
-angular.module('lostThings.services').factory('Chat', ["$http", "API_SERVER", "Authentication", function ($http, API_SERVER, Authentication) {
+angular.module('lostThings.services').factory('Chat', ['$http', 'API_SERVER', 'Authentication', function ($http, API_SERVER, Authentication) {
   /**
-   * Permite generar un chat con su token unico
-   * @param {number} id
+   * Permite generar un chat con su token único
+   * @param {Object} user
    * @returns Promise
    */
   function createChat(user) {
     return $http.post("".concat(API_SERVER, "/chats"), user, Authentication.getHeaderForAPI());
   }
   /**
-         * Permite obtener los mensajes que posee una chat por el tokenchat de la room
-         * @param {number} tokenchat 
-         * @returns Promise
-         */
+   * Permite obtener los mensajes que posee una chat por el tokenchat de la room
+   * @param {string} tokenchat 
+   * @returns Promise
+   */
 
 
   function getChatsmsgs(tokenchat) {
@@ -1408,8 +1416,7 @@ angular.module('lostThings.services').factory('Chat', ["$http", "API_SERVER", "A
   }
   /**
    * Permite enviar mensaje al chat
-   * @param {number} id 
-   * @param {Object} comment 
+   * @param {Object} data 
    * @returns Promise
    */
 
@@ -1426,7 +1433,7 @@ angular.module('lostThings.services').factory('Chat', ["$http", "API_SERVER", "A
 }]);
 "use strict";
 
-angular.module('lostThings.services').factory('Comments', ["$http", "API_SERVER", "Authentication", function ($http, API_SERVER, Authentication) {
+angular.module('lostThings.services').factory('Comments', ['$http', 'API_SERVER', 'Authentication', function ($http, API_SERVER, Authentication) {
   /**
    * Permite obtener los comentarios que posee una publicacion por el id de la publicacion
    * @param {number} id 
@@ -1454,7 +1461,7 @@ angular.module('lostThings.services').factory('Comments', ["$http", "API_SERVER"
 }]);
 "use strict";
 
-angular.module('lostThings.services').factory('Friends', ["$http", "API_SERVER", "Authentication", function ($http, API_SERVER, Authentication) {
+angular.module('lostThings.services').factory('Friends', ['$http', 'API_SERVER', 'Authentication', function ($http, API_SERVER, Authentication) {
   /**
    * Permite obtener los amigos que posee el usuario logueado por el id del mismo
    * @returns Promise
@@ -1512,7 +1519,7 @@ angular.module('lostThings.services').factory('Friends', ["$http", "API_SERVER",
 }]);
 "use strict";
 
-angular.module("lostThings.services").factory("Items", ["$http", "API_SERVER", "Authentication", function ($http, API_SERVER, Authentication) {
+angular.module('lostThings.services').factory('Items', ['$http', 'API_SERVER', 'Authentication', function ($http, API_SERVER, Authentication) {
   /**
    * Permite obtener todos los items perdidos
    * @returns Promise
@@ -1606,11 +1613,11 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-angular.module('lostThings.services').factory('Profile', ["$http", "API_SERVER", "Authentication", function ($http, API_SERVER, Authentication) {
+angular.module('lostThings.services').factory('Profile', ['$http', 'API_SERVER', 'Authentication', function ($http, API_SERVER, Authentication) {
   /**
    * Permite editar los datos del usuario, se envia en el HEADER 
    * el api key del jwt...
-   * @param userData
+   * @param {Object} userData
    * @returns Promise
    */
   function edit(userData) {
@@ -1628,6 +1635,7 @@ angular.module('lostThings.services').factory('Profile', ["$http", "API_SERVER",
   }
   /**
    * Permite obtener la información del usuario adicional
+   * @param {string} idUser
    * @returns Promise
    */
 

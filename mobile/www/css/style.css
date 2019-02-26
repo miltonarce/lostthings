@@ -290,13 +290,13 @@ button.button.icon-left.ion-search.button-search {
     background: #ff8c26;
     align-self: flex-end;
 }
-.msgem  p,h3{
+.msgem p, h3 {
     color: white;
 }
-.msgrec h3{
+.msgrec h3 {
     color: #444;
 }
-.list-chat div{
+.list-chat div {
     display: flex;
     flex-direction: column;
 }
@@ -396,13 +396,13 @@ a.button.icon-left.ion-chevron-left.button-clear {
     justify-content: space-between;
     align-items: center;
 }
-.form-chat{
+.form-chat {
     display: flex;
     justify-content: center; 
     flex-direction: row; 
     align-items: center;
 }
-.send-chat{
+.send-chat {
     padding: 8px;
     width: 50px !important;
     height: 50px;
@@ -410,13 +410,13 @@ a.button.icon-left.ion-chevron-left.button-clear {
     margin-left: 10px;
     font-size: 28px;
 }
-.send-chat ion-icon{
+.send-chat ion-icon {
     margin-left: 5px;
 }
-.content-msg-chat{
+.content-msg-chat {
     padding: 10px;
 }
-.chat-content .scroll{
+.chat-content .scroll {
     height: 100%;
     display: flex;
     flex-direction: column;

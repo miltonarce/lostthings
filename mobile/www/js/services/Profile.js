@@ -1,14 +1,14 @@
 angular
 .module('lostThings.services').factory('Profile', 
-    ["$http",
-    "API_SERVER",
-    "Authentication",
+    ['$http',
+    'API_SERVER',
+    'Authentication',
     function($http, API_SERVER, Authentication) {
 
         /**
          * Permite editar los datos del usuario, se envia en el HEADER 
          * el api key del jwt...
-         * @param userData
+         * @param {Object} userData
          * @returns Promise
          */
         function edit(userData) {
@@ -26,6 +26,7 @@ angular
 
         /**
          * Permite obtener la información del usuario adicional
+         * @param {string} idUser
          * @returns Promise
          */
         function getAdditionalInfo(idUser) {

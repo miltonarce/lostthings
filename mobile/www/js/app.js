@@ -8,11 +8,11 @@
  * https://github.com/adonespitogo/angular-base64-upload
  */
 angular
-  .module("lostThings", [
-    "ionic",
-    "lostThings.controllers",
-    "lostThings.services",
-    "naif.base64"
+  .module('lostThings', [
+    'ionic',
+    'lostThings.controllers',
+    'lostThings.services',
+    'naif.base64'
   ])
   .run(function($ionicPlatform, $rootScope, $state, Utils, Authentication) {
     $ionicPlatform.ready(function() {
@@ -24,11 +24,11 @@ angular
       }
     });
     //Permite validar cuando cambia el state si tiene permisos el usuario para acceder a una view especifica
-    $rootScope.$on("$stateChangeStart", function(event, toState) {
+    $rootScope.$on('$stateChangeStart', function(event, toState) {
       if (toState.data != undefined && toState.data.requiresAuth) {
         if (!Authentication.isLogged()) {
           event.preventDefault();
-          Utils.showPopup("Usuario no autorizado", "No se puede acceder a esta sección sin estar autenticado.").then(() => $state.go("login"));
+          Utils.showPopup('Usuario no autorizado', 'No se puede acceder a esta sección sin estar autenticado.').then(() => $state.go('login'));
         }
       }
     });
@@ -41,53 +41,53 @@ angular
       el dashboard es el main view (tabs)
     */
     $stateProvider
-      .state("dashboard", {
-        url: "/dashboard",
+      .state('dashboard', {
+        url: '/dashboard',
         abstract: true,
-        templateUrl: "templates/dashboard.html"
+        templateUrl: 'templates/dashboard.html'
       })
-      .state("dashboard.home", {
-        url: "/home",
+      .state('dashboard.home', {
+        url: '/home',
         views: {
-          "tab-home": {
-            templateUrl: "templates/dashboard-home.html",
-            controller: "HomeCtrl"
+          'tab-home': {
+            templateUrl: 'templates/dashboard-home.html',
+            controller: 'HomeCtrl'
           }
         },
         data: {
           requiresAuth: true
         }
       })
-      .state("dashboard.friends", {
-        url: "/friends",
+      .state('dashboard.friends', {
+        url: '/friends',
         views: {
-          "tab-friends": {
-            templateUrl: "templates/dashboard-friends.html",
-            controller: "FriendsCtrl"
+          'tab-friends': {
+            templateUrl: 'templates/dashboard-friends.html',
+            controller: 'FriendsCtrl'
           }
         },
         data: {
           requiresAuth: true
         }
       })
-      .state("dashboard.publish", {
-        url: "/publish",
+      .state('dashboard.publish', {
+        url: '/publish',
         views: {
-          "tab-publish": {
-            templateUrl: "templates/dashboard-publish.html",
-            controller: "PublishCtrl"
+          'tab-publish': {
+            templateUrl: 'templates/dashboard-publish.html',
+            controller: 'PublishCtrl'
           }
         },
         data: {
           requiresAuth: true
         }
       })
-      .state("dashboard.profile", {
-        url: "/profile",
+      .state('dashboard.profile', {
+        url: '/profile',
         views: {
-          "tab-profile" : {
-            templateUrl: "templates/dashboard-profile.html",
-            controller: "ProfileCtrl"
+          'tab-profile' : {
+            templateUrl: 'templates/dashboard-profile.html',
+            controller: 'ProfileCtrl'
           }
         },
         data: {
@@ -95,52 +95,52 @@ angular
         }
       })
       //Estas views no dependen del dashboard, ya que no se quiere mostrar los tabs...
-      .state("detail", {
-        url: "/detail/:id",
-        templateUrl: "templates/detail.html",
-        controller: "DetailCtrl",
+      .state('detail', {
+        url: '/detail/:id',
+        templateUrl: 'templates/detail.html',
+        controller: 'DetailCtrl',
         data: {
           requiresAuth: true
         }
       })
-      .state("chat", {
-        url: "/chat/:iduser/:tokenchat",
-        templateUrl: "templates/chat.html",
-        controller: "ChatCtrl",
+      .state('chat', {
+        url: '/chat/:iduser/:tokenchat',
+        templateUrl: 'templates/chat.html',
+        controller: 'ChatCtrl',
         data: {
           requiresAuth: true
         }
       })
-      .state("profile", {
-        url: "/profile/:id/:isFriend",
-        templateUrl: "templates/profile.html",
-        controller: "ProfileUserCtrl",
+      .state('profile', {
+        url: '/profile/:id/:isFriend',
+        templateUrl: 'templates/profile.html',
+        controller: 'ProfileUserCtrl',
         data: {
           requiresAuth: true
         }
       })
-      .state("intro", {
-        url: "/intro",
-        templateUrl: "templates/intro.html"
+      .state('intro', {
+        url: '/intro',
+        templateUrl: 'templates/intro.html'
       })
-      .state("login", {
-        url: "/login",
-        templateUrl: "templates/login.html",
-        controller: "LoginCtrl"
+      .state('login', {
+        url: '/login',
+        templateUrl: 'templates/login.html',
+        controller: 'LoginCtrl'
       })
-      .state("register", {
-        url: "/register",
-        templateUrl: "templates/register.html",
-        controller: "RegisterCtrl"
+      .state('register', {
+        url: '/register',
+        templateUrl: 'templates/register.html',
+        controller: 'RegisterCtrl'
       });
     //Por default se muestra la view de login...
-    $urlRouterProvider.otherwise("/login");
+    $urlRouterProvider.otherwise('/login');
     //Se configura el texto del button back a mostrar...
-    $ionicConfigProvider.backButton.text("Atrás");
+    $ionicConfigProvider.backButton.text('Atrás');
   })
-  .constant("API_SERVER", "http://localhost/lostthings/api/public");
+  .constant('API_SERVER', 'http://localhost/lostthings/api/public');
 
 //Módulo para los services
-angular.module("lostThings.services", []);
+angular.module('lostThings.services', []);
 //Módulo para los controllers
-angular.module("lostThings.controllers", []);
+angular.module('lostThings.controllers', []);

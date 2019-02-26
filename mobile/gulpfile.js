@@ -12,12 +12,10 @@ const concat = require('gulp-concat');
 const cleanCSS = require('gulp-clean-css');
 //Librerìa para realizar el transpiler de ES6 a ES5
 const babel = require('gulp-babel');
-
-//Tareas default
+//Tareas default que usa ionic para hacer el build de la apk...
 const sass = require('gulp-sass');
 const minifyCss = require('gulp-minify-css');
 const rename = require('gulp-rename');
-
 
 //Path para la ubicación de los archivos
 const PATH_FILES = {
@@ -54,6 +52,7 @@ gulp.task('minify-css', () => {
     .pipe(gulp.dest(PATH_FILES.css.output));
 });
 
+//Task default para los archivos sass de ionic
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
     .pipe(sass())

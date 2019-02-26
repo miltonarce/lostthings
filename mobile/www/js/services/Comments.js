@@ -1,9 +1,9 @@
 angular
 .module('lostThings.services')
 .factory('Comments', 
-    ["$http", 
-    "API_SERVER",
-    "Authentication",
+    ['$http', 
+    'API_SERVER',
+    'Authentication',
     function($http, API_SERVER, Authentication) {
 
         /**
