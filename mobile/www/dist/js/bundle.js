@@ -139,6 +139,7 @@ angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$sta
   $scope.$on('$ionicView.beforeEnter', function () {
     $scope.idUser = Authentication.getUserData().idusuario;
     $scope.usuario = Authentication.getUserData().usuario;
+    console.log('token chat', $stateParams);
     $scope.msg = getDefaultMsg();
     Profile.getAdditionalInfo($stateParams.iduser).then(function (res) {
       $scope.profile = res.data.data;
@@ -147,7 +148,7 @@ angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$sta
     });
     Chat.getChatsmsgs($stateParams.tokenchat).then(function (res) {
       return $scope.mensajeschat = res.data;
-    }).catch(function (res) {
+    }).catch(function () {
       return Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat');
     });
   });
@@ -420,7 +421,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-angular.module('lostThings.controllers').controller('FriendsCtrl', ['$scope', '$state', '$stateParams', 'Utils', 'Friends', 'Profile', '$ionicLoading', function ($scope, $state, $stateParams, Utils, Friends, Profile, $ionicLoading) {
+angular.module('lostThings.controllers').controller('FriendsCtrl', ['$scope', '$state', '$stateParams', 'Utils', 'Friends', 'Profile', '$ionicLoading', 'Chat', function ($scope, $state, $stateParams, Utils, Friends, Profile, $ionicLoading, Chat) {
   //NgModel para el input del autocompletado
   $scope.search = ''; //Lista de usuarios por default vacía
 
@@ -559,8 +560,17 @@ angular.module('lostThings.controllers').controller('FriendsCtrl', ['$scope', '$
 
 
   $scope.startChat = function (user) {
-    $state.go('chat', {
-      user: user
+    $ionicLoading.show();
+    Chat.createChat(user).then(function (res) {
+      $ionicLoading.hide();
+      var tokenchat = res.data.data.tokenchat;
+      $state.go('chat', {
+        'iduser': user.idusuario,
+        'tokenchat': tokenchat
+      });
+    }).catch(function () {
+      $ionicLoading.hide();
+      Utils.showPopup('Chats', '¡Ups se produjo un error al querer chatear.');
     });
   };
   /**

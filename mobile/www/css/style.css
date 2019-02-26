@@ -45,7 +45,6 @@ input.ng-invalid {
     font-weight: bold;
 }
 .title-app {
-    padding-top: 1em;
     font-family: 'Black Han Sans', sans-serif;
 }
 .tab-nav.tabs {
@@ -113,6 +112,7 @@ ion-tabs.tabs-color-active-positive .tab-item.activated {
 }
 .item-friends h3 {
     font-weight: 800;
+    color: #212121;
 }
 .text-info-result-friends {
     font-weight: 700;

@@ -63,7 +63,7 @@
             <h2 class="padding">Mis Invitaciones</h2>
             <ion-list ng-if="invitations.length > 0">
                 <ion-item ng-repeat="invitation in invitations" class="item-avatar">
-                    <img ng-src="{{ invitation.img ? invitation.img : 'img/avatar.png' }}" alt="{{invitation.usuario}}">
+                    <img ng-src="{{ invitation.img ? invitation.img : 'img/avatar.png' }}" alt="{{invitation.usuario}}" ng-click="showProfile(invitation.idamigo)">
                     <p>{{invitation.usuario}}</p>
                     <p>{{invitation.email}}</p>
                     <div class="container-request-invite-buttons">

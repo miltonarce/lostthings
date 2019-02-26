@@ -8,7 +8,8 @@ angular
         'Friends',
         'Profile',
         '$ionicLoading',
-        function ($scope, $state, $stateParams, Utils, Friends, Profile, $ionicLoading) {
+        'Chat',
+        function ($scope, $state, $stateParams, Utils, Friends, Profile, $ionicLoading, Chat) {
 
             //NgModel para el input del autocompletado
             $scope.search = '';
@@ -136,7 +137,15 @@ angular
              * @returns void
              */
             $scope.startChat = function (user) {
-                $state.go('chat', { user: user });
+                $ionicLoading.show();
+				Chat.createChat(user).then(res => {
+					$ionicLoading.hide();
+					let tokenchat = res.data.data.tokenchat;
+					$state.go('chat', { 'iduser': user.idusuario , 'tokenchat': tokenchat });
+				}).catch(() => {
+					$ionicLoading.hide();
+					Utils.showPopup('Chats', '¡Ups se produjo un error al querer chatear.');
+				});
             }
 
             /**

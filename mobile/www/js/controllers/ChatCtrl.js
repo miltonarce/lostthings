@@ -20,7 +20,7 @@ angular
 				}).catch(res => Utils.showPopup('Chat', 'Se produjo un error al obtener los datos del perfil'));
 				Chat.getChatsmsgs($stateParams.tokenchat)
 					.then(res => $scope.mensajeschat = res.data)
-					.catch(res => Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat'));
+					.catch(() => Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat'));
 			});
 
 			/**
