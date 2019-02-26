@@ -302,8 +302,12 @@ button.button.icon-left.ion-search.button-search {
 .msgem p, h3 {
     color: white;
 }
+.msgem h3 {
+text-decoration: underline;
+}
 .msgrec h3 {
     color: #444;
+    text-decoration: underline;
 }
 .list-chat div {
     display: flex;
