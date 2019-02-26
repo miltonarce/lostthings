@@ -26,14 +26,17 @@ class Chatsmsgs implements JsonSerializable
    */
   public function jsonSerialize()
   {
-    return[
+    $defaultProperties = [
       'idmensaje' => $this->idmensaje,
       'idusuario' => $this->idusuario,
-      'usuario' => $this->usuario,
       'mensaje' => $this->mensaje,
       'fechamensaje' => $this->fechamensaje,
       'fktokenchat' => $this->fktokenchat
     ];
+    if ($this->usuario !== null) {
+      $defaultProperties['usuario']= $this->usuario;
+    }
+    return $defaultProperties;
   }
 
   /**
@@ -48,20 +51,24 @@ class Chatsmsgs implements JsonSerializable
     $query = "INSERT INTO mensajes (idusuario, mensaje, fechamensaje, fktokenchat)
             VALUES (:idusuario, :mensaje, :fechamensaje, :fktokenchat)";
     $stmt = $db->prepare($query);
+    $dateMsg = date("Y-m-d H:i:s");
     $success = $stmt->execute([
       'idusuario' => $row['idUser'],
       'mensaje' => $row['msg'],
-      'fechamensaje' => date("Y-m-d H:i:s"),
+      'fechamensaje' => $dateMsg,
       'fktokenchat' => $row['tokenchat']
     ]);
     if ($success) {
       $row['idmensaje'] = $db->lastInsertId();
+      $row['idusuario'] = $row['idUser'];
+      $row['mensaje'] = $row['msg'];
+      $row['fechamensaje'] = $dateMsg;
+      $row['fktokenchat'] = $row['tokenchat'];
       $this->loadDataArray($row);
     } else {
       throw new Exception('Error al insertar el mensaje en la base de datos.');
     }
   }
-
 
   /**
    * Permite obtener todos los mensajes de una chat particular

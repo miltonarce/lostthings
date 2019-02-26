@@ -94,7 +94,7 @@ angular.module("lostThings", ["ionic", "lostThings.controllers", "lostThings.ser
       requiresAuth: true
     }
   }).state("chat", {
-    url: "/chat/:tokenchat",
+    url: "/chat/:iduser/:tokenchat",
     templateUrl: "templates/chat.html",
     controller: "ChatCtrl",
     data: {
@@ -130,22 +130,32 @@ angular.module("lostThings.services", []); //Módulo para los controllers
 angular.module("lostThings.controllers", []);
 "use strict";
 
-angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$state', '$stateParams', 'Utils', 'Authentication', 'Chat', function ($scope, $state, $stateParams, Utils, Authentication, Chat) {
-  $scope.idUser = Authentication.getUserData().idusuario; //Al ingresar a la view, obtiene los mensajes de los chats
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$state', '$stateParams', 'Utils', 'Authentication', 'Chat', 'Profile', function ($scope, $state, $stateParams, Utils, Authentication, Chat, Profile) {
+  //Al ingresar a la view, obtiene los mensajes de los chats
   $scope.$on('$ionicView.beforeEnter', function () {
+    $scope.idUser = Authentication.getUserData().idusuario;
+    $scope.usuario = Authentication.getUserData().usuario;
+    $scope.msg = getDefaultMsg();
+    Profile.getAdditionalInfo($stateParams.iduser).then(function (res) {
+      $scope.profile = res.data.data;
+    }).catch(function (res) {
+      return Utils.showPopup('Chat', 'Se produjo un error al obtener los datos del perfil');
+    });
     Chat.getChatsmsgs($stateParams.tokenchat).then(function (res) {
       return $scope.mensajeschat = res.data;
-    }).catch(function () {
+    }).catch(function (res) {
       return Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat');
     });
   });
   /**
-  * Permite enviar un mensaje
-  * @param {Object} formComments
-  * @param {Object} comment
-  * @returns void
-  */
+   * Permite enviar un mensaje
+   * @param {Object} formComments
+   * @returns void
+   */
 
   $scope.addmsg = function (formmsgs, msg) {
     $scope.errors = {
@@ -160,10 +170,15 @@ angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$sta
       Chat.sendmsg({
         tokenchat: $stateParams.tokenchat,
         idUser: $scope.idUser,
-        msg: msg.mensaje
+        msg: msg.content
       }).then(function (res) {
         if (res.data.status === 1) {
-          $scope.mensajeschat.push(res.data.data);
+          var chatCreated = _objectSpread({}, res.data.data, {
+            usuario: $scope.usuario
+          });
+
+          $scope.mensajeschat.push(chatCreated);
+          $scope.msg = getDefaultMsg();
         } else {
           Utils.showPopup('Mensaje', res.data.message);
         }
@@ -172,6 +187,17 @@ angular.module('lostThings.controllers').controller('ChatCtrl', ['$scope', '$sta
       });
     }
   };
+  /**
+   * Permite resetear el campo del chat 
+   * @returns Object
+   */
+
+
+  function getDefaultMsg() {
+    return {
+      content: ''
+    };
+  }
 }]);
 "use strict";
 
@@ -961,10 +987,9 @@ angular.module('lostThings.controllers').controller('ProfileUserCtrl', ['$scope'
     $ionicLoading.show();
     Chat.createChat(user).then(function (res) {
       $ionicLoading.hide();
-      var tokenchat = res.data.data[0].tokenchat; //VER PORQUE ES UN ARRAY Y NO UN OBJECT
-
+      var tokenchat = res.data.data.tokenchat;
       $state.go('chat', {
-        user: user,
+        'iduser': user.idusuario,
         'tokenchat': tokenchat
       });
     }).catch(function () {

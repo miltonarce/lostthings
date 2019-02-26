@@ -40,7 +40,7 @@ Class ChatsmsgsController extends BaseController
     $this->checkUserIsLogged();
     $d_Post = file_get_contents('php://input');
     $data = json_decode($d_Post, true);
-    $validator = new Validator($data, ['msg' => ['required']]);
+    $validator = new Validator($data, ['msg' => ['required'], 'idUser' =>['required'], 'tokenchat' => ['required']]);
     if ($validator->passes()) {
       try {
           $chatsmsgs = new Chatsmsgs;

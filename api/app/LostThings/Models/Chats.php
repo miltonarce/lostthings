@@ -50,16 +50,16 @@ class Chats implements JsonSerializable
       'idemisor' => $row['idemisor'],
       'idreceptor' => $row['idreceptor']
     ]);
-    $chats = [];
-    while ($row = $stmt->fetch()) {
-      $msg = new Chats;
-      $msg->loadDataArray($row);
-      $chats[] = $msg;
+    $row = $stmt->fetch();
+    $this->loadDataArray($row);
+    if ($stmt->rowCount() !== 0) {
+      return true;
+    } else {
+      return false;
     }
     if (!$success) {
       throw new Exception("Se produjo un error al obtener los chat");
     } 
-    return $chats;
   }
   /**
    * Permite guardar un cha que esta asociado a una publicación con un usuario especifico...
@@ -74,16 +74,16 @@ class Chats implements JsonSerializable
     $query = "INSERT INTO chats (idemisor, idreceptor, tokenchat, fechachat)
             VALUES (:idemisor, :idreceptor, :tokenchat, :fechachat)";
     $stmt = $db->prepare($query);
-    $data = [
+    $dateChat = date("Y-m-d H:i:s");
+    $success = $stmt->execute([
       'idemisor' => $row['idemisor'],
       'idreceptor' => $row['idreceptor'],
       'tokenchat' => $row['tokenchat'],
-      'fechachat' => date("Y-m-d H:i:s")
-    ];
-    $success = $stmt->execute($data);
+      'fechachat' => $dateChat
+    ]);
     if ($success) {
-       $this->loadDataArray($row); 
-       return $data;
+        $row['fechachat'] = $dateChat;
+        $this->loadDataArray($row); 
     } else {
       throw new Exception('Error al insertar al abrir el chat.');
     }

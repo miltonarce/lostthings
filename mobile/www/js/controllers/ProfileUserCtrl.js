@@ -56,8 +56,8 @@ angular
 				$ionicLoading.show();
 				Chat.createChat(user).then(res => {
 					$ionicLoading.hide();
-					let tokenchat = res.data.data[0].tokenchat; //VER PORQUE ES UN ARRAY Y NO UN OBJECT
-					$state.go('chat', { user: user , 'tokenchat': tokenchat });
+					let tokenchat = res.data.data.tokenchat;
+					$state.go('chat', { 'iduser': user.idusuario , 'tokenchat': tokenchat });
 				}).catch(() => {
 					$ionicLoading.hide();
 					Utils.showPopup('Chats', '¡Ups se produjo un error al querer chatear.');

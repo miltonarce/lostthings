@@ -7,22 +7,27 @@ angular
 		'Utils',
 		'Authentication',
 		'Chat',
-		function ($scope, $state, $stateParams, Utils, Authentication, Chat) {
-			$scope.idUser = Authentication.getUserData().idusuario;
+		'Profile',
+		function ($scope, $state, $stateParams, Utils, Authentication, Chat, Profile) {
 
 			//Al ingresar a la view, obtiene los mensajes de los chats
 			$scope.$on('$ionicView.beforeEnter', function () {
+				$scope.idUser = Authentication.getUserData().idusuario;
+				$scope.usuario = Authentication.getUserData().usuario;
+				$scope.msg = getDefaultMsg();
+				Profile.getAdditionalInfo($stateParams.iduser).then(res => {
+					$scope.profile = res.data.data;
+				}).catch(res => Utils.showPopup('Chat', 'Se produjo un error al obtener los datos del perfil'));
 				Chat.getChatsmsgs($stateParams.tokenchat)
 					.then(res => $scope.mensajeschat = res.data)
-					.catch(() => Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat'));
+					.catch(res => Utils.showPopup('Chat', 'Se produjo un error al obtener los mensajes del chat'));
 			});
 
 			/**
-		 * Permite enviar un mensaje
-		 * @param {Object} formComments
-		 * @param {Object} comment
-		 * @returns void
-		 */
+			 * Permite enviar un mensaje
+			 * @param {Object} formComments
+			 * @returns void
+			 */
 			$scope.addmsg = function (formmsgs, msg) {
 				$scope.errors = { mensaje: null };
 				if (formmsgs.mensaje.$invalid) {
@@ -30,9 +35,14 @@ angular
 						$scope.errors.mensaje = 'El campo no puede ser vacío';
 					}
 				} else {
-					Chat.sendmsg({ tokenchat: $stateParams.tokenchat, idUser: $scope.idUser, msg: msg.mensaje }).then(res => {
+					Chat.sendmsg({ tokenchat: $stateParams.tokenchat, idUser: $scope.idUser, msg: msg.content }).then(res => {
 						if (res.data.status === 1) {
-							$scope.mensajeschat.push(res.data.data);
+							let chatCreated = {
+								...res.data.data,
+								usuario: $scope.usuario
+							};
+							$scope.mensajeschat.push(chatCreated);
+							$scope.msg = getDefaultMsg();
 						} else {
 							Utils.showPopup('Mensaje', res.data.message);
 						}
@@ -40,6 +50,15 @@ angular
 				}
 			}
 
+			/**
+			 * Permite resetear el campo del chat 
+			 * @returns Object
+			 */
+			function getDefaultMsg() {
+				return { 
+					content: '', 
+				};
+			}
 		}
 	]);
 

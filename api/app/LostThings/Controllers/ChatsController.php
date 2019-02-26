@@ -24,12 +24,12 @@ Class ChatsController extends BaseController
     $tokenchat = uniqid();
       try {
           $chats = new Chats;
-          $verify = $chats->verify(['idemisor' => $idUser, 'idreceptor' => $data['idusuario'], 'tokenchat' => $tokenchat]);
-          if(empty($verify)){
-            $chats = $chats->create(['idemisor' => $idUser, 'idreceptor' => $data['idusuario'], 'tokenchat' => $tokenchat]);
+          $existChat = $chats->verify(['idemisor' => $idUser, 'idreceptor' => $data['idusuario'], 'tokenchat' => $tokenchat]);
+          if (!$existChat) {
+            $chats->create(['idemisor' => $idUser, 'idreceptor' => $data['idusuario'], 'tokenchat' => $tokenchat]);
             View::renderJson(['status' => 1, 'message' => 'Chat creado exitosamente.', 'data' => $chats]);
-          }else {
-            View::renderJson(['status' => 1, 'message' => 'Chat obtenido exitosamente.', 'data' => $verify]);
+          } else {
+            View::renderJson(['status' => 1, 'message' => 'Chat obtenido exitosamente.', 'data' => $chats]);
           }
       } catch (Exeption $e) {
         View::renderJson(['status' => 0, 'message' => $e]);
